@@ -1,0 +1,46 @@
+---
+output: github_document
+---
+
+<!-- README.md is generated from README.Rmd. Please edit that file -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.path = "man/figures/README-",
+  out.width = "100%"
+)
+```
+
+# alto
+
+<!-- badges: start -->
+<!-- badges: end -->
+
+`alto` is an R package that 
+
+- aligns topics from different LDA models,
+
+- computes metrics for quantifying the goodness of alignment, 
+
+- and provides visualization functions to explore the alignment and robustness of topics across environments or LDA hyper-parameters.
+
+
+## Installation
+
+<!-- You can install the released version of alto from [CRAN](https://CRAN.R-project.org) with: -->
+
+<!-- ``` r -->
+<!-- install.packages("alto") -->
+<!-- ``` -->
+
+<!-- And  -->
+
+You can install the development version from [GitHub](https://github.com/) with:
+
+``` r
+# install.packages("devtools")
+devtools::install_github("lasy/alto")
+```
+
