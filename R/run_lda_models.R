@@ -8,7 +8,7 @@
 #' @param controls (optional)
 #' @param reset (optional, default = \code{FALSE})
 #'
-#' @return a list of LDA models (see package \code{topicmodels}).
+#' @return a list of LDA models (see package \code{topicmodels}). (or a \code{lda_models} object ? (which would be a list of 1. a list of model; 2. some metadata about the alignement))
 #' @export
 
 run_lda_models = function(
@@ -38,6 +38,7 @@ run_lda_models = function(
   # 2. RUNNING MODELS
 
 
+  # 3. Return results
 
 
 }

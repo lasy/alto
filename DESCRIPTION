@@ -2,10 +2,10 @@ Package: alto
 Type: Package
 Title: Aligns Topics across LDA Models
 Version: 0.1.0
-Author@R: c(
-    person("Kris", "Sankaran", email = "ksankaran@wisc.edu",role = "aut"),
-    person("Laura","Symul", email = "lsymul@stanford.edu", role = "aut"),
-    person("Julia", "Fukuyama", email = "jfukuyam@iu.edu", role = "aut")
+Authors@R: c(
+    person("Kris", "Sankaran", email = "ksankaran@wisc.edu",role = c("aut","cre")),
+    person("Laura","Symul", email = "lsymul@stanford.edu", role = c("aut")),
+    person("Julia", "Fukuyama", email = "jfukuyam@iu.edu", role = c("aut"))
     )
 Maintainer: Laura Symul <lsymul@stanford.edu>
 Description: "alto" is an R package that aligns topics from different LDA models, 
