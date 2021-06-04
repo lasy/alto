@@ -10,7 +10,8 @@
 
 align_topics = function(
   model_list,
-  models_to_compare
+  models_to_compare , # = "consecutive" // "all" // list(pair1 = c("model1", "model3"), pair2 = c("model1", "model3")),
+  order_constrain
 ){
 
   # 1. CHECKS

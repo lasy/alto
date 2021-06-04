@@ -3,9 +3,7 @@
 #' [Description]
 #'
 #' @param data (required) a \code{matrix} or \code{data.frame} containing the counts (integers) of each feature (e.g. words) and each sample (or document). Each row is a sample, each column is a feature.
-#' @param varying (required) a \code{character} specifying the varying element across models. Currently supported values for \code{varying} are (i) \code{K}, the number of topics, (ii) \code{alpha}, the prior on the number of topics per document, and (iii) \code{environment}, the environment in which samples have been collected.
-#' @param values (required)
-#' @param controls (optional)
+#' @param lda_params_list (required) a list specifying the parameter for each models that needs to be ran. Currently, supported parameters are "K" (the number of topic), "method" ("VEM" or "Gibbs"), and any of the possible arguments of \code{LDAcontrol}. See \code{topicmodels::LDA} for details and below for examples.
 #' @param reset (optional, default = \code{FALSE})
 #'
 #' @return a list of LDA models (see package \code{topicmodels}). (or a \code{lda_models} object ? (which would be a list of 1. a list of model; 2. some metadata about the alignement))
@@ -13,26 +11,23 @@
 
 run_lda_models = function(
   data,
-  varying,
-  values,
-  controls,
+  lda_varying_params_lists,
+  lda_fixed_params_list,
+  dir,
   reset = FALSE
 ){
 
+
+#   = list(model1 = list(K = 2),
+#          model2 = list(K = 3))
+#      list(model1 = list(environment = c(1,4,7,100)),
+#           model2 = list(environment = c(2,3,5,6,99))
+
   # 1. CHECKS
   # check data (format and values)
-  # check varying arguments
-  varying = match.arg(varying, c("K","alpha","environment"))
-  # check argument values
-  if(varying == "K"){
-    # values should be positive integer (allow 1?)
-  }
-  if(varying == "alpha"){
-    # values should be positive doubles
-  }
-  if(varying == "environment"){
-    # values should be a vector (of integer/characters/does not matter?) with a length equal to the number of rows in data
-  }
+  # check lda_varying_params_lists
+  # check lda_fixed_params_list
+
 
 
   # 2. RUNNING MODELS
