@@ -4,18 +4,20 @@
 \alias{run_lda_models}
 \title{Run LDA models for specified values of hyper-parameters or for different environments.}
 \usage{
-run_lda_models(data, varying, values, controls, reset = FALSE)
+run_lda_models(
+  data,
+  lda_varying_params_lists,
+  lda_fixed_params_list,
+  dir,
+  reset = FALSE
+)
 }
 \arguments{
 \item{data}{(required) a \code{matrix} or \code{data.frame} containing the counts (integers) of each feature (e.g. words) and each sample (or document). Each row is a sample, each column is a feature.}
 
-\item{varying}{(required) a \code{character} specifying the varying element across models. Currently supported values for \code{varying} are (i) \code{K}, the number of topics, (ii) \code{alpha}, the prior on the number of topics per document, and (iii) \code{environment}, the environment in which samples have been collected.}
-
-\item{values}{(required)}
-
-\item{controls}{(optional)}
-
 \item{reset}{(optional, default = \code{FALSE})}
+
+\item{lda_params_list}{(required) a list specifying the parameter for each models that needs to be ran. Currently, supported parameters are "K" (the number of topic), "method" ("VEM" or "Gibbs"), and any of the possible arguments of \code{LDAcontrol}. See \code{topicmodels::LDA} for details and below for examples.}
 }
 \value{
 a list of LDA models (see package \code{topicmodels}). (or a \code{lda_models} object ? (which would be a list of 1. a list of model; 2. some metadata about the alignement))
