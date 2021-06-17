@@ -4,15 +4,27 @@
 \alias{align_topics}
 \title{Align topics from distinct LDA models}
 \usage{
-align_topics(model_list, models_to_compare)
+align_topics(
+  models,
+  comparisons = "consecutive",
+  method = "product",
+  order_constrain = NULL,
+  ...
+)
 }
 \arguments{
-\item{model_list}{(required) a \code{lda_models} object. See \code{run_lda_models} for details.}
+\item{models}{(required) a \code{lda_models} object. See
+\code{run_lda_models} for details.}
 
-\item{models_to_compare}{(optional) either a character indicating if topics should be aligned between \code{consecutive} or \code{all} models, or a list of model pairs between which topics should be aligned.}
+\item{comparisons}{(optional) either a character indicating if topics
+should be aligned between \code{consecutive} or \code{all} models, or a
+list of model pairs between which topics should be aligned.}
 }
 \value{
-a \code{data.frame} (? or some specific object) providing the weights between every pair of topics of each model pairs in the input edgelist (\code{models_to_compare}). ? Do we also return the lda_models with ordered topics?
+a \code{data.frame} (? or some specific object) providing the weights
+  between every pair of topics of each model pairs in the input edgelist
+  (\code{comparisons}). ? Do we also return the lda_models with ordered
+  topics?
 }
 \description{
 [Description]

@@ -1,0 +1,39 @@
+---
+title: "Basic Alignment"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{basic-alignment}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+This is mainly a way to test our code without having a full `testthat` workflow.
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+```{r setup}
+#devtools::document(); devtools::install()
+library(alto)
+```
+
+This step will eventually be replaced by a `run_lda_models` call.
+
+```{r}
+f <- tempfile()
+download.file("https://uwmadison.box.com/shared/static/1z6hn6u8zay92v14p5vcprlkgncj835x.rdata", f)
+models <- get(load(f))
+```
+
+```{r}
+result <- align_topics(models, "consecutive")
+result
+```
+
+```{r}
+plot(result)
+```
