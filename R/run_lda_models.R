@@ -3,7 +3,8 @@
 #' [Description]
 #'
 #' @param data (required) a \code{matrix} or \code{data.frame} containing the counts (integers) of each feature (e.g. words) and each sample (or document). Each row is a sample, each column is a feature.
-#' @param lda_params_list (required) a list specifying the parameter for each models that needs to be ran. Currently, supported parameters are "K" (the number of topic), "method" ("VEM" or "Gibbs"), and any of the possible arguments of \code{LDAcontrol}. See \code{topicmodels::LDA} for details and below for examples.
+#' @param lda_varying_params_lists (required) a list specifying the parameter for each models that needs to be ran. Currently, supported parameters are "K" (the number of topic), "method" ("VEM" or "Gibbs"), and "control", a list of type \code{LDAcontrol}. See \code{topicmodels::LDA} for details and below for examples.
+#' @param lda_fixed_params_list (optional) a list specifying the parameters common to all models to be fitted.
 #' @param reset (optional, default = \code{FALSE})
 #'
 #' @return a list of LDA models (see package \code{topicmodels}). (or a \code{lda_models} object ? (which would be a list of 1. a list of model; 2. some metadata about the alignement))
