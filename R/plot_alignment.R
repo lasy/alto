@@ -13,14 +13,14 @@
 #' @return a \code{ggplot} object (?) .
 #' @export
 
-plot_alignment = function(
+plot_alignment <- function(
   aligned_topics,
   add_leaves = TRUE,
   min_beta = 0.025,
   n_features = NULL,
   add_feature_labels = TRUE,
   reverse_x_axis = FALSE
-){
+) {
 
   # 1. CHECKS
 
