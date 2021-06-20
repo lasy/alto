@@ -96,7 +96,7 @@ run_lda_models <-
     names(lda_models) <- names(param_lists)
 
     # 4. Return results
-    if (delete_dir) base::unkink(dir, recursive = TRUE)
+    if (delete_dir) base::unlink(dir, recursive = TRUE)
     lda_models
   }
 
@@ -133,7 +133,7 @@ run_lda_models <-
           param_list$k <- lda_fixed_params_list$k
         if ("k" %in% names(lda_varying_params_list))
           param_list$k <- lda_varying_params_list$k
-        if (is.null(l$k)) {
+        if (is.null(param_list$k)) {
           warning("no value was provided for 'k'. Using default value of '5'.")
           param_list$k <- 5
         }
@@ -142,7 +142,7 @@ run_lda_models <-
           param_list$method <- lda_fixed_params_list$method
         if ("method" %in% names(lda_varying_params_list))
           param_list$method <- lda_varying_params_list$method
-        if (is.null(l$method)) {
+        if (is.null(param_list$method)) {
           warning("Using default value 'VEM' for 'method' LDA parameter.")
           param_list$method <- "VEM"
         }
@@ -152,7 +152,7 @@ run_lda_models <-
         if ("control" %in% names(lda_varying_params_list))
           param_list$control <- lda_varying_params_list$control
 
-        l
+        param_list
       }
     )
 

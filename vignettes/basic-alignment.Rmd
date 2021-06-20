@@ -17,23 +17,39 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#devtools::document(); devtools::install()
+#devtools::document(); devtools::install(quick = TRUE)
 library(alto)
 ```
 
 This step will eventually be replaced by a `run_lda_models` call.
 
 ```{r}
-f <- tempfile()
-download.file("https://uwmadison.box.com/shared/static/1z6hn6u8zay92v14p5vcprlkgncj835x.rdata", f)
-models <- get(load(f))
+data = matrix(sample(0:1000, size = 24), 4, 6)
+lda_varying_params_lists = list(K2 = list(k = 2), K3 = list(k = 3), K4 = list(k = 4))
+lda_models =
+   run_lda_models(
+      data = data,
+      lda_varying_params_lists = lda_varying_params_lists
+      )
 ```
 
 ```{r}
-result <- align_topics(models, "consecutive")
+result <- align_topics(lda_models, "consecutive")
+result
+```
+
+
+```{r}
+result <- align_topics(lda_models, "all")
+result
+```
+
+```{r}
+result <- align_topics(lda_models, "consecutive", method = "transport")
 result
 ```
 
 ```{r}
 plot(result)
 ```
+
