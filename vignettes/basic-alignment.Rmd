@@ -45,6 +45,11 @@ result
 ```
 
 ```{r}
+result <- align_topics(lda_models, "consecutive", method = "transport")
+result
+```
+
+```{r}
 plot(result)
 ```
 

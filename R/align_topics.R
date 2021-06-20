@@ -96,6 +96,7 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
 
 #' @importFrom purrr map
 #' @importFrom magrittr %>%
+#' @export
 product_weights <- function(gammas, ...) {
   products <- t(gammas[[1]]) %*% gammas[[2]]
   dimnames(products) <- purrr::map(gammas, ~ colnames(.))
@@ -103,8 +104,27 @@ product_weights <- function(gammas, ...) {
     .lengthen_weights()
 }
 
-transport_weights <- function(gammas, ...) {
+#' @importFrom philentropy JSD
+#' @importFrom purrr map
+#' @importFrom Barycenter Sinkhorn
+#' @export
+transport_weights <- function(gammas, betas, reg = 1e-1, ...) {
+  betas_mat <- do.call(rbind, betas)
+  costs <- suppressMessages(philentropy::JSD(betas_mat))
+  ix <- seq_len(nrow(betas[[1]]))
 
+  plan <- matrix(0, nrow = nrow(betas[[1]]), ncol = nrow(betas[[2]]))
+  for (i in seq_len(nrow(gammas[[1]]))) {
+    a <- t(gammas[[1]][i, , drop = F])
+    b <- t(gammas[[2]][i, , drop = F])
+    plan <- plan + Barycenter::Sinkhorn(
+        a, b, costs[ix, -ix, drop = F], lambda = reg
+      )$Transportplan
+  }
+
+  dimnames(plan) <- purrr::map(gammas, ~ colnames(.))
+  data.frame(plan) %>%
+    .lengthen_weights()
 }
 
 ################################################################################
