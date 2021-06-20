@@ -2,26 +2,52 @@
 % Please edit documentation in R/run_lda_models.R
 \name{run_lda_models}
 \alias{run_lda_models}
-\title{Run LDA models for specified values of hyper-parameters or for different environments.}
+\title{Run LDA models for specified values of hyper-parameters.}
 \usage{
 run_lda_models(
   data,
   lda_varying_params_lists,
-  lda_fixed_params_list,
-  dir,
+  lda_fixed_params_list = list(),
+  dir = NULL,
   reset = FALSE
 )
 }
 \arguments{
-\item{data}{(required) a \code{matrix} or \code{data.frame} containing the counts (integers) of each feature (e.g. words) and each sample (or document). Each row is a sample, each column is a feature.}
+\item{data}{(required) a \code{matrix} or \code{data.frame}
+containing the counts (integers) of each feature (e.g. words)
+and each sample (or document).
+Each row is a sample, each column is a feature.}
+
+\item{lda_varying_params_lists}{(required) a \code{list}
+specifying the parameter for each models that needs to be ran.
+Currently, supported parameters are "k" (the number of topic),
+"method" ("VEM" or "Gibbs"), and "control", a list of type \code{LDAcontrol}.
+See \code{topicmodels::LDA} for details and below for examples.}
+
+\item{lda_fixed_params_list}{(optional) a \code{list}
+specifying the parameters common to all models to be fitted.
+Values provided by \code{lda_fixed_params_list} are overwritten
+by those provided by \code{lda_varying_params_lists}.}
 
 \item{reset}{(optional, default = \code{FALSE})}
-
-\item{lda_params_list}{(required) a list specifying the parameter for each models that needs to be ran. Currently, supported parameters are "K" (the number of topic), "method" ("VEM" or "Gibbs"), and any of the possible arguments of \code{LDAcontrol}. See \code{topicmodels::LDA} for details and below for examples.}
 }
 \value{
-a list of LDA models (see package \code{topicmodels}). (or a \code{lda_models} object ? (which would be a list of 1. a list of model; 2. some metadata about the alignement))
+a list of LDA models (see package \code{topicmodels}).
+? or a \code{lda_models} object which would be a list of
+1. a list of model;
+2. some metadata about the alignement
 }
 \description{
 [Description]
+}
+\examples{
+set.seed(1)
+data = matrix(sample(0:1000, size = 24), 4, 6)
+lda_varying_params_lists = list(K2 = list(k = 2), K3 = list(k = 3))
+lda_models =
+   run_lda_models(
+      data = data,
+      lda_varying_params_lists = lda_varying_params_lists,
+      dir = "test_lda_models/"
+      )
 }
