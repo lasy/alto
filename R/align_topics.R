@@ -12,6 +12,10 @@
 #'   between every pair of topics of each model pairs in the input edgelist
 #'   (\code{comparisons}). ? Do we also return the lda_models with ordered
 #'   topics?
+#' @importFrom dplyr filter
+#' @importFrom magrittr %>% set_colnames
+#' @importFrom purrr map_int map
+#' @importFrom stringr str_starts
 #' @export
 align_topics <- function(
   models,
@@ -22,15 +26,25 @@ align_topics <- function(
 ) {
   check_input(models, comparisons, method)
   weight_fun <- ifelse(method == "product", product_weights, transport_weights)
+  if (is.null(names(models))) {
+    names(models) <- seq_along(models)
+  }
+
   if (comparisons == "consecutive") {
-    k_ <- length(models)
-    comparisons <- data.frame(from = seq_len(k_ - 1), to = seq(2, k_))
+    comparisons <- data.frame(
+      from = head(names(models), -1), to = tail(names(models), -1)
+    )
+  } else if (comparisons == "all") {
+    comparisons <- t(combn(names(models), 2)) %>%
+      as.data.frame() %>%
+      magrittr::set_colnames(c("from", "to")) %>%
+      dplyr::filter(from != to)
   }
 
   alignment <- align_graph(
     comparisons,
-    models$gammas,
-    models$betas,
+    map(models, ~ .@gamma),
+    map(models, ~ .@beta),
     weight_fun, ...
   )
 
@@ -52,8 +66,9 @@ check_input <- function(
 ) {
   # check model list input
   stopifnot(typeof(models) == "list")
-  stopifnot(names(models) == c("betas", "gammas", "log_likelihood"))
-  stopifnot(all(purrr::map_int(models, ~ typeof(.) == "list")))
+  stopifnot(
+    all(purrr::map_int(models, ~ stringr::str_starts(class(.), "LDA")))
+  )
 
   # check models to compare options
   if (!comparisons %in% c("consecutive", "all")) {
@@ -125,19 +140,13 @@ postprocess_weights <- function(weights, n_docs, m_levels) {
 # Class construction and methods
 ################################################################################
 print_alignment <- function(x) {
-  cat(
-    "An object of class ", class(x),
-    " comparing ",
-    n_models(x),
-    " models across ",
-    n_topics(x),
-    " topics\n"
-  )
+  cat(sprintf(
+    "# An %s: %d models, %d topics:\n",
+    class(x), n_models(x), n_topics(x)
+  ))
 
-  cat("#################################################################\n")
   print(head(x@weights))
-  cat("....")
-  cat("#################################################################\n")
+  cat(sprintf("# … with %s more rows", nrow(x@weights) - 6))
 }
 
 plot_alignment <- function(x, y, ...) {
@@ -176,10 +185,23 @@ setGeneric("n_models", function(x) standardGeneric("n_models"))
 #' Number of Models Method for Alignment Class
 #' @import methods
 #' @export
-setMethod("n_models", "alignment", function(x) length(unique(x@weights$m, x@weights$m_next)))
+setMethod("n_models", "alignment", function(x) nlevels(x@weights$m))
+
+#' Number of Topics in Alignment
+#' @importFrom magrittr %>% set_colnames
+#' @importFrom dplyr select bind_rows
+.n_topics <- function(x) {
+  w <- x@weights
+  w1 <- w %>%
+    dplyr::select(m, k_LDA)
+  w2 <- w %>%
+    dplyr::select(m_next, k_LDA_next) %>%
+    magrittr::set_colnames(c("m", "k_LDA"))
+  nrow(unique(dplyr::bind_rows(w1, w2)))
+}
 
 setGeneric("n_topics", function(x) standardGeneric("n_topics"))
 #' Number of Topics Method for Alignment Class
 #' @import methods
 #' @export
-setMethod("n_topics", "alignment", function(x) length(unique(x@weights$k_LDA, x@weights$k_LDA_next)))
+setMethod("n_topics", "alignment", .n_topics)
