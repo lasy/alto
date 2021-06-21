@@ -2,10 +2,11 @@
 #'
 #' [Description]
 #'
-#' @param data (required) a \code{matrix} or \code{data.frame}
-#' containing the counts (integers) of each feature (e.g. words)
-#' and each sample (or document).
-#' Each row is a sample, each column is a feature.
+#' @param data (required) a \code{matrix}, \code{data.frame} or
+#' \code{slam::simple_triplet_matrix} containing the counts (integers)
+#' of each feature (e.g. words) and each sample (or document).
+#' If data is provided as \code{matrix} or \code{data.frame},
+#' each row is a sample, each column is a feature.
 #' @param lda_varying_params_lists (required) a \code{list}
 #' specifying the parameter for each models that needs to be ran.
 #' Currently, supported parameters are "k" (the number of topic),
@@ -39,7 +40,8 @@ run_lda_models <-
     lda_varying_params_lists,
     lda_fixed_params_list = list(),
     dir = NULL,
-    reset = FALSE
+    reset = FALSE,
+    verbose = FALSE
   ) {
 
     # 1. CHECKS
@@ -71,6 +73,7 @@ run_lda_models <-
         purrr::map(
           .x = names(param_lists),
           .f = function(m) {
+            if (verbose) cat(m,"\n")
             param_list <- param_lists[[m]]
             lda_model <-
               topicmodels::LDA(
@@ -111,7 +114,7 @@ run_lda_models <-
     stop("'data' must have at least two rows\n")
   if (ncol(data) < 2)
     stop("'data' must have at least two columns\n")
-  data
+  slam::as.simple_triplet_matrix(data)
 }
 
 
@@ -134,7 +137,7 @@ run_lda_models <-
         if ("k" %in% names(lda_varying_params_list))
           param_list$k <- lda_varying_params_list$k
         if (is.null(param_list$k)) {
-          warning("no value was provided for 'k'. Using default value of '5'.")
+          warning("no value was provided for 'k'. Using default value of '5'.\n")
           param_list$k <- 5
         }
 
@@ -143,7 +146,7 @@ run_lda_models <-
         if ("method" %in% names(lda_varying_params_list))
           param_list$method <- lda_varying_params_list$method
         if (is.null(param_list$method)) {
-          warning("Using default value 'VEM' for 'method' LDA parameter.")
+          warning("Using default value 'VEM' for 'method' LDA parameter.\n")
           param_list$method <- "VEM"
         }
 
