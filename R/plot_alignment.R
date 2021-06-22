@@ -63,17 +63,16 @@ plot_alignment <- function(
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_c
 #' @importFrom dplyr bind_rows group_by arrange summarise mutate rename select
-.compute_layout <- function(weights, rect_hwidth=0.2) {
+.compute_layout <- function(weights, rect_hwidth = 0.2) {
   # compute topic rectangles
-  layout_rect <- weights %>%
-    group_by(m, k_LDA) %>%
-    summarise(topic_weight = sum(weight)) %>%
-    group_by(m) %>%
-    mutate(
-      m_num = match(m, levels(m)),
-      ymax = k_LDA / (max(k_LDA) + 1) + cumsum(topic_weight),
-      ymin = ymax - topic_weight
-    )
+  final_topic <- weights %>%
+    filter(m_next == tail(levels(m_next), 1)) %>%
+    select(-m, -k_LDA) %>%
+    rename(m = m_next, k_LDA = k_LDA_next)
+  layout_rect <- bind_rows(
+    topic_layout(weights),
+    topic_layout(final_topic)
+  )
 
   # compute flows out and into rectangles (input to geom_ribbon)
   ribbon_out <- weights %>%
@@ -99,6 +98,20 @@ plot_alignment <- function(
     rename(m = m_next)
 
   list(rect = layout_rect, ribbon = dplyr::bind_rows(ribbon_out, ribbon_in))
+}
+
+#' @importFrom magrittr %>%
+#' @importFrom dplyr group_by summarise mutate
+topic_layout <- function(weights) {
+  weights %>%
+    group_by(m, k_LDA) %>%
+    summarise(topic_weight = sum(weight)) %>%
+    group_by(m) %>%
+    mutate(
+      m_num = match(m, levels(m)),
+      ymax = k_LDA / (max(k_LDA) + 1) + cumsum(topic_weight),
+      ymin = ymax - topic_weight
+    )
 }
 
 .check_input <- function(aligned_topics) {
