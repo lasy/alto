@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#devtools::document(); devtools::install(quick = TRUE)
+devtools::document(); devtools::install(quick = TRUE)
 library(alto)
 ```
 
@@ -36,8 +36,8 @@ lda_models =
 ```{r}
 result <- align_topics(lda_models, "consecutive")
 result
+plot(result)
 ```
-
 
 ```{r}
 result <- align_topics(lda_models, "all")

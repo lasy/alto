@@ -12,10 +12,7 @@
 #'   between every pair of topics of each model pairs in the input edgelist
 #'   (\code{comparisons}). ? Do we also return the lda_models with ordered
 #'   topics?
-#' @importFrom dplyr filter
-#' @importFrom magrittr %>% set_colnames
-#' @importFrom purrr map_int map
-#' @importFrom stringr str_starts
+#' @importFrom purrr map
 #' @export
 align_topics <- function(
   models,
@@ -24,41 +21,47 @@ align_topics <- function(
   order_constrain = NULL,
   ...
 ) {
+
+  # 1. Check input and initialize key objects
   check_input(models, comparisons, method)
   weight_fun <- ifelse(method == "product", product_weights, transport_weights)
   if (is.null(names(models))) {
     names(models) <- seq_along(models)
   }
+  edges <- setup_edges(comparisons, names(models))
 
-  if (comparisons == "consecutive") {
-    comparisons <- data.frame(
-      from = head(names(models), -1), to = tail(names(models), -1)
-    )
-  } else if (comparisons == "all") {
-    comparisons <- t(combn(names(models), 2)) %>%
-      as.data.frame() %>%
-      magrittr::set_colnames(c("from", "to")) %>%
-      dplyr::filter(from != to)
-  }
-
+  # 2. perform alignment
   alignment <- align_graph(
-    comparisons,
+    edges,
     map(models, ~ .@gamma),
     map(models, ~ .@beta),
     weight_fun, ...
   )
 
-  # 3. ORDER TOPICS
-
-  # 4. Return results
-  new(
-    "alignment",
-    weights = as.data.frame(alignment)
-  )
+  # 3. Order the topics
+  new("alignment", weights = as.data.frame(alignment))
 }
 
+#' @importFrom magrittr set_colnames %>%
+#' @importFrom dplyr filter
+setup_edges <- function(comparisons, model_names) {
+  edges <- comparisons
+  if (comparisons == "consecutive") {
+    edges <- data.frame(
+      from = head(model_names, -1), to = tail(model_names, -1)
+    )
+  } else if (comparisons == "all") {
+    edges <- t(combn(model_names, 2)) %>%
+      as.data.frame() %>%
+      magrittr::set_colnames(c("from", "to")) %>%
+      dplyr::filter(from != to)
+  }
+
+  edges
+}
 
 #' @importFrom purrr map_int
+#' @importFrom stringr str_starts
 check_input <- function(
   models,
   comparisons,
@@ -153,6 +156,7 @@ postprocess_weights <- function(weights, n_docs, m_levels) {
     mutate(norm_weight = weight / sum(weight)) %>%
     ungroup() %>%
     mutate(across(c("m", "m_next"), factor, levels = m_levels)) %>%
+    mutate(across(c("k_LDA", "k_LDA_next"), as.integer)) %>%
     arrange(m)
 }
 
@@ -169,10 +173,6 @@ print_alignment <- function(x) {
   cat(sprintf("# … with %s more rows", nrow(x@weights) - 6))
 }
 
-plot_alignment <- function(x, y, ...) {
-  warning("plotting method is not implemented yet")
-}
-
 #' Alignment Class Definition
 #' @import methods
 #' @exportClass alignment
@@ -183,11 +183,6 @@ setClass("alignment",
     n_topics = "numeric"
   )
 )
-
-#' Plot Method for Alignment Class
-#' @import methods
-#' @export
-setMethod("plot", c(x = "alignment", y = "missing"), plot_alignment)
 
 #' Show Method for Alignment Class
 #' @import methods
