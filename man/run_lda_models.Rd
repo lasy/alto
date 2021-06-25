@@ -9,14 +9,16 @@ run_lda_models(
   lda_varying_params_lists,
   lda_fixed_params_list = list(),
   dir = NULL,
-  reset = FALSE
+  reset = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
-\item{data}{(required) a \code{matrix} or \code{data.frame}
-containing the counts (integers) of each feature (e.g. words)
-and each sample (or document).
-Each row is a sample, each column is a feature.}
+\item{data}{(required) a \code{matrix}, \code{data.frame} or
+\code{slam::simple_triplet_matrix} containing the counts (integers)
+of each feature (e.g. words) and each sample (or document).
+If data is provided as \code{matrix} or \code{data.frame},
+each row is a sample, each column is a feature.}
 
 \item{lda_varying_params_lists}{(required) a \code{list}
 specifying the parameter for each models that needs to be ran.

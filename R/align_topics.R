@@ -23,7 +23,7 @@ align_topics <- function(
 ) {
 
   # 1. Check input and initialize key objects
-  check_input(models, comparisons, method)
+  .check_align_input(models, comparisons, method)
   weight_fun <- ifelse(method == "product", product_weights, transport_weights)
   if (is.null(names(models))) {
     names(models) <- seq_along(models)
@@ -33,8 +33,8 @@ align_topics <- function(
   # 2. perform alignment
   alignment <- align_graph(
     edges,
-    map(models, ~ .@gamma),
-    map(models, ~ .@beta),
+    map(models, ~ .$gamma),
+    map(models, ~ .$beta),
     weight_fun, ...
   )
 
@@ -62,7 +62,7 @@ setup_edges <- function(comparisons, model_names) {
 
 #' @importFrom purrr map_int
 #' @importFrom stringr str_starts
-check_input <- function(
+.check_align_input <- function(
   models,
   comparisons,
   method
@@ -70,7 +70,10 @@ check_input <- function(
   # check model list input
   stopifnot(typeof(models) == "list")
   stopifnot(
-    all(purrr::map_int(models, ~ stringr::str_starts(class(.), "LDA")))
+    all(purrr::map(models, ~ class(.) == "list"))
+  )
+  stopifnot(
+    all(purrr::map(lda_models, ~ all(names(.) %in% c("gamma", "beta"))))
   )
 
   # check models to compare options
