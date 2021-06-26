@@ -17,7 +17,7 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#devtools::document(); devtools::install(quick = TRUE)
+#devtools::document(); devtools::install(quick=T)
 library(alto)
 library(stringr)
 ```
@@ -40,6 +40,51 @@ result <- align_topics(lda_models, "consecutive")
 result
 plot(result)
 ```
+
+```{r}
+library("dplyr")
+  result@weights %>%
+    group_by(m, k_LDA) %>%
+    summarise(topic_weight = sum(weight)) %>%
+    group_by(m) %>%
+    mutate(
+      m_num = match(m, levels(m)),
+      ymax = k_LDA / (max(k_LDA) + 1) + cumsum(topic_weight),
+      ymin = ymax - topic_weight
+    )
+
+```
+
+
+```{r}
+library("tidyr")
+library("dplyr")
+top_words <- exp(result@models[[n_models(result)]]$beta) %>%
+  as_tibble() %>%
+  mutate(k_LDA = row_number()) %>%
+  pivot_longer(-k_LDA, names_to = "v") %>%
+  group_by(k_LDA) %>%
+  slice_max(value, n = 2) %>%
+  ungroup()
+
+top_words %>%
+  mutate(
+    m_num = 10,
+    ymax = cumsum(value) + 0.1 * row_number() / n(),
+    ymin = ymax - value
+  )
+
+#    group_by(m, k_LDA) %>%
+#    summarise(topic_weight = sum(weight)) %>%
+#    group_by(m) %>%
+#    mutate(
+#      m_num = match(m, levels(m)),
+#      ymax = k_LDA / (max(k_LDA) + 1) + cumsum(topic_weight),
+#      ymin = ymax - topic_weight
+#    )
+#}
+```
+
 
 ```{r}
 result <- align_topics(lda_models, "all")
