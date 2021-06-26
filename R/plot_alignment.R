@@ -25,16 +25,16 @@ plot_alignment <- function(
   n_features = NULL,
   add_feature_labels = TRUE,
   reverse_x_axis = FALSE,
-  rect_hwidth = 0.2
+  rect_gap = 0.2
 ) {
   .check_input(x)
-  layouts <- .compute_layout(x@weights, rect_hwidth)
-  .plot_from_layout(layouts$rect, layouts$ribbon, rect_hwidth)
+  layouts <- .compute_layout(x, rect_gap)
+  .plot_from_layout(layouts$rect, layouts$ribbon, rect_gap)
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
 #'   theme
-.plot_from_layout <- function(rect, ribbon, rect_hwidth) {
+.plot_from_layout <- function(rect, ribbon, rect_gap) {
   ms <- unique(rect$m_num)
   ggplot() +
     geom_ribbon(
@@ -51,8 +51,8 @@ plot_alignment <- function(
     geom_rect(
       data = rect,
       aes(
-        xmin = m_num - rect_hwidth,
-        xmax = m_num + rect_hwidth,
+        xmin = m_num - rect_gap,
+        xmax = m_num + rect_gap,
         ymin = ymin,
         ymax = ymax,
         fill = as.factor(k_LDA)
@@ -65,23 +65,25 @@ plot_alignment <- function(
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_c
 #' @importFrom dplyr bind_rows group_by arrange summarise mutate rename select
-.compute_layout <- function(weights, rect_gap = 0.2) {
-  final_topic <- weights %>%
+.compute_layout <- function(x, rect_gap = 0.2) {
+  final_topic <- x@weights %>%
     filter(m_next == tail(levels(m_next), 1)) %>%
     select(-m, -k_LDA) %>%
     rename(m = m_next, k_LDA = k_LDA_next)
   layout_rect <- bind_rows(
-    topic_layout(weights),
-    topic_layout(final_topic)
+    topic_layout(x@weights),
+    topic_layout(final_topic),
+    words_rect(x)
   )
 
   # compute flows out and into rectangles (input to geom_ribbon)
-  ribbon_out <- ribbon_layout(weights, c("m", "k_LDA"), rect_gap)
-  ribbon_in <- ribbon_layout(weights, c("m_next", "k_LDA_next"), -rect_gap) %>%
+  r_out <- ribbon_layout(x@weights, c("m", "k_LDA"), rect_gap)
+  r_in <- ribbon_layout(x@weights, c("m_next", "k_LDA_next"), -rect_gap) %>%
     select(-m) %>%
     rename(m = m_next)
 
-  list(rect = layout_rect, ribbon = dplyr::bind_rows(ribbon_out, ribbon_in))
+  ribbon <- dplyr::bind_rows(r_out, r_in)
+  list(rect = layout_rect, ribbon = ribbon)
 }
 
 ribbon_layout <- function(weights, v = c("m", "k_LDA"), rect_gap = 0.1) {
@@ -96,6 +98,9 @@ ribbon_layout <- function(weights, v = c("m", "k_LDA"), rect_gap = 0.1) {
     )
 }
 
+words_ribbon <- function(weights, rect_gap = 0.2) {
+}
+
 #' @importFrom magrittr %>%
 #' @importFrom dplyr group_by summarise mutate
 topic_layout <- function(weights) {
@@ -107,6 +112,33 @@ topic_layout <- function(weights) {
       m_num = match(m, levels(m)),
       ymax = k_LDA / (max(k_LDA) + 1) + cumsum(topic_weight),
       ymin = ymax - topic_weight
+    )
+}
+
+#' @importFrom magrittr %>%
+#' @importFrom dplyr group_by mutate slice_max ungroup row_number n
+#' @importFrom tidyr pivot_longer
+top_words <- function(beta, min_beta = 0.1) {
+  exp(beta) %>%
+    as.data.frame() %>%
+    mutate(k_LDA = row_number()) %>%
+    pivot_longer(-k_LDA, names_to = "v") %>%
+    group_by(k_LDA) %>%
+    filter(value > min_beta) %>%
+    arrange(k_LDA, value) %>%
+    ungroup()
+}
+
+#' @importFrom magrittr %>%
+#' @importFrom dplyr mutate row_number n
+words_rect <- function(x) {
+  beta <- models(x)[[n_models(x)]]$beta
+  top_words(beta) %>%
+    mutate(
+      value = value / sum(value),
+      m_num = n_models(x) + 1.5,
+      ymax = cumsum(value) + row_number() / (n() + 1),
+      ymin = ymax - value
     )
 }
 
