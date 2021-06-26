@@ -39,7 +39,7 @@ align_topics <- function(
   )
 
   # 3. Order the topics
-  new("alignment", weights = as.data.frame(alignment))
+  new("alignment", weights = as.data.frame(alignment), models = models)
 }
 
 #' @importFrom magrittr set_colnames %>%
@@ -182,6 +182,7 @@ print_alignment <- function(x) {
 setClass("alignment",
   representation(
     weights = "data.frame",
+    models = "list",
     n_models = "numeric",
     n_topics = "numeric"
   )
@@ -223,3 +224,9 @@ setGeneric("n_topics", function(x) standardGeneric("n_topics"))
 #' @import methods
 #' @export
 setMethod("n_topics", "alignment", .n_topics)
+
+setGeneric("models", function(x) standardGeneric("models"))
+#' Extract Models underlying Alignment
+#' @import methods
+#' @export
+setMethod("models", "alignment", function(x) x@models)
