@@ -19,6 +19,7 @@ knitr::opts_chunk$set(
 ```{r setup}
 #devtools::document(); devtools::install(quick = TRUE)
 library(alto)
+library(stringr)
 ```
 
 This step will eventually be replaced by a `run_lda_models` call.
@@ -26,8 +27,6 @@ This step will eventually be replaced by a `run_lda_models` call.
 ```{r}
 data = matrix(sample(0:1000, size = 24), 4, 6)
 lda_varying_params_lists <- lapply(1:5, function(z) list(k = z))
-#lda_varying_params_lists = list(K2 = list(k = 2), K3 = list(k = 3), K4 = list(k = 4))
-library("stringr")
 names(lda_varying_params_lists) <- str_c("K", 1:5)
 lda_models =
    run_lda_models(
