@@ -43,10 +43,6 @@ plot(result)
 ```
 
 ```{r}
-result@weights
-```
-
-```{r}
 result <- align_topics(lda_models, "all")
 result
 ```
