@@ -76,23 +76,35 @@ plot_alignment <- function(
   )
 
   # compute flows out and into rectangles (input to geom_ribbon)
-  r_out <- ribbon_layout(weights, c("m", "k_LDA"), rect_gap)
-  r_in <- ribbon_layout(weights, c("m_next", "k_LDA_next"), -rect_gap) %>%
+  r_out <- ribbon_out(weights, rect_gap)
+  r_in <- ribbon_in(weights, -rect_gap) %>%
     select(-m) %>%
     rename(m = m_next)
 
   list(rect = layout_rect, ribbon = bind_rows(r_out, r_in))
 }
 
-ribbon_layout <- function(weights, v = c("m", "k_LDA"), rect_gap = 0.1) {
+ribbon_out <- function(weights, rect_gap = 0.1) {
   weights %>%
-    group_by(across(v[1])) %>%
-    arrange(across(v)) %>%
+    group_by(m) %>%
+    arrange(k_LDA, k_LDA_next) %>%
     mutate(
-      ymax = .data[[v[2]]] / (max(.data[[v[2]]] + 1)) + cumsum(weight),
+      ymax = k_LDA / (max(k_LDA + 1)) + cumsum(weight),
       ymin = ymax - weight,
       id = str_c(m, m_next, k_LDA, k_LDA_next),
-      m_num = match(.data[[v[1]]], levels(.data[[v[1]]])) + rect_gap
+      m_num = match(m, levels(m)) + rect_gap
+    )
+}
+
+ribbon_in<- function(weights, rect_gap = 0.1) {
+  weights %>%
+    group_by(m_next) %>%
+    arrange(k_LDA_next, k_LDA) %>%
+    mutate(
+      ymax = k_LDA_next / (max(k_LDA_next + 1)) + cumsum(weight),
+      ymin = ymax - weight,
+      id = str_c(m, m_next, k_LDA, k_LDA_next),
+      m_num = match(m_next, levels(m_next)) + rect_gap
     )
 }
 

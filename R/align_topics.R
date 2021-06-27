@@ -36,9 +36,9 @@ align_topics <- function(
     map(models, ~ .$gamma),
     map(models, ~ .$beta),
     weight_fun, ...
-  )
+  ) %>%
+  reorder_topics()
 
-  # 3. Order the topics
   new("alignment", weights = as.data.frame(alignment), models = models)
 }
 
@@ -119,13 +119,17 @@ transport_weights <- function(gammas, betas, reg = 1e-1, ...) {
   costs <- suppressMessages(philentropy::JSD(betas_mat))
   ix <- seq_len(nrow(betas[[1]]))
 
-  plan <- matrix(0, nrow = nrow(betas[[1]]), ncol = nrow(betas[[2]]))
+  plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
   for (i in seq_len(nrow(gammas[[1]]))) {
     a <- t(gammas[[1]][i, , drop = F])
     b <- t(gammas[[2]][i, , drop = F])
     plan <- plan + Barycenter::Sinkhorn(
         a, b, costs[ix, -ix, drop = F], lambda = reg
       )$Transportplan
+  }
+  if (any(is.na(plan))) {
+    plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
+    warning("OT diverged, considering increasing regularization.")
   }
 
   dimnames(plan) <- purrr::map(gammas, ~ colnames(.))
