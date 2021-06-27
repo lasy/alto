@@ -20,12 +20,13 @@ knitr::opts_chunk$set(
 #devtools::document(); devtools::install(quick=T)
 library(alto)
 library(stringr)
+set.seed(123)
 ```
 
 This step will eventually be replaced by a `run_lda_models` call.
 
 ```{r}
-data = matrix(sample(0:1000, size = 200), 20, 10)
+data = matrix(sample(0:1000, size = 24), 6, 4)
 lda_varying_params_lists <- lapply(1:5, function(z) list(k = z))
 names(lda_varying_params_lists) <- str_c("K", 1:5)
 lda_models =
@@ -39,6 +40,10 @@ lda_models =
 result <- align_topics(lda_models, "consecutive")
 result
 plot(result)
+```
+
+```{r}
+result@weights
 ```
 
 ```{r}
