@@ -11,7 +11,7 @@ plot_alignment(
   n_features = NULL,
   add_feature_labels = TRUE,
   reverse_x_axis = FALSE,
-  rect_hwidth = 0.2
+  rect_gap = 0.2
 )
 }
 \arguments{

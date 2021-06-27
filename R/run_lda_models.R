@@ -73,15 +73,23 @@ run_lda_models <-
         purrr::map(
           .x = names(param_lists),
           .f = function(m) {
-            if (verbose) cat(m,"\n")
+            if (verbose) cat(m, "\n")
             param_list <- param_lists[[m]]
-            lda_model <-
-              topicmodels::LDA(
-                x = data,
-                k = param_list$k,
-                method = param_list$method,
-                control = param_list$control
+            if (param_list$k == 1) {
+              lda_model <- list(
+                gamma = matrix(1, nrow = nrow(data), ncol = 1),
+                beta = matrix(colSums(data) / sum(data), nrow = 1)
               )
+            } else {
+              tm <- topicmodels::LDA(
+                      x = data,
+                      k = param_list$k,
+                      method = param_list$method,
+                      control = param_list$control
+                    )
+              lda_model <- list(gamma = tm@gamma, beta = tm@beta)
+            }
+
             save(lda_model, file = paste0(dir, m, ".Rdata"))
           }
         )
@@ -114,7 +122,7 @@ run_lda_models <-
     stop("'data' must have at least two rows\n")
   if (ncol(data) < 2)
     stop("'data' must have at least two columns\n")
-  slam::as.simple_triplet_matrix(data)
+  data
 }
 
 

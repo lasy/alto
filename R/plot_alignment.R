@@ -25,15 +25,16 @@ plot_alignment <- function(
   n_features = NULL,
   add_feature_labels = TRUE,
   reverse_x_axis = FALSE,
-  rect_hwidth = 0.2
+  rect_gap = 0.2
 ) {
   .check_input(x)
-  layouts <- .compute_layout(x@weights, rect_hwidth)
-  .plot_from_layout(layouts$rect, layouts$ribbon, rect_hwidth)
+  layouts <- .compute_layout(x@weights, rect_gap)
+  .plot_from_layout(layouts$rect, layouts$ribbon, rect_gap)
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
-.plot_from_layout <- function(rect, ribbon, rect_hwidth) {
+#'   theme
+.plot_from_layout <- function(rect, ribbon, rect_gap) {
   ms <- unique(rect$m_num)
   ggplot() +
     geom_ribbon(
@@ -50,21 +51,21 @@ plot_alignment <- function(
     geom_rect(
       data = rect,
       aes(
-        xmin = m_num - rect_hwidth,
-        xmax = m_num + rect_hwidth,
+        xmin = m_num - rect_gap,
+        xmax = m_num + rect_gap,
         ymin = ymin,
         ymax = ymax,
         fill = as.factor(k_LDA)
       )
     ) +
-    scale_x_continuous(breaks = ms, labels = ms)
+    scale_x_continuous(breaks = ms, labels = ms) +
+    theme(legend.position = "none")
 }
 
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_c
 #' @importFrom dplyr bind_rows group_by arrange summarise mutate rename select
-.compute_layout <- function(weights, rect_hwidth = 0.2) {
-  # compute topic rectangles
+.compute_layout <- function(weights, rect_gap = 0.2) {
   final_topic <- weights %>%
     filter(m_next == tail(levels(m_next), 1)) %>%
     select(-m, -k_LDA) %>%
@@ -75,29 +76,24 @@ plot_alignment <- function(
   )
 
   # compute flows out and into rectangles (input to geom_ribbon)
-  ribbon_out <- weights %>%
-    group_by(m) %>%
-    arrange(m, k_LDA) %>%
-    mutate(
-      ymax = k_LDA * 1 / (max(k_LDA) + 1) + cumsum(weight),
-      ymin = ymax - weight,
-      id = str_c(m, m_next, k_LDA, k_LDA_next),
-      m_num = match(m, levels(m)) + rect_hwidth
-    )
-
-  ribbon_in <- weights %>%
-    group_by(m_next)  %>%
-    arrange(m_next, k_LDA_next) %>%
-    mutate(
-      ymax = k_LDA_next / (max(k_LDA_next) + 1) + cumsum(weight),
-      ymin = ymax - weight,
-      id = str_c(m, m_next, k_LDA, k_LDA_next),
-      m_num = match(m_next, levels(m_next)) - rect_hwidth
-    ) %>%
+  r_out <- ribbon_layout(weights, c("m", "k_LDA"), rect_gap)
+  r_in <- ribbon_layout(weights, c("m_next", "k_LDA_next"), -rect_gap) %>%
     select(-m) %>%
     rename(m = m_next)
 
-  list(rect = layout_rect, ribbon = dplyr::bind_rows(ribbon_out, ribbon_in))
+  list(rect = layout_rect, ribbon = bind_rows(r_out, r_in))
+}
+
+ribbon_layout <- function(weights, v = c("m", "k_LDA"), rect_gap = 0.1) {
+  weights %>%
+    group_by(across(v[1])) %>%
+    arrange(across(v)) %>%
+    mutate(
+      ymax = .data[[v[2]]] / (max(.data[[v[2]]] + 1)) + cumsum(weight),
+      ymin = ymax - weight,
+      id = str_c(m, m_next, k_LDA, k_LDA_next),
+      m_num = match(.data[[v[1]]], levels(.data[[v[1]]])) + rect_gap
+    )
 }
 
 #' @importFrom magrittr %>%
