@@ -4,15 +4,8 @@
 #'
 #' @param aligned_topics (required)
 #' @param add_leaves (optional, default = TRUE) whether topic composition of
-#' last model should be displayed. @param min_beta (optional, default = 0.025)
-#' if \code{add_leaves} is \code{TRUE}, this option specifies the minimum beta
-#' value (i.e. proportion in topic) for a feature to be displayed in the leaves.
-#' @param n_features (optional) alternative to \code{min_beta}. if
-#' \code{add_leaves} is \code{TRUE}, this option specifies the minimum beta
-#' value (i.e. proportion in topic) for a feature to be displayed in the leaves.
-#' @param add_feature_labels (optional, default = TRUE) if \code{add_leaves} is
-#' \code{TRUE}, this option specifies if the name of the features should be
-#' displayed. @param reverse_x_axis (optional, default = TRUE) specifies whether
+#' last model should be displayed.
+#' @param reverse_x_axis (optional, default = TRUE) specifies whether
 #' the x-axis (models) should be reversed.
 #'
 #' @seealso align_topics
@@ -20,10 +13,6 @@
 #' @export
 plot_alignment <- function(
   x,
-  add_leaves = TRUE,
-  min_beta = 0.025,
-  n_features = NULL,
-  add_feature_labels = TRUE,
   reverse_x_axis = FALSE,
   rect_gap = 0.2
 ) {
@@ -125,6 +114,59 @@ topic_layout <- function(weights) {
 .check_input <- function(aligned_topics) {
   stopifnot(class(aligned_topics) == "alignment")
 }
+
+#' Plot Words Heatmap
+#'
+#' @param min_beta (optional, default = 0.025) if \code{add_leaves} is
+#' \code{TRUE}, this option specifies the minimum beta value (i.e. proportion in
+#' topic) for a feature to be displayed in the leaves.
+#' @param n_features (optional) alternative to \code{min_beta}. if
+#' \code{add_leaves} is \code{TRUE}, this option specifies the minimum beta
+#' value (i.e. proportion in topic) for a feature to be displayed in the leaves.
+#' @param add_feature_labels (optional, default = TRUE) if \code{add_leaves} is
+#' \code{TRUE}, this option specifies if the name of the features should be
+#' displayed.
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select starts_with
+#' @importFrom superheat superheat
+#' @export
+plot_beta <- function(x, models = "all", min_beta = 0.025, n_features = NULL,
+                      add_feature_labels = TRUE) {
+  p <- plot_beta_layout(x, models, min_beta, n_features)
+  superheat(
+    p$betas %>% select(starts_with("X")),
+    membership.rows = p$betas$m,
+    pretty.order.cols = TRUE,
+    yr = p$weights$weight,
+    yr.plot.type = "bar",
+    yr.obs.col = p$weights$col,
+    grid.vline = FALSE,
+    heat.pal = c("#f6eff7", "#bdc9e1", "#67a9cf", "#1c9099", "#016c59")
+  )
+}
+
+#' @importFrom purrr map map_dfr
+#' @importFrom magrittr %>%
+#' @importFrom dplyr select row_number mutate n left_join
+#' @importFrom scales hue_pal
+plot_beta_layout <- function(x, models = "all", min_beta = 0.025,
+                             n_features = NULL, cols = NULL) {
+  betas <- models(x) %>%
+    map_dfr(~ data.frame(exp(.$beta)), .id = "m")
+
+  topic_weights <- models(x) %>%
+    map(~ colSums(.$gamma)) %>%
+    map(~ data.frame(weight = .)) %>%
+    map_dfr(~ mutate(., k_LDA  = row_number()), .id = "m")
+
+  if (is.null(cols)) {
+    cols <- data.frame(k_LDA = unique(topic_weights$k_LDA)) %>%
+      mutate(col = hue_pal()(n()))
+  }
+
+  list(betas = betas, weights = left_join(topic_weights, cols))
+}
+
 
 #' Plot Method for Alignment Class
 #' @import methods
