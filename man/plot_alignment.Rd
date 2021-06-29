@@ -4,32 +4,16 @@
 \alias{plot_alignment}
 \title{Visualize alignments between topics of distinct LDA models}
 \usage{
-plot_alignment(
-  x,
-  add_leaves = TRUE,
-  min_beta = 0.025,
-  n_features = NULL,
-  add_feature_labels = TRUE,
-  reverse_x_axis = FALSE,
-  rect_gap = 0.2
-)
+plot_alignment(x, reverse_x_axis = FALSE, rect_gap = 0.2)
 }
 \arguments{
-\item{add_leaves}{(optional, default = TRUE) whether topic composition of
-last model should be displayed. @param min_beta (optional, default = 0.025)
-if \code{add_leaves} is \code{TRUE}, this option specifies the minimum beta
-value (i.e. proportion in topic) for a feature to be displayed in the leaves.}
-
-\item{n_features}{(optional) alternative to \code{min_beta}. if
-\code{add_leaves} is \code{TRUE}, this option specifies the minimum beta
-value (i.e. proportion in topic) for a feature to be displayed in the leaves.}
-
-\item{add_feature_labels}{(optional, default = TRUE) if \code{add_leaves} is
-\code{TRUE}, this option specifies if the name of the features should be
-displayed. @param reverse_x_axis (optional, default = TRUE) specifies whether
+\item{reverse_x_axis}{(optional, default = TRUE) specifies whether
 the x-axis (models) should be reversed.}
 
 \item{aligned_topics}{(required)}
+
+\item{add_leaves}{(optional, default = TRUE) whether topic composition of
+last model should be displayed.}
 }
 \value{
 a \code{ggplot} object (?) .
