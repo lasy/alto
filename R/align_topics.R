@@ -120,19 +120,17 @@ product_weights <- function(gammas, ...) {
 #' @importFrom purrr map
 #' @importFrom Barycenter Sinkhorn
 #' @export
-transport_weights <- function(gammas, betas, reg = 1e-1, ...) {
+transport_weights <- function(gammas, betas, reg = 1e-2, ...) {
   betas_mat <- do.call(rbind, betas)
   costs <- suppressMessages(philentropy::JSD(betas_mat))
   ix <- seq_len(nrow(betas[[1]]))
 
-  plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
-  for (i in seq_len(nrow(gammas[[1]]))) {
-    a <- t(gammas[[1]][i, , drop = F])
-    b <- t(gammas[[2]][i, , drop = F])
-    plan <- plan + Barycenter::Sinkhorn(
-        a, b, costs[ix, -ix, drop = F], lambda = reg
-      )$Transportplan
-  }
+  a <- matrix(colSums(gammas[[1]]), ncol = 1)
+  b <- matrix(colSums(gammas[[2]]), ncol = 1)
+  plan <- Barycenter::Sinkhorn(
+    a, b, costs[ix, -ix, drop = F], lambda = reg
+  )$Transportplan
+
   if (any(is.na(plan))) {
     plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
     warning("OT diverged, considering increasing regularization.")
