@@ -31,15 +31,15 @@ align_topics <- function(
   edges <- setup_edges(comparisons, names(models))
 
   # 2. perform alignment
-  alignment <- align_graph(
+  ordered <- align_graph(
     edges,
     map(models, ~ .$gamma),
     map(models, ~ .$beta),
     weight_fun, ...
   ) %>%
-  reorder_topics()
+  reorder_topics(models)
 
-  new("alignment", weights = as.data.frame(alignment), models = models)
+  new("alignment", weights = ordered$weights, models = ordered$models)
 }
 
 #' @importFrom magrittr set_colnames %>%
