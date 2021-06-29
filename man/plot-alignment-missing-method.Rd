@@ -4,15 +4,7 @@
 \alias{plot,alignment,missing-method}
 \title{Plot Method for Alignment Class}
 \usage{
-\S4method{plot}{alignment,missing}(
-  x,
-  add_leaves = TRUE,
-  min_beta = 0.025,
-  n_features = NULL,
-  add_feature_labels = TRUE,
-  reverse_x_axis = FALSE,
-  rect_gap = 0.2
-)
+\S4method{plot}{alignment,missing}(x, reverse_x_axis = FALSE, rect_gap = 0.2)
 }
 \description{
 Plot Method for Alignment Class

@@ -48,7 +48,7 @@ optimize_permutation <- function(weights) {
 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select
-reorder_topics <- function(weights) {
+reorder_topics <- function(weights, models) {
   sources <- unique(weights$m)
   for (i in seq_along(sources)) {
     ix <- which(weights$m == sources[i])
@@ -63,10 +63,14 @@ reorder_topics <- function(weights) {
     if (i < length(sources)) {
       ix <- which(weights$m == sources[i + 1])
       weights[ix, ]$k_LDA <- reorder_helper(weights, ix, pi_star, "k_LDA")
+
+      pi_ <- pi_star[sort(names(pi_star))]
+      models[[i + 1]]$beta <- models[[i + 1]]$beta[pi_, ]
+      models[[i + 1]]$gamma <- models[[i + 1]]$gamma[, pi_]
     }
   }
 
-  weights
+  list(weights = weights, models = models)
 }
 
 reorder_helper <- function(weights, ix, pi_star, type = "k_LDA_next") {

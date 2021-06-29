@@ -78,7 +78,7 @@ run_lda_models <-
             if (param_list$k == 1) {
               lda_model <- list(
                 gamma = matrix(1, nrow = nrow(data), ncol = 1),
-                beta = matrix(colSums(data) / sum(data), nrow = 1)
+                beta = log(matrix(colSums(data) / sum(data), nrow = 1))
               )
             } else {
               tm <- topicmodels::LDA(
