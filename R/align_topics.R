@@ -31,13 +31,19 @@ align_topics <- function(
   edges <- setup_edges(comparisons, names(models))
 
   # 2. perform alignment
-  ordered <- align_graph(
+  weights <- align_graph(
     edges,
     map(models, ~ .$gamma),
     map(models, ~ .$beta),
     weight_fun, ...
-  ) %>%
-  reorder_topics(models)
+  )
+
+  # 3. reorder the topics, if k's are sequenced
+  if (comparisons == "consecutive") {
+    ordered <- reorder_topics(weights, models)
+  } else {
+    ordered <- list(weights = weights, models = models)
+  }
 
   new("alignment", weights = ordered$weights, models = ordered$models)
 }
