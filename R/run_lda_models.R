@@ -16,6 +16,12 @@
 #' specifying the parameters common to all models to be fitted.
 #' Values provided by \code{lda_fixed_params_list} are overwritten
 #' by those provided by \code{lda_varying_params_lists}.
+#' @param dir (optional) a \code{character} specifying the directory
+#' in which individual LDA models should be stored.
+#' If not specified, individual LDA models are not stored.
+#' This option is especially useful for data exploration
+#' as it allows to save execution time if one wishes to add models
+#' to an existing model list. (see examples)
 #' @param reset (optional, default = \code{FALSE})
 #'
 #' @return a list of LDA models (see package \code{topicmodels}).
@@ -33,6 +39,21 @@
 #'       lda_varying_params_lists = lda_varying_params_lists,
 #'       dir = "test_lda_models/"
 #'       )
+#'
+#' additional_lda_varying_params_list =
+#'    list(K4 = list(k = 4))
+#'  updated_lda_models =
+#'    run_lda_models(
+#'       data = data,
+#'       lda_varying_params_lists =
+#'         append(
+#'            lda_varying_params_lists,
+#'            additional_lda_varying_params_list),
+#'       dir = "test_lda_models/"
+#'       )
+#'
+#' # because we specified the "dir" option, it only runs LDA for k = 4
+#' unlink("test_lda_models/", recursive = TRUE)
 
 run_lda_models <-
   function(
