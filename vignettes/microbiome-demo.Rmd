@@ -18,6 +18,7 @@ knitr::opts_chunk$set(
 library(alto)
 library(dplyr)
 library(magrittr)
+library(ggplot2)
 ```
 
 
@@ -76,7 +77,7 @@ For example, it takes about x minutes on the authors' laptops.
 ```{r run-lda-models}
 
 lda_varying_params_lists = list()
-for (k in 2:11) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
+for (k in 2:7) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
 
 lda_models = 
   run_lda_models(
@@ -97,7 +98,7 @@ aligned_topics =
   align_topics(
     models = lda_models, 
     comparison = "consecutive", 
-    method = "product")
+    method = "product") # transport product
 
 
 aligned_topics@weights %>% head()
@@ -108,9 +109,42 @@ And visualize the alignment:
 
 ```{r align-topics-viz}
 
-plot_alignment(aligned_topics = aligned_topics)
+plot_alignment(aligned_topics)
 
 ```
 
 
+## Diagnostics
+
+```{r key-number-of-topics}
+
+compute_number_of_key_topics(weights = aligned_topics@weights, plot = TRUE)
+
+```
+
+```{r stability}
+
+stability = 
+  compute_stability_along_branches(
+    aligned_topics@weights
+  )
+
+ggplot(stability, aes(x = m, y = branch, fill = stability)) +
+  geom_tile() +
+  scale_fill_gradient(low = "red", high = "blue")
+
+```
+
+```{r refinement}
+
+refinement <- 
+  compute_refinement_scores(
+    aligned_topics@weights
+  )
+
+ggplot(refinement, 
+       aes(x = m, y = k_LDA, fill = refinement_score)) +
+  geom_tile()
+
+```
 
