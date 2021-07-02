@@ -25,30 +25,9 @@ set.seed(123)
 
 This step will eventually be replaced by a `run_lda_models` call.
 
-```{r}
-simulate_lda <- function(betas, gammas, n0=NULL) {
-  n <- nrow(gammas)
-  if (is.null(n0)) {
-    n0 <- rpois(n, 1000)
-  }
-
-  x <- matrix(nrow = n, ncol = ncol(betas))
-  for (i in seq_len(n)) {
-    x[i, ] <- rmultinom(1, n0[i], t(betas) %*% gammas[i, ])
-  }
-  rownames(x) <- seq_len(n)
-  colnames(x) <- seq_len(ncol(betas))
-  x
-}
-
-library("MCMCpack")
-betas <- rdirichlet(10, rep(.1, 50))
-gammas <- rdirichlet(100, rep(.1, 10))
-data <- simulate_lda(betas, gammas)
-```
-
 
 ```{r}
+data = rmultinom(20, 5000, rep(0.1, 500))
 lda_varying_params_lists <- lapply(1:10, function(z) list(k = z))
 names(lda_varying_params_lists) <- str_c("K", 1:10)
 lda_models =
@@ -65,33 +44,13 @@ plot(result)
 plot_beta(result)
 ```
 
-
-```{r}
-weights <- result@weights %>%
-  dplyr::filter(m == "K5") %>%
-  dplyr::select(k_LDA, k_LDA_next, norm_weight) %>%
-  dplyr::group_by(k_LDA) %>%
-  dplyr::slice_max(norm_weight, n = 4)
-
-P <- weights %>%
-  dplyr::mutate(ix = dplyr::row_number()) %>%
-  dplyr::select(-norm_weight) %>%
-  tidyr::pivot_wider(names_from = ix, values_from = k_LDA_next) %>%
-  dplyr::ungroup() %>%
-  dplyr::select(-k_LDA) %>%
-  t()
-```
-```{r}
-
-```
-
 ```{r}
 result <- align_topics(lda_models, "all")
 result
 ```
 
 ```{r}
-result <- align_topics(lda_models, "consecutive", method = "transport")
+result <- align_topics(lda_models, "consecutive", method = "transport", top_n=3)
 result
 ```
 
@@ -99,4 +58,3 @@ result
 plot(result)
 plot_beta(result)
 ```
-
