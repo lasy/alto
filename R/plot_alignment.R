@@ -27,8 +27,8 @@ plot_alignment <- function(
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
+#' theme guides scale_fill_gradient
 #' @importFrom dplyr mutate left_join
-#'   theme
 .plot_from_layout <- function(weights, rect, ribbon, rect_gap, color_by) {
 
   rect = .add_topic_col(rect, weights, color_by)

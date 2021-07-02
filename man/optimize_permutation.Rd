@@ -2,10 +2,10 @@
 % Please edit documentation in R/reorder.R
 \name{optimize_permutation}
 \alias{optimize_permutation}
-\title{Naive Optimization}
+\title{Permutation Optimization}
 \usage{
-optimize_permutation(weights)
+optimize_permutation(weights, top_n = 3)
 }
 \description{
-This just tries all the permutations and picks one with the lowest cost.
+This tries all the permutations and picks one with the lowest cost.
 }

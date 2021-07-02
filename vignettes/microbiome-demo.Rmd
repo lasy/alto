@@ -19,6 +19,9 @@ library(alto)
 library(dplyr)
 library(magrittr)
 library(ggplot2)
+library(tibble)
+library(stringr)
+library(tidyr)
 ```
 
 
@@ -77,7 +80,7 @@ For example, it takes about x minutes on the authors' laptops.
 ```{r run-lda-models}
 
 lda_varying_params_lists = list()
-for (k in 2:6) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
+for (k in 2:12) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
 
 lda_models = 
   run_lda_models(
@@ -121,6 +124,7 @@ plot_alignment(aligned_topics)
 compute_number_of_key_topics(weights = aligned_topics@weights, plot = TRUE)
 
 ```
+
 
 ```{r stability}
 
