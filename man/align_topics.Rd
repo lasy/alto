@@ -20,6 +20,8 @@ align_topics(
 \item{comparisons}{(optional) either a character indicating if topics
 should be aligned between \code{consecutive} or \code{all} models, or a
 list of model pairs between which topics should be aligned.}
+
+\item{top_n}{(optional) How large should the search be for topic reordering?}
 }
 \value{
 a \code{data.frame} (? or some specific object) providing the weights

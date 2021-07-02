@@ -4,7 +4,7 @@
 \alias{optimize_permutation}
 \title{Permutation Optimization}
 \usage{
-optimize_permutation(weights, top_n = 2)
+optimize_permutation(weights, top_n = 3)
 }
 \description{
 This tries all the permutations and picks one with the lowest cost.
