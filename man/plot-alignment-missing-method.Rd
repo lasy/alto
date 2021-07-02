@@ -4,7 +4,7 @@
 \alias{plot,alignment,missing-method}
 \title{Plot Method for Alignment Class}
 \usage{
-\S4method{plot}{alignment,missing}(x, reverse_x_axis = FALSE, rect_gap = 0.2)
+\S4method{plot}{alignment,missing}(x, reverse_x_axis = FALSE, rect_gap = 0.2, color_by = "branch")
 }
 \description{
 Plot Method for Alignment Class

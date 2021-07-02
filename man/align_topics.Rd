@@ -9,6 +9,7 @@ align_topics(
   comparisons = "consecutive",
   method = "product",
   order_constrain = NULL,
+  top_n = 2,
   ...
 )
 }
