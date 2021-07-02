@@ -77,7 +77,7 @@ For example, it takes about x minutes on the authors' laptops.
 ```{r run-lda-models}
 
 lda_varying_params_lists = list()
-for (k in 2:7) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
+for (k in 2:6) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
 
 lda_models = 
   run_lda_models(

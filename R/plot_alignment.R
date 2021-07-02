@@ -14,18 +14,29 @@
 plot_alignment <- function(
   x,
   reverse_x_axis = FALSE,
-  rect_gap = 0.2
+  rect_gap = 0.2,
+  color_by = "branch"
 ) {
+  # inputs
   .check_input(x)
+  color_by <- color_by[1]
+  color_by <- match.arg(color_by, c("topic","branch","refinement","stability"))
+  # layout and viz
   layouts <- .compute_layout(x@weights, rect_gap)
-  .plot_from_layout(layouts$rect, layouts$ribbon, rect_gap)
+  .plot_from_layout(x@weights, layouts$rect, layouts$ribbon, rect_gap, color_by)
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
+#' @importFrom dplyr mutate left_join
 #'   theme
-.plot_from_layout <- function(rect, ribbon, rect_gap) {
+.plot_from_layout <- function(weights, rect, ribbon, rect_gap, color_by) {
+
+  rect = .add_topic_col(rect, weights, color_by)
+  ribbon = .add_topic_col(ribbon, weights, color_by)
+
   ms <- unique(rect$m_num)
-  ggplot() +
+  g <-
+    ggplot() +
     geom_ribbon(
       data = ribbon,
       aes(
@@ -33,7 +44,7 @@ plot_alignment <- function(
         ymin = ymin,
         ymax = ymax,
         group = id,
-        fill = as.factor(k_LDA)
+        fill = topic_col
       ),
       alpha = 0.4
     ) +
@@ -44,31 +55,85 @@ plot_alignment <- function(
         xmax = m_num + rect_gap,
         ymin = ymin,
         ymax = ymax,
-        fill = as.factor(k_LDA)
+        fill = topic_col
       )
     ) +
     scale_x_continuous(breaks = ms, labels = ms) +
-    theme(legend.position = "none")
+    theme(legend.position = "bottom")
+
+  # replace choices below by a better color scheme...
+  if(color_by %in% c("refinement", "stability"))
+    g <- g + scale_fill_gradient(color_by,
+                                 low = "brown1",
+                                 high = "cornflowerblue",
+                                 limits = c(0,1))
+  else
+    g <- g + guides(fill = "none")
+
+  g
 }
+
+
+
+.add_topic_col <- function(x, weights, color_by){
+
+  if (color_by == "topic"){
+    x <- x %>% mutate(topic_col = factor(k_LDA))
+  }
+  if (color_by == "branch"){
+    branches <- identify_branches(weights)
+    x <-
+      x %>%
+      left_join(., branches, by = c("m", "k_LDA")) %>%
+      mutate(topic_col = factor(branch))
+
+  }
+  if (color_by == "refinement") {
+    refinement_score <- compute_refinement_scores(weights)
+    x <-
+      x %>%
+      left_join(., refinement_score, by = c("m", "k_LDA")) %>%
+      mutate(topic_col = refinement_score)
+
+  }
+  if (color_by == "stability") {
+    stability <- compute_stability_along_branches(weights)
+    branches <- identify_branches(weights)
+    x <-
+      x %>%
+      left_join(., branches, by = c("m", "k_LDA")) %>%
+      left_join(., stability, by = c("m", "branch")) %>%
+      mutate(topic_col = stability)
+
+  }
+  x
+}
+
+
+
+
 
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_c
 #' @importFrom dplyr bind_rows group_by arrange summarise mutate rename select
 .compute_layout <- function(weights, rect_gap = 0.2) {
-  final_topic <- weights %>%
+
+  final_topic <-
+    weights %>%
     filter(m_next == tail(levels(m_next), 1)) %>%
     select(-m, -k_LDA) %>%
     rename(m = m_next, k_LDA = k_LDA_next)
-  layout_rect <- bind_rows(
-    topic_layout(weights),
-    topic_layout(final_topic)
-  )
+  layout_rect <-
+    bind_rows(
+      topic_layout(weights),
+      topic_layout(final_topic)
+    )
 
   # compute flows out and into rectangles (input to geom_ribbon)
   r_out <- ribbon_out(weights, rect_gap)
-  r_in <- ribbon_in(weights, -rect_gap) %>%
-    select(-m) %>%
-    rename(m = m_next)
+  r_in <- ribbon_in(weights, -rect_gap) #%>%
+  # select(-m) %>%
+  # rename(m = m_next)
 
   list(rect = layout_rect, ribbon = bind_rows(r_out, r_in))
 }
