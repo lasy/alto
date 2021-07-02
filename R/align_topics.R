@@ -7,6 +7,7 @@
 #' @param comparisons (optional) either a character indicating if topics
 #'   should be aligned between \code{consecutive} or \code{all} models, or a
 #'   list of model pairs between which topics should be aligned.
+#' @param top_n (optional) How large should the search be for topic reordering?
 #'
 #' @return a \code{data.frame} (? or some specific object) providing the weights
 #'   between every pair of topics of each model pairs in the input edgelist
@@ -19,6 +20,7 @@ align_topics <- function(
   comparisons = "consecutive",
   method = "product",
   order_constrain = NULL,
+  top_n = 2,
   ...
 ) {
 
@@ -40,7 +42,7 @@ align_topics <- function(
 
   # 3. reorder the topics, if k's are sequenced
   if (comparisons == "consecutive") {
-    ordered <- reorder_topics(weights, models)
+    ordered <- reorder_topics(weights, models, top_n)
   } else {
     ordered <- list(weights = weights, models = models)
   }
