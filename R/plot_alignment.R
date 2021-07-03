@@ -196,30 +196,77 @@ topic_layout <- function(weights) {
 #' @importFrom superheat superheat
 #' @export
 plot_beta <- function(x, models = "all", min_beta = 0.025, n_features = NULL,
-                      add_feature_labels = TRUE) {
+                      ...) {
   p <- plot_beta_layout(x, models, min_beta, n_features)
-  superheat(
-    p$betas %>% select(starts_with("X")),
+  layout_args <- list(
+    X = p$betas %>% select(-m),
     membership.rows = p$betas$m,
-    pretty.order.cols = TRUE,
     yr = p$weights$weight,
-    yr.plot.type = "bar",
-    yr.obs.col = p$weights$col,
-    grid.vline = FALSE,
-    heat.pal = c("#f6eff7", "#bdc9e1", "#67a9cf", "#1c9099", "#016c59")
+    yr.obs.col = p$weights$col
   )
+  style_args <- superheat_defaults(...)
+  do.call(superheat::superheat, c(layout_args, style_args))
+}
+
+#' Style Defaults for plot_beta
+superheat_defaults <- function(...) {
+  plot_defaults <- list(
+    bottom.label.text.size = 4,
+    grid.vline = FALSE,
+    heat.pal = c("#f6eff7", "#bdc9e1", "#67a9cf", "#1c9099", "#016c59"),
+    left.label.text.size = 5,
+    legend.text.size = 6,
+    pretty.order.cols = TRUE,
+    yr.axis.name = "Topic Weight",
+    yr.plot.type = "bar"
+  )
+  modifyList(plot_defaults, list(...))
+}
+
+#' Filter to words of interest
+#' @param min_beta
+#' @param n_features
+#' @importFrom dplyr select bind_cols
+trim_betas <- function(betas, min_beta = 0, n_features = NULL) {
+  if (min_beta == 0 & is.null(n_features)) {
+    return(betas)
+  }
+
+  beta_tilde <- dplyr::select(betas, -m)
+  beta_tilde <- beta_tilde[, colMeans(beta_tilde) > min_beta]
+  if (ncol(beta_tilde) == 0) {
+    warning("min_beta removed all columns. Try a smaller min_beta?
+             Returning without filtering.\n")
+    beta_tilde <- dplyr::select(betas, -m)
+  }
+
+  ix <- order(colSums(beta_tilde), decreasing = TRUE)
+  beta_tilde <- beta_tilde[, ix[seq_len(min(n_features, ncol(beta_tilde)))]]
+  dplyr::bind_cols(m = betas$m, beta_tilde)
 }
 
 #' @importFrom purrr map map_dfr
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select row_number mutate n left_join
 #' @importFrom scales hue_pal
-plot_beta_layout <- function(x, models = "all", min_beta = 0.025,
-                             n_features = NULL, cols = NULL) {
-  betas <- models(x) %>%
-    map_dfr(~ data.frame(exp(.$beta)), .id = "m")
+plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
+                             cols = NULL) {
+  # subset to only the models of interest
+  model_params <- models(x)
+  if (subset == "last") {
+    model_params <- model_params[length(model_params)]
+  } else if (!(subset == "all") & (is.vector(subset))) {
+    model_params <- model_params[subset]
+  }
 
-  topic_weights <- models(x) %>%
+  # filter the betas to those that pass thresholds
+  betas <- model_params %>%
+    map_dfr(~ data.frame(exp(.$beta)), .id = "m") %>%
+    trim_betas(min_beta, n_features) %>%
+    mutate(m = factor(m, levels = rev(names(model_params))))
+
+  # extract topic weights for side plot
+  topic_weights <- model_params %>%
     map(~ colSums(.$gamma)) %>%
     map(~ data.frame(weight = .)) %>%
     map_dfr(~ mutate(., k_LDA  = row_number()), .id = "m")

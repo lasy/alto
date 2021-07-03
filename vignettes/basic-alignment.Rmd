@@ -23,8 +23,7 @@ library(stringr)
 set.seed(123)
 ```
 
-This step will eventually be replaced by a `run_lda_models` call.
-
+First fit 10 models to toy data.
 
 ```{r}
 data = rmultinom(20, 5000, rep(0.1, 500))
@@ -43,6 +42,16 @@ result
 plot(result)
 plot_beta(result)
 ```
+
+Some more variants of `plot_beta`.
+
+```{r}
+plot_beta(result, "all", n_features = 20, bottom.label.text.size = 3)
+plot_beta(result, c(2, 3, 5), n_features = 10)
+plot_beta(result, c("K2", "K5", "K10"), n_features = 10)
+plot_beta(result, "last", n_features = 10)
+```
+
 
 ```{r}
 result <- align_topics(lda_models, "all")
