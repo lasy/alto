@@ -4,13 +4,7 @@
 \alias{plot_beta}
 \title{Plot Words Heatmap}
 \usage{
-plot_beta(
-  x,
-  models = "all",
-  min_beta = 0.025,
-  n_features = NULL,
-  add_feature_labels = TRUE
-)
+plot_beta(x, models = "all", min_beta = 0.025, n_features = NULL, ...)
 }
 \arguments{
 \item{min_beta}{(optional, default = 0.025) if \code{add_leaves} is
