@@ -7,7 +7,8 @@
 #' @param comparisons (optional) either a character indicating if topics
 #'   should be aligned between \code{consecutive} or \code{all} models, or a
 #'   list of model pairs between which topics should be aligned.
-#' @param top_n (optional) How large should the search be for topic reordering?
+#' @param perm_search (optional) How large should the search be for topic
+#'    reordering?
 #'
 #' @return a \code{data.frame} (? or some specific object) providing the weights
 #'   between every pair of topics of each model pairs in the input edgelist
@@ -20,7 +21,7 @@ align_topics <- function(
   comparisons = "consecutive",
   method = "product",
   order_constrain = NULL,
-  top_n = 2,
+  perm_search = 2,
   ...
 ) {
 
@@ -39,10 +40,9 @@ align_topics <- function(
     map(models, ~ .$beta),
     weight_fun, ...
   )
-
   # 3. reorder the topics, if k's are sequenced
   if (comparisons == "consecutive") {
-    ordered <- reorder_topics(weights, models, top_n)
+    ordered <- reorder_topics(weights, models, perm_search)
   } else {
     ordered <- list(weights = weights, models = models)
   }
@@ -81,7 +81,7 @@ setup_edges <- function(comparisons, model_names) {
     all(purrr::map(models, ~ class(.) == "list"))
   )
   stopifnot(
-    all(purrr::map(lda_models, ~ all(names(.) %in% c("gamma", "beta"))))
+    all(purrr::map(models, ~ all(names(.) %in% c("gamma", "beta"))))
   )
 
   # check models to compare options
@@ -122,7 +122,7 @@ product_weights <- function(gammas, ...) {
 #' @importFrom purrr map
 #' @importFrom Barycenter Sinkhorn
 #' @export
-transport_weights <- function(gammas, betas, reg = 1e-2, ...) {
+transport_weights <- function(gammas, betas, reg = 1, ...) {
   betas_mat <- do.call(rbind, betas)
   costs <- suppressMessages(philentropy::JSD(betas_mat))
   ix <- seq_len(nrow(betas[[1]]))
@@ -135,7 +135,7 @@ transport_weights <- function(gammas, betas, reg = 1e-2, ...) {
 
   if (any(is.na(plan))) {
     plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
-    warning("OT diverged, considering increasing regularization.")
+    warning("OT diverged, considering increasing regularization.\n")
   }
 
   dimnames(plan) <- purrr::map(gammas, ~ colnames(.))
