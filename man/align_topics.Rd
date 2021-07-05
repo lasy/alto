@@ -9,7 +9,7 @@ align_topics(
   comparisons = "consecutive",
   method = "product",
   order_constrain = NULL,
-  top_n = 2,
+  perm_search = 2,
   ...
 )
 }
@@ -21,7 +21,8 @@ align_topics(
 should be aligned between \code{consecutive} or \code{all} models, or a
 list of model pairs between which topics should be aligned.}
 
-\item{top_n}{(optional) How large should the search be for topic reordering?}
+\item{perm_search}{(optional) How large should the search be for topic
+reordering?}
 }
 \value{
 a \code{data.frame} (? or some specific object) providing the weights

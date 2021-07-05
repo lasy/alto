@@ -16,7 +16,7 @@ cost_fun <- function(weights) {
 }
 
 #' @importFrom dplyr select group_by slice_max
-high_weight_pairs <- function(weights, top_n=3) {
+high_weight_pairs <- function(weights, top_n=2) {
   weights %>%
     group_by(k_LDA) %>%
     slice_max(weight, n = top_n)
@@ -61,7 +61,7 @@ filter_paths <- function(paths) {
   do.call(rbind, candidates)
 }
 
-candidate_perms <- function(weights, top_n=3, max_perms=1e6) {
+candidate_perms <- function(weights, top_n=2, max_perms=1e6) {
   all_pi <- high_weight_pairs(weights, top_n) %>%
     pairs_to_matrix() %>%
     matrix_paths() %>%
@@ -77,7 +77,7 @@ candidate_perms <- function(weights, top_n=3, max_perms=1e6) {
 #'
 #' This tries all the permutations and picks one with the lowest cost.
 #' @export
-optimize_permutation <- function(weights, top_n=3) {
+optimize_permutation <- function(weights, top_n=2) {
   cw <- cost_fun(weights)
   target <- unique(weights$k_LDA_next)
   all_pi <- candidate_perms(weights, top_n)
@@ -94,7 +94,7 @@ optimize_permutation <- function(weights, top_n=3) {
 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select
-reorder_topics <- function(weights, models, top_n=3) {
+reorder_topics <- function(weights, models, top_n=2) {
   sources <- unique(weights$m)
   for (i in seq_along(sources)) {
     ix <- which(weights$m == sources[i])
