@@ -52,15 +52,16 @@ align_topics <- function(
 
 #' @importFrom magrittr set_colnames %>%
 #' @importFrom dplyr filter
+#' @importFrom tibble tibble as_tibble
 setup_edges <- function(comparisons, model_names) {
   edges <- comparisons
   if (comparisons == "consecutive") {
-    edges <- data.frame(
+    edges <- tibble::tibble(
       from = head(model_names, -1), to = tail(model_names, -1)
     )
   } else if (comparisons == "all") {
     edges <- t(combn(model_names, 2)) %>%
-      as.data.frame() %>%
+      tibble::as_tibble() %>%
       magrittr::set_colnames(c("from", "to")) %>%
       dplyr::filter(from != to)
   }
@@ -101,7 +102,7 @@ setup_edges <- function(comparisons, model_names) {
 align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
   weights <- list()
   for (i in seq_len(nrow(edges))) {
-    pair <- c(edges[i, 1], edges[i, 2])
+    pair <- c(edges$from[i], edges$to[i])
     weights[[i]] <- weight_fun(gamma_hats[pair], beta_hats[pair], ...) %>%
       mutate(m = pair[1], m_next = pair[2])
   }
