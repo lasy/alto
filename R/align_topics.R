@@ -53,6 +53,7 @@ align_topics <- function(
 #' @importFrom magrittr set_colnames %>%
 #' @importFrom dplyr filter
 #' @importFrom tibble tibble as_tibble
+#' @importFrom utils combn head tail
 setup_edges <- function(comparisons, model_names) {
   edges <- comparisons
   if (comparisons == "consecutive") {
@@ -177,14 +178,15 @@ postprocess_weights <- function(weights, n_docs, m_levels) {
 ################################################################################
 # Class construction and methods
 ################################################################################
-print_alignment <- function(x) {
+#' @importFrom utils head
+print_alignment <- function(object) {
   cat(sprintf(
     "# An %s: %d models, %d topics:\n",
-    class(x), n_models(x), n_topics(x)
+    class(object), n_models(object), n_topics(object)
   ))
 
-  print(head(x@weights))
-  cat(sprintf("# … with %s more rows", nrow(x@weights) - 6))
+  print(head(object@weights))
+  cat(sprintf("# … with %s more rows", nrow(object@weights) - 6))
 }
 
 #' Alignment Class Definition

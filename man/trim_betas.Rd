@@ -4,7 +4,12 @@
 \alias{trim_betas}
 \title{Filter to words of interest}
 \usage{
-trim_betas(betas, min_beta = 0, n_features = NULL)
+trim_betas(betas, min_beta = -1, n_features = NULL)
+}
+\arguments{
+\item{min_beta}{Words with less than this beta in all topics are ignored}
+
+\item{n_features}{Maximum number of features to show}
 }
 \description{
 Filter to words of interest

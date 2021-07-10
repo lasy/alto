@@ -1,0 +1,75 @@
+---
+title: "gradient-simulation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{gradient-simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  out_dir: "gradient"
+  method: "product"
+  id: 1
+  alpha: 0
+  K: 5
+  V: 1000
+  N: 250
+  n_models: 10
+  save: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+  )
+set.seed(params$id)
+```
+
+```{r}
+library(alto)
+library(dplyr)
+library(purrr)
+library(readr)
+library(stringr)
+source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
+my_theme()
+```
+
+```{r}
+attach(params)
+lambdas <- list(beta = 0.1, gamma = 0.5, nu = 0.5, count = 1e4)
+```
+
+```{r}
+stability <- list()
+refinement <- list()
+key_topics <- list()
+sim_data <- simulate_gradient(N, K, V, lambdas, alpha = params$alpha)
+```
+
+```{r}
+lda_params <- map(1:n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:n_models)
+alignment <- sim_data$x %>%
+  run_lda_models(lda_params, reset = TRUE) %>%
+  align_topics(method = params$method)
+```
+
+```{r}
+stability <- alto:::compute_stability_along_branches(alignment@weights)
+refinement <- alto:::compute_refinement_scores(alignment@weights)
+key_topics <- alto:::compute_number_of_key_topics(alignment@weights)
+```
+
+
+```{r}
+id_vars <- params[c("out_dir", "method", "alpha", "id", "N", "V", "K")]
+if (params$save) {
+  dir.create(params$out_dir, recursive = TRUE)
+  write_csv(stability, save_str("stability", id_vars))
+  write_csv(refinement, save_str("refinement", id_vars))
+  write_csv(key_topics, save_str("key_topics", id_vars))
+  exper <- list(sim_data, alignment)
+  save(exper, file = save_str("exper", id_vars, "rda"))
+}
+```

@@ -76,6 +76,7 @@ candidate_perms <- function(weights, top_n=2, max_perms=1e6) {
 #' Permutation Optimization
 #'
 #' This tries all the permutations and picks one with the lowest cost.
+#' @importFrom stats setNames
 #' @export
 optimize_permutation <- function(weights, top_n=2) {
   cw <- cost_fun(weights)

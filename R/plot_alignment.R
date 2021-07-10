@@ -109,13 +109,10 @@ plot_alignment <- function(
   x
 }
 
-
-
-
-
 #' @importFrom magrittr %>%
 #' @importFrom stringr str_c
 #' @importFrom dplyr bind_rows group_by arrange summarise mutate rename select
+#' @importFrom utils tail
 .compute_layout <- function(weights, rect_gap = 0.2) {
 
   final_topic <-
@@ -131,10 +128,7 @@ plot_alignment <- function(
 
   # compute flows out and into rectangles (input to geom_ribbon)
   r_out <- ribbon_out(weights, rect_gap)
-  r_in <- ribbon_in(weights, -rect_gap) #%>%
-  # select(-m) %>%
-  # rename(m = m_next)
-
+  r_in <- ribbon_in(weights, -rect_gap)
   list(rect = layout_rect, ribbon = bind_rows(r_out, r_in))
 }
 
@@ -150,7 +144,7 @@ ribbon_out <- function(weights, rect_gap = 0.1) {
     )
 }
 
-ribbon_in<- function(weights, rect_gap = 0.1) {
+ribbon_in <- function(weights, rect_gap = 0.1) {
   weights %>%
     group_by(m_next) %>%
     arrange(k_LDA_next, k_LDA) %>%
@@ -209,6 +203,7 @@ plot_beta <- function(x, models = "all", min_beta = 0.025, n_features = NULL,
 }
 
 #' Style Defaults for plot_beta
+#' @importFrom utils modifyList
 superheat_defaults <- function(...) {
   plot_defaults <- list(
     bottom.label.text.size = 4,
@@ -224,10 +219,10 @@ superheat_defaults <- function(...) {
 }
 
 #' Filter to words of interest
-#' @param min_beta
-#' @param n_features
+#' @param min_beta Words with less than this beta in all topics are ignored
+#' @param n_features Maximum number of features to show
 #' @importFrom dplyr select bind_cols
-trim_betas <- function(betas, min_beta = 0, n_features = NULL) {
+trim_betas <- function(betas, min_beta = -1, n_features = NULL) {
   if (min_beta == 0 & is.null(n_features)) {
     return(betas)
   }

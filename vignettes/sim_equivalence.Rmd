@@ -1,0 +1,96 @@
+---
+title: "equivalence-simulation"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{equivalence-simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  out_dir: "equivalence"
+  method: "product"
+  rep: 1
+  S: 4
+  K: 5
+  V: 1000
+  N: 250
+  n_models: 10
+  save: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+  )
+set.seed(params$rep + params$S)
+```
+
+```{r}
+library(alto)
+library(dplyr)
+library(purrr)
+library(readr)
+library(stringr)
+library(tibble)
+source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
+my_theme()
+```
+
+```{r}
+attach(params)
+lambdas <- list(beta = 0.1, gamma = 0.5, count = 1e4, alpha = 0.3)
+```
+
+Now include the perturbed betas in the plot, and compare with estimates at a
+more refined $K$.
+
+```{r}
+sim_data <- equivalence_data(N, V, K, lambdas, S)
+lda_params <- map(1:n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:n_models)
+alignment <- sim_data$x %>%
+  run_lda_models(lda_params, reset = TRUE) %>%
+  align_topics(method = params$method)
+```
+
+```{r}
+beta_hat <- alto:::plot_beta_layout(alignment)$betas
+perturbed_topics <- do.call(rbind, sim_data$perturbed_topics)
+similarities <- cosine_similarity(select(beta_hat, -m), perturbed_topics) %>%
+  as_tibble() %>%
+  mutate(
+    m = beta_hat$m,
+    rep = params$rep,
+    S = params$S
+  )
+```
+
+```{r, fig.width = 10, fig.height = 3}
+cols <- alto:::superheat_defaults()$heat.pal
+superheat::superheat(perturbed_topics, pretty.order.cols = TRUE, heat.pal = cols)
+plot_beta(alignment, min_beta = 0, pretty.order.rows = TRUE)
+```
+
+```{r, fig.width = 10, fig.height = 4}
+plot(alignment)
+```
+
+```{r}
+sensitivity <- data.frame(
+  diff = sum(abs(similarities[, 2] - similarities[, 1]) +
+               abs(similarities[, 4] - similarities[, 3])),
+  subset_size = params$S,
+  rep = params$rep
+)
+```
+
+```{r}
+id_vars <- params[c("out_dir", "method", "S", "rep", "N", "V", "K")]
+if (params$save) {
+  dir.create(params$out_dir, recursive = TRUE)
+  write_csv(similarities, save_str("similarities", id_vars))
+  write_csv(sensitivity, save_str("sensitivity", id_vars))
+  exper <- list(sim_data, alignment)
+  save(exper, file = save_str("exper", id_vars, "rda"))
+}
+```
