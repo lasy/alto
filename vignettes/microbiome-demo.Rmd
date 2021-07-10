@@ -10,7 +10,8 @@ vignette: >
 ```{r, include = FALSE}
 knitr::opts_chunk$set(
   collapse = TRUE,
-  comment = "#>"
+  comment = "#>",
+  eval = FALSE
 )
 ```
 
@@ -36,7 +37,6 @@ A .zip file containing the related data can be downloaded from the [Stanford dat
 For convenience, the data file (i.e. the tables contained in the `processed.rda` file) has been attached to the `alto` package as `vm_data`. For details, type `?vm_data`.
 
 ```{r show-names-of-provided-data}
-
 names(vm_data)
 
 ```
@@ -45,24 +45,24 @@ First, we do some pre-processing of the data. Specifically, we change the `colna
 
 ```{r human-friendly-ASV-names}
 
-# we create the human-friendly ASV names 
-# by concatenating Genus and Species and an identifying number 
+# we create the human-friendly ASV names
+# by concatenating Genus and Species and an identifying number
 # as a given species can be represented by several ASVs
-vm_data$taxonomy <- 
-  vm_data$taxonomy %>% 
-  as.data.frame() %>% 
-  group_by(Genus, Species) %>% 
+vm_data$taxonomy <-
+  vm_data$taxonomy %>%
+  as.data.frame() %>%
+  group_by(Genus, Species) %>%
   mutate(
-    ASV_name = 
+    ASV_name =
       paste0(
         ifelse(is.na(Genus),"[unknown Genus]", Genus), " ",
         ifelse(is.na(Species),"[unknown Species]", Species), " ",
         row_number()
         )
-    ) %>% 
+    ) %>%
   ungroup()
 
-# then, we replace the colnames of the count matrix by these new names. 
+# then, we replace the colnames of the count matrix by these new names.
 # Note that the tax table rows are ordered as the count matrix columns,
 # allowing us to assign without matching first.
 colnames(vm_data$counts) = vm_data$taxonomy$ASV_name
@@ -74,15 +74,15 @@ colnames(vm_data$counts) = vm_data$taxonomy$ASV_name
 ## Using `alto` on these data
 
 Our first step is to run the lda models for varying number of topics, i.e. from 2 to 15 topics.
-For this, we use the `run_lda_models` function. This can take a while on a personal computer. 
+For this, we use the `run_lda_models` function. This can take a while on a personal computer.
 For example, it takes about x minutes on the authors' laptops.
 
 ```{r run-lda-models}
 
 lda_varying_params_lists = list()
-for (k in 2:12) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
+for (k in 1:7) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
 
-lda_models = 
+lda_models =
   run_lda_models(
     data = vm_data$counts[1:100,1:50], # change for the full data set when full workflow is ready
     lda_varying_params_lists = lda_varying_params_lists,
@@ -97,10 +97,10 @@ We can now align the topics from each consecutive models:
 
 ```{r align-topics}
 
-aligned_topics = 
+aligned_topics =
   align_topics(
-    models = lda_models, 
-    comparison = "consecutive", 
+    models = lda_models,
+    comparison = "consecutive",
     method = "product") # transport product
 
 
@@ -108,7 +108,7 @@ aligned_topics@weights %>% head()
 
 ```
 
-And visualize the alignment: 
+And visualize the alignment:
 
 ```{r align-topics-viz}
 
@@ -128,7 +128,7 @@ compute_number_of_key_topics(weights = aligned_topics@weights, plot = TRUE)
 
 ```{r stability}
 
-stability = 
+stability =
   compute_stability_along_branches(
     aligned_topics@weights
   )
@@ -141,14 +141,13 @@ ggplot(stability, aes(x = m, y = branch, fill = stability)) +
 
 ```{r refinement}
 
-refinement <- 
+refinement <-
   compute_refinement_scores(
     aligned_topics@weights
   )
 
-ggplot(refinement, 
+ggplot(refinement,
        aes(x = m, y = k_LDA, fill = refinement_score)) +
   geom_tile()
 
 ```
-
