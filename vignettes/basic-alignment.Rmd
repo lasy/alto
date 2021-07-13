@@ -1,5 +1,5 @@
 ---
-title: "Basic Alignment"
+title: "basic-alignment"
 output: rmarkdown::html_vignette
 vignette: >
   %\VignetteIndexEntry{basic-alignment}
@@ -17,7 +17,6 @@ knitr::opts_chunk$set(
 ```
 
 ```{r setup}
-#devtools::document(); devtools::install(quick = TRUE)
 library(alto)
 library(stringr)
 set.seed(123)
@@ -26,14 +25,10 @@ set.seed(123)
 First fit 10 models to toy data.
 
 ```{r}
-data = rmultinom(20, 5000, rep(0.1, 500))
-lda_varying_params_lists <- lapply(1:10, function(z) list(k = z))
-names(lda_varying_params_lists) <- str_c("K", 1:10)
-lda_models =
-   run_lda_models(
-      data = data,
-      lda_varying_params_lists = lda_varying_params_lists
-      )
+data <- rmultinom(20, 5000, rep(0.1, 500))
+lda_params <- lapply(1:10, function(z) list(k = z))
+names(lda_params) <- str_c("K", 1:10)
+lda_models <- run_lda_models(data = data, lda_varying_params_lists = lda_params)
 ```
 
 ```{r}
@@ -59,7 +54,7 @@ result
 ```
 
 ```{r}
-result <- align_topics(lda_models, "consecutive", method = "transport", top_n=3)
+result <- align_topics(lda_models, "consecutive", method = "transport", top_n = 3)
 result
 ```
 
