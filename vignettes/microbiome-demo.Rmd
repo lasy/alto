@@ -80,7 +80,7 @@ For example, it takes about x minutes on the authors' laptops.
 ```{r run-lda-models}
 
 lda_varying_params_lists = list()
-for (k in 2:12) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
+for (k in 1:12) {lda_varying_params_lists[[paste0("k",k)]] = list(k = k)}
 
 lda_models = 
   run_lda_models(
@@ -112,7 +112,7 @@ And visualize the alignment:
 
 ```{r align-topics-viz}
 
-plot_alignment(aligned_topics)
+plot_alignment(aligned_topics, color_by = "b")
 
 ```
 
