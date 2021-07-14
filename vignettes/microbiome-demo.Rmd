@@ -97,14 +97,27 @@ We can now align the topics from each consecutive models:
 
 ```{r align-topics}
 
+
+tic()
 aligned_topics =
   align_topics(
     models = lda_models,
     comparison = "consecutive",
     method = "product") # transport product
-
+toc()
 
 aligned_topics@weights %>% head()
+
+
+tic()
+aligned_topics_lsy =
+  align_topics(
+    models = lda_models,
+    comparison = "consecutive",
+    method = "product",
+    order_version = "lsy") 
+toc()
+
 
 ```
 
@@ -113,6 +126,19 @@ And visualize the alignment:
 ```{r align-topics-viz}
 
 plot_alignment(aligned_topics, color_by = "b")
+
+plot_alignment(aligned_topics_lsy, color_by = "b")
+
+
+```
+## Alignment with diagnostics scores
+
+```{r}
+
+plot_alignment(aligned_topics_lsy, color_by = "r")
+
+plot_alignment(aligned_topics_lsy, color_by = "s")
+
 
 ```
 

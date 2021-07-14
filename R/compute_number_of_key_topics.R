@@ -1,3 +1,7 @@
+
+
+
+
 compute_number_of_key_topics <- function(weights, plot = FALSE){
 
   branches <-

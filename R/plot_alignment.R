@@ -48,16 +48,16 @@ plot_alignment <- function(
       ),
       alpha = 0.4
     ) +
-    geom_rect(
-      data = rect,
-      aes(
-        xmin = m_num - rect_gap,
-        xmax = m_num + rect_gap,
-        ymin = ymin,
-        ymax = ymax,
-        fill = topic_col
-      )
-    ) +
+  geom_rect(
+    data = rect,
+    aes(
+      xmin = m_num - rect_gap,
+      xmax = m_num + rect_gap,
+      ymin = ymin,
+      ymax = ymax,
+      fill = topic_col
+    )
+  ) +
     scale_x_continuous(breaks = ms, labels = ms) +
     theme(legend.position = "bottom")
 
@@ -81,11 +81,17 @@ plot_alignment <- function(
     x <- x %>% mutate(topic_col = factor(k_LDA))
   }
   if (color_by == "branch"){
-    branches <- identify_branches(weights)
+    branches <- identify_branches(weights) %>% arrange(branch)
     x <-
       x %>%
       left_join(., branches, by = c("m", "k_LDA")) %>%
-      mutate(topic_col = factor(branch))
+      mutate(
+        topic_col =
+          factor(branch,
+                 levels = branches$branch %>% unique() %>% sort())
+      ) %>%
+      arrange(m, k_LDA)
+
 
   }
   if (color_by == "refinement") {
@@ -139,7 +145,7 @@ ribbon_out <- function(weights, rect_gap = 0.1) {
     mutate(
       ymax = k_LDA / (max(k_LDA + 1)) + cumsum(weight),
       ymin = ymax - weight,
-      id = str_c(m, m_next, k_LDA, k_LDA_next),
+      id = str_c(m, m_next,"_", k_LDA, "-",k_LDA_next),
       m_num = match(m, levels(m)) + rect_gap
     )
 }
@@ -151,7 +157,7 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
     mutate(
       ymax = k_LDA_next / (max(k_LDA_next + 1)) + cumsum(weight),
       ymin = ymax - weight,
-      id = str_c(m, m_next, k_LDA, k_LDA_next),
+      id = str_c(m, m_next,"_", k_LDA, "-",k_LDA_next),
       m_num = match(m_next, levels(m_next)) + rect_gap
     )
 }

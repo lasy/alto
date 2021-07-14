@@ -22,6 +22,7 @@ align_topics <- function(
   method = "product",
   order_constrain = NULL,
   perm_search = 2,
+  order_version = "kris",
   ...
 ) {
 
@@ -42,7 +43,8 @@ align_topics <- function(
   )
   # 3. reorder the topics, if k's are sequenced
   if (comparisons == "consecutive") {
-    ordered <- reorder_topics(weights, models, perm_search)
+    if (order_version == "kris") ordered <- reorder_topics(weights, models, perm_search)
+    else ordered <- reorder_topics_lsy(weights, models)
   } else {
     ordered <- list(weights = weights, models = models)
   }
