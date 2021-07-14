@@ -128,7 +128,7 @@ reorder_helper <- function(weights, ix, pi_star, type = "k_LDA_next") {
 }
 
 
-
+#' @importFrom dplyr group_by ungroup mutate
 reorder_topics_lsy <- function(weights, models){
   weights <-
     weights %>%
@@ -140,7 +140,7 @@ reorder_topics_lsy <- function(weights, models){
   list(weights = weights_bw, models = models)
 }
 
-
+#' @importFrom dplyr filter group_by ungroup mutate summarize arrange
 forward_ordering <- function(weights) {
   models <- weights$m_next %>% unique() %>% sort()
 
@@ -176,7 +176,7 @@ forward_ordering <- function(weights) {
 
 
 
-
+#' @importFrom dplyr filter group_by ungroup mutate summarize arrange
 backward_ordering <- function(weights) {
   models <- weights$m %>% unique() %>% sort()
 

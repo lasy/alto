@@ -1,0 +1,11 @@
+pandoc: 2.7.3
+pkgdown: 1.6.1
+pkgdown_sha: ~
+articles:
+  basic-alignment: basic-alignment.html
+  microbiome-demo: microbiome-demo.html
+  sim_equivalence: sim_equivalence.html
+  sim_gradient: sim_gradient.html
+  sim_lda: sim_lda.html
+last_built: 2021-07-14T21:40Z
+

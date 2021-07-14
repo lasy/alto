@@ -1,4 +1,14 @@
-
+#' Identifies topic branches along the topic alignment graph
+#'
+#' [Description]
+#'
+#' @param weights (required) \code{data.frame} with the alignment weights
+#' (the @weight field from an \code{alignment} object)
+#'
+#' @seealso align_topics
+#' @return a \code{data.frame}
+#' identifying the branch of each topic in each model.
+#' @export
 identify_branches <- function(weights){
   models <- levels(weights$m)
   branches <-

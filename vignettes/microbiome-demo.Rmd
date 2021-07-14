@@ -98,25 +98,20 @@ We can now align the topics from each consecutive models:
 ```{r align-topics}
 
 
-tic()
 aligned_topics =
   align_topics(
     models = lda_models,
     comparison = "consecutive",
     method = "product") # transport product
-toc()
 
 aligned_topics@weights %>% head()
 
-
-tic()
 aligned_topics_lsy =
   align_topics(
     models = lda_models,
     comparison = "consecutive",
     method = "product",
     order_version = "lsy") 
-toc()
 
 
 ```
@@ -174,6 +169,7 @@ refinement <-
 
 ggplot(refinement,
        aes(x = m, y = k_LDA, fill = refinement_score)) +
-  geom_tile()
+  geom_tile() +
+  scale_fill_gradient(low = "red", high = "blue")
 
 ```

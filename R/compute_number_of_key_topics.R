@@ -1,7 +1,15 @@
-
-
-
-
+#' Computes the number of key topics
+#'
+#' [Description]
+#'
+#' @param weights (required) \code{data.frame} with the alignment weights
+#' (the @weight field from an \code{alignment} object)
+#' @param plot (optional, default = FALSE)
+#' whether to visualize the number of key topics.
+#'
+#' @seealso align_topics
+#' @return a \code{data.frame} with the number of key topic for each model.
+#' @export
 compute_number_of_key_topics <- function(weights, plot = FALSE){
 
   branches <-

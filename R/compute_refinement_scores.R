@@ -1,5 +1,14 @@
-
-
+#' Computes the refinement score of each topic in each model
+#'
+#' [Description]
+#'
+#' @param weights (required) \code{data.frame} with the alignment weights
+#' (the @weight field from an \code{alignment} object)
+#'
+#' @seealso align_topics align_branches
+#' @return a \code{data.frame}
+#' with the refinement score of each topic in each model.
+#' @export
 compute_refinement_scores <- function(weights) {
 
   models <- levels(weights$m)

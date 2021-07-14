@@ -1,0 +1,40 @@
+reference:
+- title: "Fit LDA models to data for specified K's"
+- contents:
+  - run_lda_models
+
+- title: "Alignment function"
+- contents:
+  - align_topics
+
+- title: "Visualization functions"
+- contents:
+  - plot_alignment
+  - plot_beta
+
+- title: "Diagnostic functions"
+- contents:
+  - starts_with("compute_")
+
+- title: "Alignment class and related functions"
+- contents:
+  - alignment-class
+  - show,alignment-method
+  - plot,alignment,missing-method
+  - models,alignment-method
+  - weights,alignment-method
+  - n_models,alignment-method
+  - n_topics,alignment-method
+  - .n_topics
+
+- title: "Helper functions"
+- contents:
+  - align_graph
+  - cost_fun
+  - optimize_permutation
+  - superheat_defaults
+  - trim_betas
+
+- title: "Demo data"
+- contents:
+  - vm_data

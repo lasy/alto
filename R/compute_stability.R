@@ -1,6 +1,14 @@
-
-
-
+#' Computes stability score along branches
+#'
+#' [Description]
+#'
+#' @param weights (required) \code{data.frame} with the alignment weights
+#' (the @weight field from an \code{alignment} object)
+#'
+#' @seealso align_topics align_branches
+#' @return a \code{data.frame}
+#' with the stability score of each branch along k's.
+#' @export
 compute_stability_along_branches <- function(weights) {
 
   branches <-
