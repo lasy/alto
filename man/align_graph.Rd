@@ -6,6 +6,28 @@
 \usage{
 align_graph(edges, gamma_hats, beta_hats, weight_fun, ...)
 }
+\arguments{
+\item{edges}{A data frame with two columns, $from and $to, giving the names
+of the models to be aligned. These names must be the names of the lists in
+`gamma_hats` and `beta_hats`.}
+
+\item{gamma_hats}{A named list of matrices, giving estimated mixed-membership
+parameters across a collection of topic models. The names of this list must
+correspond to the names of models to compare in `edges`.}
+
+\item{beta_hats}{A named list of matrices, giving estimated topic parameters
+across a collection of topic models. The names of this list must correspond
+to the names of models to compare in `edges`.}
+
+\item{weight_fun}{A function that returns a data.frame giving weights between
+all pairs of topics between two models. The first argument must accept a list
+of two gamma_hat matrices, the second argument must accept a list of two
+beta_hat matrices. See `product_weights` or `transport_weights` for examples.}
+}
 \description{
-Alignment between Pairs of Topics
+This provides a more generic interface to alignment between arbitrary pairs
+of topics, compared to `align_topics`. Rather than requiring sequential or
+all-vs-all comparisons, this function supports comparisons between any pairs
+of models, as specified by the `edges` parameter. Any graph linking pairs of
+models can be the starting point for an alignment.
 }
