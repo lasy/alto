@@ -38,7 +38,7 @@ align_topics <- function(
   weights <- align_graph(
     edges,
     map(models, ~ .$gamma),
-    map(models, ~ .$beta),
+    map(models, ~ exp(.$beta)),
     weight_fun, ...
   )
   # 3. reorder the topics, if k's are sequenced
@@ -52,6 +52,10 @@ align_topics <- function(
   new("alignment", weights = ordered$weights, models = ordered$models)
 }
 
+#' Edgelists for Default Alignment
+#'
+#' @param comparisons
+#' @param model_names
 #' @importFrom magrittr set_colnames %>%
 #' @importFrom dplyr filter
 #' @importFrom tibble tibble as_tibble
@@ -99,6 +103,26 @@ setup_edges <- function(comparisons, model_names) {
 }
 
 #' Alignment between Pairs of Topics
+#'
+#' This provides a more generic interface to alignment between arbitrary pairs
+#' of topics, compared to `align_topics`. Rather than requiring sequential or
+#' all-vs-all comparisons, this function supports comparisons between any pairs
+#' of models, as specified by the `edges` parameter. Any graph linking pairs of
+#' models can be the starting point for an alignment.
+#'
+#' @param edges A data frame with two columns, $from and $to, giving the names
+#' of the models to be aligned. These names must be the names of the lists in
+#' `gamma_hats` and `beta_hats`.
+#' @param gamma_hats A named list of matrices, giving estimated mixed-membership
+#' parameters across a collection of topic models. The names of this list must
+#' correspond to the names of models to compare in `edges`.
+#' @param beta_hats A named list of matrices, giving estimated topic parameters
+#' across a collection of topic models. The names of this list must correspond
+#' to the names of models to compare in `edges`.
+#' @param weight_fun A function that returns a data.frame giving weights between
+#' all pairs of topics between two models. The first argument must accept a list
+#' of two gamma_hat matrices, the second argument must accept a list of two
+#' beta_hat matrices. See `product_weights` or `transport_weights` for examples.
 #' @importFrom dplyr mutate
 #' @importFrom magrittr %>%
 #' @export
@@ -126,7 +150,7 @@ product_weights <- function(gammas, ...) {
 #' @importFrom purrr map
 #' @importFrom Barycenter Sinkhorn
 #' @export
-transport_weights <- function(gammas, betas, reg = 1, ...) {
+transport_weights <- function(gammas, betas, reg = 0.1, ...) {
   betas_mat <- do.call(rbind, betas)
   costs <- suppressMessages(philentropy::JSD(betas_mat))
   ix <- seq_len(nrow(betas[[1]]))
