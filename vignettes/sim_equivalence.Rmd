@@ -9,7 +9,7 @@ params:
   out_dir: "equivalence"
   method: "product"
   rep: 1
-  S: 4
+  S: 190
   K: 5
   V: 1000
   N: 250
