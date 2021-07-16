@@ -43,8 +43,7 @@ align_topics <- function(
   )
   # 3. reorder the topics, if k's are sequenced
   if (comparisons == "consecutive") {
-    if (order_version == "kris") ordered <- reorder_topics(weights, models, perm_search)
-    else ordered <- reorder_topics_lsy(weights, models)
+    ordered <- reorder_topics(weights, models)
   } else {
     ordered <- list(weights = weights, models = models)
   }
