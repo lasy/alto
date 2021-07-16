@@ -10,6 +10,7 @@ align_topics(
   method = "product",
   order_constrain = NULL,
   perm_search = 2,
+  order_version = "kris",
   ...
 )
 }
