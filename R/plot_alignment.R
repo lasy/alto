@@ -74,7 +74,6 @@ plot_alignment <- function(
 }
 
 
-
 .add_topic_col <- function(x, weights, color_by){
 
   if (color_by == "topic"){
@@ -260,21 +259,26 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     model_params <- model_params[subset]
   }
 
-  # filter the betas to those that pass thresholds
+  # filter betas to those that pass thresholds
   betas <- model_params %>%
     map_dfr(~ data.frame(exp(.$beta)), .id = "m") %>%
     trim_betas(min_beta, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
   # extract topic weights for side plot
+  branches <- identify_branches(weights(x))
   topic_weights <- model_params %>%
     map(~ colSums(.$gamma)) %>%
     map(~ data.frame(weight = .)) %>%
-    map_dfr(~ mutate(., k_LDA  = row_number()), .id = "m")
+    map_dfr(~ mutate(., k_LDA  = row_number()), .id = "m") %>%
+    left_join(branches)
 
   if (is.null(cols)) {
-    cols <- data.frame(k_LDA = unique(topic_weights$k_LDA)) %>%
-      mutate(col = hue_pal()(n()))
+    cols <- data.frame(branch = unique(branches$branch)) %>%
+      mutate(branch_ = as.character(branch)) %>%
+      arrange(branch_) %>%
+      mutate(col = hue_pal()(max(branch))) %>%
+      select(-branch_)
   }
 
   list(betas = betas, weights = left_join(topic_weights, cols))
