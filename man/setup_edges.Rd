@@ -6,6 +6,13 @@
 \usage{
 setup_edges(comparisons, model_names)
 }
+\arguments{
+\item{comparisons}{A string describing the type of model comparisons to
+compute.}
+
+\item{model_names}{The names of the models to compare. The resulting edge
+list will refer to models by these names.}
+}
 \description{
 Edgelists for Default Alignment
 }

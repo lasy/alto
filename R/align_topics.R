@@ -53,8 +53,10 @@ align_topics <- function(
 
 #' Edgelists for Default Alignment
 #'
-#' @param comparisons
-#' @param model_names
+#' @param comparisons A string describing the type of model comparisons to
+#'   compute.
+#' @param model_names The names of the models to compare. The resulting edge
+#'   list will refer to models by these names.
 #' @importFrom magrittr set_colnames %>%
 #' @importFrom dplyr filter
 #' @importFrom tibble tibble as_tibble
