@@ -7,21 +7,29 @@ reorder_topics <- function(weights, models) {
     ungroup()
   weights_fw <- forward_ordering(weights)
   weights_bw <- backward_ordering(weights_fw)
+  models <- reorder_models(models, weights_bw)
 
-  unique_ms <- unique(weights_bw$m)
+  list(weights = weights_bw, models = models)
+}
+
+#' @importFrom dplyr pull first
+reorder_models <- function(models, weights) {
+  unique_ms <- unique(weights$m)
   for (m_ in unique_ms) {
-    cur_weights <- weights_bw %>%
+    # get current permutation
+    weights_ <- weights %>%
       filter(k_LDA == first(k_LDA), m == m_)
+    perm <- pull(weights_, k_LDA_next)
+    m_next <- first(weights_$m_next)
 
-    perm <- pull(cur_weights, k_LDA_next)
-    m_next <- first(cur_weights$m_next)
+    # reorder gamma and betas
     tmp <- models[[m_next]]$gamma[, perm]
     models[[m_next]]$gamma <- tmp
     tmp <- models[[m_next]]$beta[perm, ]
     models[[m_next]]$beta <- tmp
-}
+  }
 
-  list(weights = weights_bw, models = models)
+  models
 }
 
 #' @importFrom dplyr filter group_by ungroup mutate summarize arrange
