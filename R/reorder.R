@@ -7,6 +7,20 @@ reorder_topics <- function(weights, models) {
     ungroup()
   weights_fw <- forward_ordering(weights)
   weights_bw <- backward_ordering(weights_fw)
+
+  unique_ms <- unique(weights_bw$m)
+  for (m_ in unique_ms) {
+    cur_weights <- weights_bw %>%
+      filter(k_LDA == first(k_LDA), m == m_)
+
+    perm <- pull(cur_weights, k_LDA_next)
+    m_next <- first(cur_weights$m_next)
+    tmp <- models[[m_next]]$gamma[, perm]
+    models[[m_next]]$gamma <- tmp
+    tmp <- models[[m_next]]$beta[perm, ]
+    models[[m_next]]$beta <- tmp
+}
+
   list(weights = weights_bw, models = models)
 }
 

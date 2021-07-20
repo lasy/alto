@@ -68,7 +68,9 @@ plot_alignment <- function(
                                  high = "cornflowerblue",
                                  limits = c(0,1))
   else
-    g <- g + guides(fill = "none")
+    g <- g +
+      scale_fill_discrete(limits = levels(rect$topic_col)) #+
+      #guides(fill = "none")
 
   g
 }
@@ -200,7 +202,7 @@ plot_beta <- function(x, models = "all", min_beta = 0.025, n_features = NULL,
   layout_args <- list(
     X = p$betas %>% select(-m),
     membership.rows = p$betas$m,
-    yr = p$weights$weight,
+    yr = p$weights$document_mass,
     yr.obs.col = p$weights$col
   )
   style_args <- superheat_defaults(...)
@@ -265,23 +267,24 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     trim_betas(min_beta, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
+  gamma_hats <- model_params %>%
+    map_dfr(~ data.frame(t(.$gamma)), .id = "m") %>%
+    group_by(m) %>%
+    mutate(k_LDA = row_number()) %>%
+    group_by(m, k_LDA) %>%
+    summarise(document_mass = sum(c_across()))
+
+  weights0 <- weights(x) %>%
+    group_by(m, k_LDA) %>%
+    summarise(document_mass = sum(document_mass))
+
   # extract topic weights for side plot
-  branches <- identify_branches(weights(x))
-  topic_weights <- model_params %>%
-    map(~ colSums(.$gamma)) %>%
-    map(~ data.frame(weight = .)) %>%
-    map_dfr(~ mutate(., k_LDA  = row_number()), .id = "m") %>%
-    left_join(branches)
+   topic_weights <- gamma_hats %>%
+     filter(m %in% betas$m) %>%
+     .add_topic_col(weights(x), "branch") %>%
+     mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
 
-  if (is.null(cols)) {
-    cols <- data.frame(branch = unique(branches$branch)) %>%
-      mutate(branch_ = as.character(branch)) %>%
-      arrange(branch_) %>%
-      mutate(col = hue_pal()(max(branch))) %>%
-      select(-branch_)
-  }
-
-  list(betas = betas, weights = left_join(topic_weights, cols))
+  list(betas = betas, weights = topic_weights, gamma_hats = gamma_hats, weights0 = weights0)
 }
 
 

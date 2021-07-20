@@ -9,12 +9,12 @@ params:
   out_dir: "equivalence"
   method: "transport"
   rep: 1
-  S: 190
+  S: 25
   K: 5
-  V: 1000
-  N: 250
-  n_models: 10
-  save: TRUE
+  V: 35
+  N: 150
+  n_models: 7
+  save: FALSE
 ---
 
 ```{r setup, include=FALSE}
@@ -27,6 +27,9 @@ set.seed(params$rep + params$S)
 
 ```{r}
 library(alto)
+source("../R/reorder.R")
+source("../R/align_topics.R")
+source("../R/plot_alignment.R")
 library(dplyr)
 library(purrr)
 library(readr)
@@ -34,11 +37,18 @@ library(stringr)
 library(tibble)
 source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
 my_theme()
+library(ggplot2)
+library(purrr)
+library(dplyr)
+library(tidyr)
+library(scales)
+library(RColorBrewer)
 ```
 
 ```{r}
 attach(params)
 lambdas <- list(beta = 0.1, gamma = 0.5, count = 1e4, alpha = 0.3)
+n_models <- 7
 ```
 
 Now include the perturbed betas in the plot, and compare with estimates at a
@@ -52,9 +62,14 @@ alignment <- sim_data$x %>%
   run_lda_models(lda_params, reset = TRUE) %>%
   align_topics(method = params$method)
 ```
+```{r}
+layout <- plot_beta_layout(alignment)
+layout$weights %>%
+  filter(m == "K4")
+```
 
 ```{r}
-beta_hat <- alto:::plot_beta_layout(alignment)$betas
+beta_hat <- plot_beta_layout(alignment)$betas
 perturbed_topics <- do.call(rbind, sim_data$perturbed_topics)
 similarities <- cosine_similarity(select(beta_hat, -m), perturbed_topics) %>%
   as_tibble() %>%
@@ -65,15 +80,23 @@ similarities <- cosine_similarity(select(beta_hat, -m), perturbed_topics) %>%
   )
 ```
 
+```{r}
+layout <- plot_beta_layout(alignment)
+weights0 <- layout$weights0
+weights <- layout$weights
+gamma_hats <- layout$gamma_hats
+betas <- layout$betas
+```
+
 ```{r, fig.width = 10, fig.height = 3}
 cols <- alto:::superheat_defaults()$heat.pal
 superheat::superheat(perturbed_topics, pretty.order.cols = TRUE, heat.pal = cols)
-plot_beta(alignment, min_beta = 0, pretty.order.rows = TRUE)
-plot_beta(alignment, c("K5", "K7"), pretty.order.rows = TRUE)
+#plot_beta(alignment, min_beta = 0, pretty.order.rows = TRUE)
+plot_beta(alignment, c("K4", "K7"), pretty.order.rows = FALSE)
 ```
 
 ```{r, fig.width = 5, fig.height = 3}
-plot(alignment)
+plot_alignment(alignment)
 ```
 
 ```{r}
