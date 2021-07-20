@@ -73,7 +73,7 @@ plot_beta(alignment, c("K5", "K7"), pretty.order.rows = TRUE)
 ```
 
 ```{r, fig.width = 5, fig.height = 3}
-plot_alignment(alignment)
+plot(alignment)
 ```
 
 ```{r}
