@@ -27,7 +27,7 @@ plot_alignment <- function(
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
-#' theme guides scale_fill_gradient
+#' theme guides scale_fill_gradient scale_fill_discrete
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(weights, rect, ribbon, rect_gap, color_by) {
 

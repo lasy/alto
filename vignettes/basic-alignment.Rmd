@@ -54,7 +54,7 @@ result
 ```
 
 ```{r}
-result <- align_topics(lda_models, "consecutive", method = "transport", top_n = 3)
+result <- align_topics(lda_models, "consecutive", method = "transport")
 result
 ```
 
