@@ -20,7 +20,7 @@ plot_alignment <- function(
   # inputs
   .check_input(x)
   color_by <- color_by[1]
-  color_by <- match.arg(color_by, c("topic","branch","refinement","stability"))
+  color_by <- match.arg(color_by, c("topic", "branch", "refinement", "stability"))
   # layout and viz
   layouts <- .compute_layout(x@weights, rect_gap)
   .plot_from_layout(x@weights, layouts$rect, layouts$ribbon, rect_gap, color_by)
@@ -31,8 +31,8 @@ plot_alignment <- function(
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(weights, rect, ribbon, rect_gap, color_by) {
 
-  rect = .add_topic_col(rect, weights, color_by)
-  ribbon = .add_topic_col(ribbon, weights, color_by)
+  rect <- .add_topic_col(rect, weights, color_by)
+  ribbon <- .add_topic_col(ribbon, weights, color_by)
 
   ms <- unique(rect$m_num)
   g <-
@@ -62,15 +62,15 @@ plot_alignment <- function(
     theme(legend.position = "bottom")
 
   # replace choices below by a better color scheme...
-  if(color_by %in% c("refinement", "stability"))
+  if (color_by %in% c("refinement", "stability"))
     g <- g + scale_fill_gradient(color_by,
                                  low = "brown1",
                                  high = "cornflowerblue",
-                                 limits = c(0,1))
+                                 limits = c(0, 1))
   else
     g <- g +
-      scale_fill_discrete(limits = levels(rect$topic_col)) #+
-      #guides(fill = "none")
+      scale_fill_discrete(limits = levels(rect$topic_col)) +
+      guides(fill = "none")
 
   g
 }
@@ -202,7 +202,7 @@ plot_beta <- function(x, models = "all", min_beta = 0.025, n_features = NULL,
   layout_args <- list(
     X = p$betas %>% select(-m),
     membership.rows = p$betas$m,
-    yr = p$weights$document_mass,
+    yr = p$weights$topic_weight,
     yr.obs.col = p$weights$col
   )
   style_args <- superheat_defaults(...)
@@ -267,24 +267,20 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     trim_betas(min_beta, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
-  gamma_hats <- model_params %>%
-    map_dfr(~ data.frame(t(.$gamma)), .id = "m") %>%
-    group_by(m) %>%
-    mutate(k_LDA = row_number()) %>%
-    group_by(m, k_LDA) %>%
-    summarise(document_mass = sum(c_across()))
-
-  weights0 <- weights(x) %>%
-    group_by(m, k_LDA) %>%
-    summarise(document_mass = sum(document_mass))
-
-  # extract topic weights for side plot
-   topic_weights <- gamma_hats %>%
+  # extract topic weights for the side plot
+  final_topic <- weights(x) %>%
+    filter(m_next == tail(levels(m_next), 1)) %>%
+    select(-m, -k_LDA) %>%
+    rename(m = m_next, k_LDA = k_LDA_next)
+  topic_weights <- bind_rows(
+      topic_layout(weights(x)),
+      topic_layout(final_topic)
+    ) %>%
      filter(m %in% betas$m) %>%
      .add_topic_col(weights(x), "branch") %>%
      mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
 
-  list(betas = betas, weights = topic_weights, gamma_hats = gamma_hats, weights0 = weights0)
+  list(betas = betas, weights = topic_weights)
 }
 
 
