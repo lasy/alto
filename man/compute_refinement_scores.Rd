@@ -15,7 +15,20 @@ a \code{data.frame}
 with the refinement score of each topic in each model.
 }
 \description{
-[Description]
+This function computes a refinement score for each topic in an alignment. The
+refinement score is defined recursively from the leaves. All leaves are given
+scores of 1. To find the score of an intermediate node, a weighted average is
+taken of the refinement scores for all descendant nodes, with weights coming
+from the normalized alignment weights.
+}
+\examples{
+library(purrr)
+data <- rmultinom(10, 20, rep(0.1, 20))
+lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
+lda_models <- run_lda_models(data, lda_params)
+alignment <- align_topics(lda_models)
+compute_refinement_scores(weights(alignment))
+
 }
 \seealso{
 align_topics align_branches

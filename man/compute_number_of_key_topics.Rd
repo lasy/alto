@@ -8,16 +8,38 @@ compute_number_of_key_topics(weights, plot = FALSE)
 }
 \arguments{
 \item{weights}{(required) \code{data.frame} with the alignment weights
-(the @weight field from an \code{alignment} object)}
+(the @weight field from an \code{alignment} object).}
 
-\item{plot}{(optional, default = FALSE)
-whether to visualize the number of key topics.}
+\item{plot}{(optional, default = FALSE) whether to visualize the number of
+key topics.}
 }
 \value{
-a \code{data.frame} with the number of key topic for each model.
+a \code{data.frame} with the number of key topic for each model. The
+\code{n_topics} column shows the total possible number of topics available
+for that model while \code{n_key_topics} gives the number that passed the key
+topics criterion.
 }
 \description{
-[Description]
+This function computes the number of topics recursively in a backwards
+fashion. At the final level of the alignment, all topics are considered key
+topics. At intermediate levels, a topic is considered key if there is an edge
+leaving it such that the linked topic received most of its weight from this
+parent edge.
+}
+\details{
+Given the weights from an \code{alignment} object, this function computes the
+number of key topics at each level in the alignment. The result is a
+\code{data.frame} mapping each level to a number from 1 to the number of
+current levels.
+}
+\examples{
+library(purrr)
+data <- rmultinom(10, 20, rep(0.1, 20))
+lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
+lda_models <- run_lda_models(data, lda_params)
+alignment <- align_topics(lda_models)
+compute_number_of_key_topics(weights(alignment), plot = TRUE)
+
 }
 \seealso{
 align_topics
