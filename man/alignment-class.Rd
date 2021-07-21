@@ -5,5 +5,24 @@
 \alias{alignment-class}
 \title{Alignment Class Definition}
 \description{
-Alignment Class Definition
+The alignment class contains all the information available associated with an
+alignment across an ensemble of topic models. The available accessor methods
+are,
+}
+\details{
+* \code{weights}: Extract weights between all pairs of topics within an
+ alignment. Topic pairs with high alignment scores are more similar to one
+ another, though the precise implementation will depend on the \code{method}
+ used during \code{align_topics}. Note that only the weights are needed in
+ order to compute stability, refinement, and key topics summaries.
+* \code{models}: Extract the model parameters that were used in the original
+  alignment. Note that the latent topics may have been reordered, to maximize
+  the consistency across all models according to their alignment.
+* \code{n_topics}: How many topics are there total, within the alignment
+  object?
+\code{n_models}: How many models total are there, within the alignment
+  object?
+}
+\seealso{
+align_topics
 }

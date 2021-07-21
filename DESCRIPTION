@@ -8,9 +8,10 @@ Authors@R: c(
     person("Julia", "Fukuyama", email = "jfukuyam@iu.edu", role = c("aut"))
     )
 Maintainer: Laura Symul <lsymul@stanford.edu>
-Description: "alto" is an R package that aligns topics from different LDA models,
-    computes metrics for quantifying the goodness of alignment,
-    and provides visualization functions to explore the alignment and robustness of topics across environments or LDA hyper-parameters.
+Description: "alto" is an R package that aligns topics from different LDA
+  models, computes metrics for quantifying the goodness of alignment, and provides
+  visualization functions to explore the alignment and robustness of topics across
+  environments or LDA hyper-parameters.
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
@@ -31,9 +32,7 @@ Imports:
     topicmodels
 Suggests:
     rmarkdown,
-    knitr,
-    MCMCpack,
-    readr
+    knitr
 VignetteBuilder: knitr
 Depends:
     R (>= 3.6)
