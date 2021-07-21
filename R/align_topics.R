@@ -2,10 +2,10 @@
 #'
 #' This function takes a list of LDA models and returns an object of class
 #' \code{alignment}. Each element in the models list must be itself a named
-#' list, corresponding to the mixed memberships ($gamma) and topics ($beta). The
-#' resulting alignment object can be plotted using `plot` and its weights can be
-#' extracted using the `weights` accessor function. See the documentation for
-#' class \code{alignment} for further details.
+#' list, corresponding to the mixed memberships (\code{$gamma}) and topics
+#' (\code{$beta}). The resulting alignment object can be plotted using `plot`
+#' and its weights can be extracted using the `weights` accessor function. See
+#' the documentation for class \code{alignment} for further details.
 #'
 #' @param models (required) a list of LDA models object. Each list component
 #' must be a list with two named entries, $gamma (containing mixed memberships)
