@@ -1,33 +1,37 @@
 #' Run LDA models for specified values of hyper-parameters.
 #'
-#' [Description]
+#' This function fits a collection of lda models to a dataset, fitting one model
+#' for each hyperparameter setting specified by the
+#' \code{lda_varying_params_list} argument. Its output can be directly used by
+#' \code{align_topics}.
 #'
 #' @param data (required) a \code{matrix}, \code{data.frame} or
-#' \code{slam::simple_triplet_matrix} containing the counts (integers)
-#' of each feature (e.g. words) and each sample (or document).
-#' If data is provided as \code{matrix} or \code{data.frame},
-#' each row is a sample, each column is a feature.
-#' @param lda_varying_params_lists (required) a \code{list}
-#' specifying the parameter for each models that needs to be ran.
-#' Currently, supported parameters are "k" (the number of topic),
-#' "method" ("VEM" or "Gibbs"), and "control", a list of type \code{LDAcontrol}.
-#' See \code{topicmodels::LDA} for details and below for examples.
-#' @param lda_fixed_params_list (optional) a \code{list}
-#' specifying the parameters common to all models to be fitted.
-#' Values provided by \code{lda_fixed_params_list} are overwritten
-#' by those provided by \code{lda_varying_params_lists}.
-#' @param dir (optional) a \code{character} specifying the directory
-#' in which individual LDA models should be stored.
-#' If not specified, individual LDA models are not stored.
-#' This option is especially useful for data exploration
-#' as it allows to save execution time if one wishes to add models
-#' to an existing model list. (see examples)
+#' \code{slam::simple_triplet_matrix} containing the counts (integers) of each
+#' feature (e.g. words) and each sample (or document). If data is provided as
+#' \code{matrix} or \code{data.frame}, each row is a sample, each column is a
+#' feature.
+#' @param lda_varying_params_lists (required) a \code{list} specifying the
+#' parameter for each models that needs to be ran. Currently, supported
+#' parameters are "k" (the number of topic), "method" ("VEM" or "Gibbs"), and
+#' "control", a list of type \code{LDAcontrol}. See \code{topicmodels::LDA} for
+#' details and below for examples.
+#' @param lda_fixed_params_list (optional) a \code{list} specifying the
+#' parameters common to all models to be fitted. Values provided by
+#' \code{lda_fixed_params_list} are overwritten by those provided by
+#' \code{lda_varying_params_lists}.
+#' @param dir (optional) a \code{character} specifying the directory in which
+#' individual LDA models should be stored. If not specified, individual LDA
+#' models are not stored. This option is especially useful for data exploration
+#' as it allows to save execution time if one wishes to add models to an
+#' existing model list. (see examples)
 #' @param reset (optional, default = \code{FALSE})
 #'
 #' @return a list of LDA models (see package \code{topicmodels}).
 #' ? or a \code{lda_models} object which would be a list of
 #' 1. a list of model;
 #' 2. some metadata about the alignement
+#' @importFrom purrr map
+#' @importFrom topicmodels LDA
 #' @export
 #' @examples
 #' set.seed(1)
@@ -61,8 +65,7 @@ run_lda_models <-
     lda_varying_params_lists,
     lda_fixed_params_list = list(),
     dir = NULL,
-    reset = FALSE,
-    verbose = FALSE
+    reset = FALSE
   ) {
 
     # 1. CHECKS
@@ -91,10 +94,9 @@ run_lda_models <-
     lda_files <- list.files(dir)
     if (reset |  (length(lda_files) != length(param_lists))) {
       done <-
-        purrr::map(
+        map(
           .x = names(param_lists),
           .f = function(m) {
-            if (verbose) cat(m, "\n")
             param_list <- param_lists[[m]]
             if (param_list$k == 1) {
               lda_model <- list(
@@ -102,7 +104,7 @@ run_lda_models <-
                 beta = log(matrix(colSums(data) / sum(data), nrow = 1))
               )
             } else {
-              tm <- topicmodels::LDA(
+              tm <- LDA(
                       x = data,
                       k = param_list$k,
                       method = param_list$method,
@@ -147,46 +149,26 @@ run_lda_models <-
 }
 
 
-
+#' @importFrom purrr map
 .check_params <- function(lda_varying_params_lists, lda_fixed_params_list) {
   # for each element of the lda_varying_params_lists,
   # we check the varying params and
   # we add the fixed params to the varying params list.
   # the end result is a list of lists.
   # each sub-list has the element k, method and control
-
-  param_lists <-
-    purrr::map(
-      .x = lda_varying_params_lists,
-      .f = function(lda_varying_params_list) {
-        param_list <- list(k = NULL, method = NULL, control = NULL)
-
-        if ("k" %in% names(lda_fixed_params_list))
-          param_list$k <- lda_fixed_params_list$k
-        if ("k" %in% names(lda_varying_params_list))
-          param_list$k <- lda_varying_params_list$k
-        if (is.null(param_list$k)) {
-          warning("no value was provided for 'k'. Using default value of '5'.\n")
-          param_list$k <- 5
+  defaults <- list(k = 5, method = "VEM", "control" = NULL)
+  map(
+     .x = lda_varying_params_lists,
+     .f = function(hyper) {
+        params_list <- modifyList(lda_fixed_params_list, hyper)
+        if (is.null(params_list$k)) {
+          message("No value was provided for 'k'. Using default value of '5'.")
+        }
+        if (is.null(params_list$method)) {
+          message("Using default value 'VEM' for 'method' LDA parameter.")
         }
 
-        if ("method" %in% names(lda_fixed_params_list))
-          param_list$method <- lda_fixed_params_list$method
-        if ("method" %in% names(lda_varying_params_list))
-          param_list$method <- lda_varying_params_list$method
-        if (is.null(param_list$method)) {
-          warning("Using default value 'VEM' for 'method' LDA parameter.\n")
-          param_list$method <- "VEM"
-        }
-
-        if ("control" %in% names(lda_fixed_params_list))
-          param_list$control <- lda_fixed_params_list$control
-        if ("control" %in% names(lda_varying_params_list))
-          param_list$control <- lda_varying_params_list$control
-
-        param_list
-      }
-    )
-
-  param_lists
+        modifyList(defaults, params_list)
+    }
+  )
 }

@@ -1,28 +1,51 @@
 #' Align topics from distinct LDA models
 #'
-#' [Description]
+#' This function takes a list of LDA models and returns an object of class
+#' \code{alignment}. Each element in the models list must be itself a named
+#' list, corresponding to the mixed memberships ($gamma) and topics ($beta). The
+#' resulting alignment object can be plotted using `plot` and its weights can be
+#' extracted using the `weights` accessor function. See the documentation for
+#' class \code{alignment} for further details.
 #'
-#' @param models (required) a \code{lda_models} object. See
-#'   \code{run_lda_models} for details.
+#' @param models (required) a list of LDA models object. Each list component
+#' must be a list with two named entries, $gamma (containing mixed memberships)
+#' and $beta (containing topic parameters in log sapce). See
+#' \code{run_lda_models} for details.
 #' @param comparisons (optional) either a character indicating if topics
 #'   should be aligned between \code{consecutive} or \code{all} models, or a
-#'   list of model pairs between which topics should be aligned.
-#' @param perm_search (optional) How large should the search be for topic
-#'    reordering?
+#'   \code{data.frame} containing the pairs of models within which topics should
+#'   be aligned. See the \code{setup_edges} function for examples of custom
+#'   topic comparison by passing in an edgelist.
+#' @return An object of class \code{alignment} providing the weights between
+#' every pair of topics of each model pairs in the input edgelist
+#' (\code{comparisons}).
 #'
-#' @return a \code{data.frame} (? or some specific object) providing the weights
-#'   between every pair of topics of each model pairs in the input edgelist
-#'   (\code{comparisons}). ? Do we also return the lda_models with ordered
-#'   topics?
+#' @seealso alignment
+#' @examples
+#' library(purrr)
+#' data <- rmultinom(10, 20, rep(0.1, 20))
+#' lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
+#' lda_models <- run_lda_models(data, lda_params)
+#'
+#' alignment <- align_topics(lda_models)
+#' alignment
+#' plot(alignment)
+#'
+#' plot(alignment, color_by = "refinement")
+#' alignment <- align_topics(lda_models, method = "transport")
+#' plot(alignment)
+#' plot_beta(alignment)
+#'
+#' align_topics(lda_models, comparisons = "all")
+#'
+#' weights(alignment)
+#' models(alignment)
 #' @importFrom purrr map
 #' @export
 align_topics <- function(
   models,
   comparisons = "consecutive",
   method = "product",
-  order_constrain = NULL,
-  perm_search = 2,
-  order_version = "kris",
   ...
 ) {
 
@@ -64,20 +87,21 @@ align_topics <- function(
 setup_edges <- function(comparisons, model_names) {
   edges <- comparisons
   if (comparisons == "consecutive") {
-    edges <- tibble::tibble(
+    edges <- tibble(
       from = head(model_names, -1), to = tail(model_names, -1)
     )
   } else if (comparisons == "all") {
     edges <- t(combn(model_names, 2)) %>%
-      tibble::as_tibble() %>%
-      magrittr::set_colnames(c("from", "to")) %>%
-      dplyr::filter(from != to)
+      as_tibble(.name_repair = "unique") %>%
+      suppressMessages() %>%
+      set_colnames(c("from", "to")) %>%
+      filter(from != to)
   }
 
   edges
 }
 
-#' @importFrom purrr map_int
+#' @importFrom purrr map map_int
 #' @importFrom stringr str_starts
 .check_align_input <- function(
   models,
@@ -87,10 +111,10 @@ setup_edges <- function(comparisons, model_names) {
   # check model list input
   stopifnot(typeof(models) == "list")
   stopifnot(
-    all(purrr::map(models, ~ class(.) == "list"))
+    all(map_int(models, ~ class(.) == "list"))
   )
   stopifnot(
-    all(purrr::map(models, ~ all(names(.) %in% c("gamma", "beta"))))
+    all(map_int(models, ~ all(names(.) %in% c("gamma", "beta"))))
   )
 
   # check models to compare options
@@ -137,6 +161,28 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
   postprocess_weights(weights, nrow(gamma_hats[[1]]), names(gamma_hats))
 }
 
+#' Product Weights between Model Pair
+#'
+#' An alignment based on product weights sets the weight between topics k and k'
+#' according to \eqn{\gamma_{k}^T\gamma_{k}^\prime}, where \eqn{\gamma_{k} \in
+#' \mathbb{R}^n_{+}} provides the mixed membership assigned to topic \eqn{k}
+#' across the \eqn{n} samples (and similarly for topic \eqn{k^\prime}). This
+#' function computes these weights given a list of two \eqn{n \times K} gamma
+#' matrices.
+#'
+#' @param gammas (required) A list of length two, containing the mixed
+#' membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
+#' compare. The number of columns may be different, but the number of samples
+#' must be equal.
+#' @return products A \code{data.frame} giving the product similarity of each
+#' pair of topics across the two input matrices.
+#'
+#' @examples
+#' g1 <- matrix(runif(20 * 2), 20, 2)
+#' g2 <- matrix(runif(20 * 4), 20, 4)
+#' product_weights(list(g1, g2))
+#'
+#' @seealso align_graph
 #' @importFrom purrr map
 #' @importFrom magrittr %>%
 #' @export
@@ -147,6 +193,32 @@ product_weights <- function(gammas, ...) {
     .lengthen_weights()
 }
 
+#' Transport Weights between Model Pair
+#'
+#' An alignment based on transport weights sets the weight between topics k and
+#' k' according to an optimal transport problem with (1) costs set by the
+#' distance (specifically, Jensen-Shannon Divergence) between \eqn{\beta_{k}}
+#' and \eqn{\beta_{k^\prime}} and (2) masses defined by the total topic mixed
+#' memberships \eqn{\sum_{i}\gamma_{ik}} and \eqn{\sum_{i}\gamma_{ik^\prime}}.
+#' If topics have similar mixed membership weight and similar topic \eqn{\beta},
+#' then they will be given high transport alignment weight.
+#'
+#' @param gammas (required) A list of length two, containing the mixed
+#' membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
+#' compare. The number of columns may be different, but the number of samples
+#' must be equal.
+#' @return products A \code{data.frame} giving the product similarity of each
+#' pair of topics across the two input matrices.
+#'
+#' @examples
+#' library(purrr)
+#' data <- rmultinom(10, 20, rep(0.1, 20))
+#' lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
+#' lda_models <- run_lda_models(data, lda_params)
+#' gammas <- list(lda_models[[3]]$gamma, lda_models[[5]]$gamma)
+#' betas <- list(lda_models[[3]]$beta, lda_models[[5]]$beta)
+#' transport_weights(gammas, betas)
+#'
 #' @importFrom philentropy JSD
 #' @importFrom purrr map
 #' @importFrom Barycenter Sinkhorn
@@ -217,6 +289,25 @@ print_alignment <- function(object) {
 }
 
 #' Alignment Class Definition
+#'
+#' The alignment class contains all the information available associated with an
+#' alignment across an ensemble of topic models. The available accessor methods
+#' are,
+#'
+#'  * \code{weights}: Extract weights between all pairs of topics within an
+#'  alignment. Topic pairs with high alignment scores are more similar to one
+#'  another, though the precise implementation will depend on the \code{method}
+#'  used during \code{align_topics}. Note that only the weights are needed in
+#'  order to compute stability, refinement, and key topics summaries.
+#' * \code{models}: Extract the model parameters that were used in the original
+#'   alignment. Note that the latent topics may have been reordered, to maximize
+#'   the consistency across all models according to their alignment.
+#' * \code{n_topics}: How many topics are there total, within the alignment
+#'   object?
+#' \code{n_models}: How many models total are there, within the alignment
+#'   object?
+#'
+#' @seealso align_topics
 #' @import methods
 #' @exportClass alignment
 setClass("alignment",
@@ -252,11 +343,11 @@ setMethod("n_models", "alignment", function(x) nlevels(x@weights$m))
 .n_topics <- function(x) {
   w <- x@weights
   w1 <- w %>%
-    dplyr::select(m, k_LDA)
+    select(m, k_LDA)
   w2 <- w %>%
-    dplyr::select(m_next, k_LDA_next) %>%
-    magrittr::set_colnames(c("m", "k_LDA"))
-  nrow(unique(dplyr::bind_rows(w1, w2)))
+    select(m_next, k_LDA_next) %>%
+    set_colnames(c("m", "k_LDA"))
+  nrow(unique(bind_rows(w1, w2)))
 }
 
 setGeneric("n_topics", function(x) standardGeneric("n_topics"))
