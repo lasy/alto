@@ -40,7 +40,10 @@
 
 
 <meta property="og:title" content="Run LDA models for specified values of hyper-parameters. — run_lda_models" />
-<meta property="og:description" content="[Description]" />
+<meta property="og:description" content="This function fits a collection of lda models to a dataset, fitting one model
+for each hyperparameter setting specified by the
+lda_varying_params_list argument. Its output can be directly used by
+align_topics." />
 
 
 
@@ -133,7 +136,10 @@
     </div>
 
     <div class="ref-description">
-    <p>[Description]</p>
+    <p>This function fits a collection of lda models to a dataset, fitting one model
+for each hyperparameter setting specified by the
+<code>lda_varying_params_list</code> argument. Its output can be directly used by
+<code>align_topics</code>.</p>
     </div>
 
     <pre class="usage"><span class='fu'>run_lda_models</span><span class='op'>(</span>
@@ -141,8 +147,7 @@
   <span class='va'>lda_varying_params_lists</span>,
   lda_fixed_params_list <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
   dir <span class='op'>=</span> <span class='cn'>NULL</span>,
-  reset <span class='op'>=</span> <span class='cn'>FALSE</span>,
-  verbose <span class='op'>=</span> <span class='cn'>FALSE</span>
+  reset <span class='op'>=</span> <span class='cn'>FALSE</span>
 <span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
@@ -151,34 +156,33 @@
     <tr>
       <th>data</th>
       <td><p>(required) a <code>matrix</code>, <code>data.frame</code> or
-<code><a href='https://rdrr.io/pkg/slam/man/matrix.html'>slam::simple_triplet_matrix</a></code> containing the counts (integers)
-of each feature (e.g. words) and each sample (or document).
-If data is provided as <code>matrix</code> or <code>data.frame</code>,
-each row is a sample, each column is a feature.</p></td>
+<code><a href='https://rdrr.io/pkg/slam/man/matrix.html'>slam::simple_triplet_matrix</a></code> containing the counts (integers) of each
+feature (e.g. words) and each sample (or document). If data is provided as
+<code>matrix</code> or <code>data.frame</code>, each row is a sample, each column is a
+feature.</p></td>
     </tr>
     <tr>
       <th>lda_varying_params_lists</th>
-      <td><p>(required) a <code>list</code>
-specifying the parameter for each models that needs to be ran.
-Currently, supported parameters are "k" (the number of topic),
-"method" ("VEM" or "Gibbs"), and "control", a list of type <code>LDAcontrol</code>.
-See <code><a href='https://rdrr.io/pkg/topicmodels/man/lda.html'>topicmodels::LDA</a></code> for details and below for examples.</p></td>
+      <td><p>(required) a <code>list</code> specifying the
+parameter for each models that needs to be ran. Currently, supported
+parameters are "k" (the number of topic), "method" ("VEM" or "Gibbs"), and
+"control", a list of type <code>LDAcontrol</code>. See <code><a href='https://rdrr.io/pkg/topicmodels/man/lda.html'>topicmodels::LDA</a></code> for
+details and below for examples.</p></td>
     </tr>
     <tr>
       <th>lda_fixed_params_list</th>
-      <td><p>(optional) a <code>list</code>
-specifying the parameters common to all models to be fitted.
-Values provided by <code>lda_fixed_params_list</code> are overwritten
-by those provided by <code>lda_varying_params_lists</code>.</p></td>
+      <td><p>(optional) a <code>list</code> specifying the
+parameters common to all models to be fitted. Values provided by
+<code>lda_fixed_params_list</code> are overwritten by those provided by
+<code>lda_varying_params_lists</code>.</p></td>
     </tr>
     <tr>
       <th>dir</th>
-      <td><p>(optional) a <code>character</code> specifying the directory
-in which individual LDA models should be stored.
-If not specified, individual LDA models are not stored.
-This option is especially useful for data exploration
-as it allows to save execution time if one wishes to add models
-to an existing model list. (see examples)</p></td>
+      <td><p>(optional) a <code>character</code> specifying the directory in which
+individual LDA models should be stored. If not specified, individual LDA
+models are not stored. This option is especially useful for data exploration
+as it allows to save execution time if one wishes to add models to an
+existing model list. (see examples)</p></td>
     </tr>
     <tr>
       <th>reset</th>
@@ -203,7 +207,7 @@ to an existing model list. (see examples)</p></td>
       lda_varying_params_lists <span class='op'>=</span> <span class='va'>lda_varying_params_lists</span>,
       dir <span class='op'>=</span> <span class='st'>"test_lda_models/"</span>
       <span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'>
 <span class='va'>additional_lda_varying_params_list</span> <span class='op'>=</span>
    <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>K4 <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
  <span class='va'>updated_lda_models</span> <span class='op'>=</span>
@@ -215,7 +219,7 @@ to an existing model list. (see examples)</p></td>
            <span class='va'>additional_lda_varying_params_list</span><span class='op'>)</span>,
       dir <span class='op'>=</span> <span class='st'>"test_lda_models/"</span>
       <span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='warning'>Warning: Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='warning'>Warning: Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'>
 <span class='co'># because we specified the "dir" option, it only runs LDA for k = 4</span>
 <span class='fu'><a href='https://rdrr.io/r/base/unlink.html'>unlink</a></span><span class='op'>(</span><span class='st'>"test_lda_models/"</span>, recursive <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
 </div></pre>

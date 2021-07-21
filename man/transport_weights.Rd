@@ -30,8 +30,8 @@ library(purrr)
 data <- rmultinom(10, 20, rep(0.1, 20))
 lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
 lda_models <- run_lda_models(data, lda_params)
-gammas <- list(lda_models[[1]]$gamma, lda_models[[2]]$gamma)
-betas <- list(lda_models[[1]]$beta, lda_models[[2]]$beta)
+gammas <- list(lda_models[[3]]$gamma, lda_models[[5]]$gamma)
+betas <- list(lda_models[[3]]$beta, lda_models[[5]]$beta)
 transport_weights(gammas, betas)
 
 }

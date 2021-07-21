@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Alignment between Pairs of Topics — align_graph • alto</title>
+<title>Edgelists for Default Alignment — setup_edges • alto</title>
 
 
 <!-- jquery -->
@@ -39,12 +39,8 @@
 
 
 
-<meta property="og:title" content="Alignment between Pairs of Topics — align_graph" />
-<meta property="og:description" content="This provides a more generic interface to alignment between arbitrary pairs
-of topics, compared to `align_topics`. Rather than requiring sequential or
-all-vs-all comparisons, this function supports comparisons between any pairs
-of models, as specified by the `edges` parameter. Any graph linking pairs of
-models can be the starting point for an alignment." />
+<meta property="og:title" content="Edgelists for Default Alignment — setup_edges" />
+<meta property="og:description" content="Edgelists for Default Alignment" />
 
 
 
@@ -131,48 +127,29 @@ models can be the starting point for an alignment." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Alignment between Pairs of Topics</h1>
+    <h1>Edgelists for Default Alignment</h1>
     
-    <div class="hidden name"><code>align_graph.Rd</code></div>
+    <div class="hidden name"><code>setup_edges.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This provides a more generic interface to alignment between arbitrary pairs
-of topics, compared to `align_topics`. Rather than requiring sequential or
-all-vs-all comparisons, this function supports comparisons between any pairs
-of models, as specified by the `edges` parameter. Any graph linking pairs of
-models can be the starting point for an alignment.</p>
+    <p>Edgelists for Default Alignment</p>
     </div>
 
-    <pre class="usage"><span class='fu'>align_graph</span><span class='op'>(</span><span class='va'>edges</span>, <span class='va'>gamma_hats</span>, <span class='va'>beta_hats</span>, <span class='va'>weight_fun</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>setup_edges</span><span class='op'>(</span><span class='va'>comparisons</span>, <span class='va'>model_names</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>edges</th>
-      <td><p>A data frame with two columns, $from and $to, giving the names
-of the models to be aligned. These names must be the names of the lists in
-`gamma_hats` and `beta_hats`.</p></td>
+      <th>comparisons</th>
+      <td><p>A string describing the type of model comparisons to
+compute.</p></td>
     </tr>
     <tr>
-      <th>gamma_hats</th>
-      <td><p>A named list of matrices, giving estimated mixed-membership
-parameters across a collection of topic models. The names of this list must
-correspond to the names of models to compare in `edges`.</p></td>
-    </tr>
-    <tr>
-      <th>beta_hats</th>
-      <td><p>A named list of matrices, giving estimated topic parameters
-across a collection of topic models. The names of this list must correspond
-to the names of models to compare in `edges`.</p></td>
-    </tr>
-    <tr>
-      <th>weight_fun</th>
-      <td><p>A function that returns a data.frame giving weights between
-all pairs of topics between two models. The first argument must accept a list
-of two gamma_hat matrices, the second argument must accept a list of two
-beta_hat matrices. See `product_weights` or `transport_weights` for examples.</p></td>
+      <th>model_names</th>
+      <td><p>The names of the models to compare. The resulting edge
+list will refer to models by these names.</p></td>
     </tr>
     </table>
 

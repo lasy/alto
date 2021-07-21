@@ -40,7 +40,12 @@
 
 
 <meta property="og:title" content="Align topics from distinct LDA models — align_topics" />
-<meta property="og:description" content="[Description]" />
+<meta property="og:description" content="This function takes a list of LDA models and returns an object of class
+alignment. Each element in the models list must be itself a named
+list, corresponding to the mixed memberships ($gamma) and topics ($beta). The
+resulting alignment object can be plotted using `plot` and its weights can be
+extracted using the `weights` accessor function. See the documentation for
+class alignment for further details." />
 
 
 
@@ -133,46 +138,272 @@
     </div>
 
     <div class="ref-description">
-    <p>[Description]</p>
+    <p>This function takes a list of LDA models and returns an object of class
+<code>alignment</code>. Each element in the models list must be itself a named
+list, corresponding to the mixed memberships (<code>$gamma</code>) and topics (<code>$beta</code>). The
+resulting alignment object can be plotted using `plot` and its weights can be
+extracted using the `weights` accessor function. See the documentation for
+class <code>alignment</code> for further details.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>align_topics</span><span class='op'>(</span>
-  <span class='va'>models</span>,
-  comparisons <span class='op'>=</span> <span class='st'>"consecutive"</span>,
-  method <span class='op'>=</span> <span class='st'>"product"</span>,
-  order_constrain <span class='op'>=</span> <span class='cn'>NULL</span>,
-  perm_search <span class='op'>=</span> <span class='fl'>2</span>,
-  <span class='va'>...</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>align_topics</span><span class='op'>(</span><span class='va'>models</span>, comparisons <span class='op'>=</span> <span class='st'>"consecutive"</span>, method <span class='op'>=</span> <span class='st'>"product"</span>, <span class='va'>...</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>models</th>
-      <td><p>(required) a <code>lda_models</code> object. See
+      <td><p>(required) a list of LDA models object. Each list component
+must be a list with two named entries, $gamma (containing mixed memberships)
+and $beta (containing topic parameters in log sapce). See
 <code>run_lda_models</code> for details.</p></td>
     </tr>
     <tr>
       <th>comparisons</th>
       <td><p>(optional) either a character indicating if topics
 should be aligned between <code>consecutive</code> or <code>all</code> models, or a
-list of model pairs between which topics should be aligned.</p></td>
-    </tr>
-    <tr>
-      <th>perm_search</th>
-      <td><p>(optional) How large should the search be for topic
-reordering?</p></td>
+<code>data.frame</code> containing the pairs of models within which topics should
+be aligned. See the <code>setup_edges</code> function for examples of custom
+topic comparison by passing in an edgelist.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>a <code>data.frame</code> (? or some specific object) providing the weights
-  between every pair of topics of each model pairs in the input edgelist
-  (<code>comparisons</code>). ? Do we also return the lda_models with ordered
-  topics?</p>
+    <p>An object of class <code>alignment</code> providing the weights between
+every pair of topics of each model pairs in the input edgelist
+(<code>comparisons</code>).</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
+    <div class='dont-index'><p>alignment</p></div>
+
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://purrr.tidyverse.org'>purrr</a></span><span class='op'>)</span>
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Multinom.html'>rmultinom</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>20</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>lda_params</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span><span class='op'>(</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='va'>.</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
+<span class='va'>lda_models</span> <span class='op'>&lt;-</span> <span class='fu'><a href='run_lda_models.html'>run_lda_models</a></span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>lda_params</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'>
+<span class='va'>alignment</span> <span class='op'>&lt;-</span> <span class='fu'>align_topics</span><span class='op'>(</span><span class='va'>lda_models</span><span class='op'>)</span>
+<span class='va'>alignment</span>
+</div><div class='output co'>#&gt; # An alignment: 5 models, 15 topics:
+#&gt; <span style='color: #949494;'># A tibble: 6 x 8</span>
+#&gt;   m     m_next k_LDA k_LDA_next document_mass weight norm_weight fw_weight
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> 1     2          1          1         10.0   0.500       1         0.500
+#&gt; <span style='color: #BCBCBC;'>2</span> 1     2          1          2         10.0   0.500       1         0.500
+#&gt; <span style='color: #BCBCBC;'>3</span> 2     3          1          1          3.33  0.167       0.500     0.333
+#&gt; <span style='color: #BCBCBC;'>4</span> 2     3          1          3          3.33  0.167       0.500     0.333
+#&gt; <span style='color: #BCBCBC;'>5</span> 2     3          1          2          3.33  0.167       0.500     0.333
+#&gt; <span style='color: #BCBCBC;'>6</span> 2     3          2          1          3.33  0.167       0.500     0.333
+#&gt; # … with 34 more rows</div><div class='input'><span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
+</div><div class='img'><img src='align_topics-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>alignment</span>, color_by <span class='op'>=</span> <span class='st'>"refinement"</span><span class='op'>)</span>
+</div><div class='img'><img src='align_topics-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='va'>alignment</span> <span class='op'>&lt;-</span> <span class='fu'>align_topics</span><span class='op'>(</span><span class='va'>lda_models</span>, method <span class='op'>=</span> <span class='st'>"transport"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
+</div><div class='img'><img src='align_topics-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'><a href='plot_beta.html'>plot_beta</a></span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
+</div><div class='img'><img src='align_topics-4.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>align_topics</span><span class='op'>(</span><span class='va'>lda_models</span>, comparisons <span class='op'>=</span> <span class='st'>"all"</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; # An alignment: 5 models, 15 topics:
+#&gt; <span style='color: #949494;'># A tibble: 6 x 7</span>
+#&gt;   m     m_next k_LDA k_LDA_next document_mass weight norm_weight
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> 1     2          1          1         10.0   0.500       1    
+#&gt; <span style='color: #BCBCBC;'>2</span> 1     2          1          2         10.0   0.500       1    
+#&gt; <span style='color: #BCBCBC;'>3</span> 1     3          1          1          6.67  0.333       0.5  
+#&gt; <span style='color: #BCBCBC;'>4</span> 1     3          1          2          6.67  0.333       0.5  
+#&gt; <span style='color: #BCBCBC;'>5</span> 1     3          1          3          6.67  0.333       0.5  
+#&gt; <span style='color: #BCBCBC;'>6</span> 1     4          1          1          5.00  0.250       0.333
+#&gt; # … with 79 more rows</div><div class='input'>
+<span class='fu'><a href='https://rdrr.io/r/stats/weights.html'>weights</a></span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 40 x 8</span>
+#&gt;    m     m_next k_LDA k_LDA_next document_mass weight norm_weight fw_weight
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>      <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>         <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span> 1     2          1          1         10.0  0.500        1         0.500
+#&gt; <span style='color: #BCBCBC;'> 2</span> 1     2          1          2         10.0  0.500        1         0.500
+#&gt; <span style='color: #BCBCBC;'> 3</span> 2     3          1          1          4.02 0.201        0.603     0.402
+#&gt; <span style='color: #BCBCBC;'> 4</span> 2     3          1          3          2.61 0.130        0.391     0.261
+#&gt; <span style='color: #BCBCBC;'> 5</span> 2     3          1          2          3.38 0.169        0.507     0.338
+#&gt; <span style='color: #BCBCBC;'> 6</span> 2     3          2          1          2.65 0.132        0.397     0.265
+#&gt; <span style='color: #BCBCBC;'> 7</span> 2     3          2          3          4.06 0.203        0.609     0.406
+#&gt; <span style='color: #BCBCBC;'> 8</span> 2     3          2          2          3.29 0.164        0.493     0.329
+#&gt; <span style='color: #BCBCBC;'> 9</span> 3     4          1          1          2.67 0.134        0.535     0.401
+#&gt; <span style='color: #BCBCBC;'>10</span> 3     4          1          4          1.77 0.088<span style='text-decoration: underline;'>4</span>       0.354     0.265
+#&gt; <span style='color: #949494;'># … with 30 more rows</span></div><div class='input'><span class='fu'>models</span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; $`1`
+#&gt; $`1`$gamma
+#&gt;       [,1]
+#&gt;  [1,]    1
+#&gt;  [2,]    1
+#&gt;  [3,]    1
+#&gt;  [4,]    1
+#&gt;  [5,]    1
+#&gt;  [6,]    1
+#&gt;  [7,]    1
+#&gt;  [8,]    1
+#&gt;  [9,]    1
+#&gt; [10,]    1
+#&gt; [11,]    1
+#&gt; [12,]    1
+#&gt; [13,]    1
+#&gt; [14,]    1
+#&gt; [15,]    1
+#&gt; [16,]    1
+#&gt; [17,]    1
+#&gt; [18,]    1
+#&gt; [19,]    1
+#&gt; [20,]    1
+#&gt; 
+#&gt; $`1`$beta
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] -2.302585 -2.302585 -2.302585 -2.302585 -2.302585 -2.302585 -2.302585
+#&gt;           [,8]      [,9]     [,10]
+#&gt; [1,] -2.302585 -2.302585 -2.302585
+#&gt; 
+#&gt; 
+#&gt; $`2`
+#&gt; $`2`$gamma
+#&gt;            [,1]      [,2]
+#&gt;  [1,] 0.5003269 0.4996731
+#&gt;  [2,] 0.5003135 0.4996865
+#&gt;  [3,] 0.4999253 0.5000747
+#&gt;  [4,] 0.4974805 0.5025195
+#&gt;  [5,] 0.5014542 0.4985458
+#&gt;  [6,] 0.5019856 0.4980144
+#&gt;  [7,] 0.5037180 0.4962820
+#&gt;  [8,] 0.5016356 0.4983644
+#&gt;  [9,] 0.4938493 0.5061507
+#&gt; [10,] 0.4976158 0.5023842
+#&gt; [11,] 0.5020686 0.4979314
+#&gt; [12,] 0.4978190 0.5021810
+#&gt; [13,] 0.4991792 0.5008208
+#&gt; [14,] 0.5012828 0.4987172
+#&gt; [15,] 0.4966875 0.5033125
+#&gt; [16,] 0.4993982 0.5006018
+#&gt; [17,] 0.5008970 0.4991030
+#&gt; [18,] 0.5000613 0.4999387
+#&gt; [19,] 0.5032735 0.4967265
+#&gt; [20,] 0.5010125 0.4989875
+#&gt; 
+#&gt; $`2`$beta
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] -2.131958 -2.358895 -2.300274 -2.354847 -2.726616 -1.941845 -1.964927
+#&gt; [2,] -2.508222 -2.249327 -2.304899 -2.252965 -2.005992 -2.871708 -2.815546
+#&gt;           [,8]      [,9]     [,10]
+#&gt; [1,] -2.634814 -2.579452 -2.352428
+#&gt; [2,] -2.053845 -2.086172 -2.255153
+#&gt; 
+#&gt; 
+#&gt; $`3`
+#&gt; $`3`$gamma
+#&gt;            [,1]      [,2]      [,3]
+#&gt;  [1,] 0.3270454 0.3450129 0.3279417
+#&gt;  [2,] 0.3329323 0.3347065 0.3323612
+#&gt;  [3,] 0.3341666 0.3324938 0.3333395
+#&gt;  [4,] 0.3322814 0.3323364 0.3353822
+#&gt;  [5,] 0.3337882 0.3333313 0.3328805
+#&gt;  [6,] 0.3345213 0.3326808 0.3327979
+#&gt;  [7,] 0.3327742 0.3382051 0.3290207
+#&gt;  [8,] 0.3353288 0.3302728 0.3343984
+#&gt;  [9,] 0.3302293 0.3353779 0.3343928
+#&gt; [10,] 0.3348242 0.3271260 0.3380499
+#&gt; [11,] 0.3359528 0.3292745 0.3347727
+#&gt; [12,] 0.3317388 0.3350878 0.3331734
+#&gt; [13,] 0.3332628 0.3325523 0.3341850
+#&gt; [14,] 0.3331807 0.3349863 0.3318330
+#&gt; [15,] 0.3326484 0.3314883 0.3358632
+#&gt; [16,] 0.3323477 0.3357340 0.3319183
+#&gt; [17,] 0.3349163 0.3319174 0.3331663
+#&gt; [18,] 0.3318861 0.3354779 0.3326360
+#&gt; [19,] 0.3341853 0.3343919 0.3314228
+#&gt; [20,] 0.3384405 0.3246051 0.3369544
+#&gt; 
+#&gt; $`3`$beta
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] -1.901545 -2.522420 -1.941948 -2.073159 -2.796098 -1.930055 -2.626156
+#&gt; [2,] -2.970360 -2.038038 -4.318412 -3.348310 -2.186731 -2.308346 -1.629439
+#&gt; [3,] -2.308209 -2.414365 -1.942697 -1.972506 -2.066526 -2.891682 -3.455939
+#&gt;           [,8]      [,9]     [,10]
+#&gt; [1,] -3.294215 -2.509934 -2.260771
+#&gt; [2,] -1.620552 -2.458059 -2.540491
+#&gt; [3,] -2.732934 -2.016595 -2.146345
+#&gt; 
+#&gt; 
+#&gt; $`4`
+#&gt; $`4`$gamma
+#&gt;            [,1]      [,2]      [,3]      [,4]
+#&gt;  [1,] 0.2456764 0.2510420 0.2461098 0.2571717
+#&gt;  [2,] 0.2502554 0.2485240 0.2498617 0.2513589
+#&gt;  [3,] 0.2504561 0.2503654 0.2499451 0.2492334
+#&gt;  [4,] 0.2492425 0.2503030 0.2511639 0.2492906
+#&gt;  [5,] 0.2500540 0.2504179 0.2495210 0.2500072
+#&gt;  [6,] 0.2500860 0.2524922 0.2489982 0.2484236
+#&gt;  [7,] 0.2497955 0.2492492 0.2475366 0.2534188
+#&gt;  [8,] 0.2511528 0.2497765 0.2507372 0.2483335
+#&gt;  [9,] 0.2482470 0.2488825 0.2507876 0.2520830
+#&gt; [10,] 0.2512229 0.2490959 0.2532408 0.2464404
+#&gt; [11,] 0.2516246 0.2499240 0.2509000 0.2475514
+#&gt; [12,] 0.2493387 0.2485552 0.2503953 0.2517108
+#&gt; [13,] 0.2497533 0.2505972 0.2503412 0.2493083
+#&gt; [14,] 0.2501271 0.2494071 0.2493266 0.2511392
+#&gt; [15,] 0.2494682 0.2510713 0.2513522 0.2481084
+#&gt; [16,] 0.2490377 0.2505695 0.2488397 0.2515532
+#&gt; [17,] 0.2508422 0.2504633 0.2497992 0.2488952
+#&gt; [18,] 0.2486632 0.2511801 0.2490888 0.2510678
+#&gt; [19,] 0.2504770 0.2509021 0.2485379 0.2500831
+#&gt; [20,] 0.2544356 0.2470569 0.2534880 0.2450195
+#&gt; 
+#&gt; $`4`$beta
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] -1.763290 -2.944228 -2.012293 -1.910008 -2.847080 -1.950195 -2.582730
+#&gt; [2,] -2.821157 -1.607197 -2.133656 -3.043107 -2.163141 -2.230054 -2.585981
+#&gt; [3,] -2.176140 -2.840270 -1.996445 -1.799513 -2.101985 -2.914658 -3.420377
+#&gt; [4,] -2.891174 -2.423995 -4.412096 -3.248639 -2.255771 -2.342887 -1.530705
+#&gt;           [,8]      [,9]     [,10]
+#&gt; [1,] -3.257906 -2.477163 -2.345081
+#&gt; [2,] -2.736005 -2.446214 -2.082117
+#&gt; [3,] -2.676107 -1.960040 -2.224744
+#&gt; [4,] -1.479264 -2.424571 -2.639206
+#&gt; 
+#&gt; 
+#&gt; $`5`
+#&gt; $`5`$gamma
+#&gt;            [,1]      [,2]      [,3]      [,4]      [,5]
+#&gt;  [1,] 0.1967365 0.2015594 0.1967621 0.2007281 0.2042140
+#&gt;  [2,] 0.2000854 0.2007400 0.1997141 0.1987196 0.2007409
+#&gt;  [3,] 0.2000959 0.2011030 0.1997646 0.1999977 0.1990388
+#&gt;  [4,] 0.1997789 0.1987012 0.2011664 0.2005440 0.1998095
+#&gt;  [5,] 0.1998891 0.1996312 0.1996311 0.2003068 0.2005418
+#&gt;  [6,] 0.2000928 0.1980686 0.1995441 0.2022172 0.2000774
+#&gt;  [7,] 0.1995865 0.2017014 0.1979694 0.1991807 0.2015621
+#&gt;  [8,] 0.2008549 0.1989948 0.2007633 0.1999382 0.1994488
+#&gt;  [9,] 0.1983655 0.2052060 0.1995872 0.1984161 0.1984252
+#&gt; [10,] 0.2012611 0.1978738 0.2027794 0.1995673 0.1985185
+#&gt; [11,] 0.2013675 0.1977574 0.2009932 0.2002407 0.1996412
+#&gt; [12,] 0.1992832 0.2027015 0.1999276 0.1984858 0.1996019
+#&gt; [13,] 0.1997849 0.1992846 0.2003339 0.2005719 0.2000247
+#&gt; [14,] 0.2000801 0.2003741 0.1995033 0.1995050 0.2005376
+#&gt; [15,] 0.1996533 0.1983681 0.2011660 0.2009838 0.1998287
+#&gt; [16,] 0.1988699 0.2032352 0.1985737 0.1999403 0.1993809
+#&gt; [17,] 0.2004567 0.2006540 0.1997930 0.2002151 0.1988812
+#&gt; [18,] 0.1989956 0.2000949 0.1992203 0.2008816 0.2008076
+#&gt; [19,] 0.2006054 0.1973002 0.1992719 0.2011890 0.2016335
+#&gt; [20,] 0.2041765 0.1967018 0.2035840 0.1983071 0.1972306
+#&gt; 
+#&gt; $`5`$beta
+#&gt;           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]
+#&gt; [1,] -1.675672 -2.918823 -2.030783 -1.762641 -2.924967 -2.099124 -2.616875
+#&gt; [2,] -2.861626 -2.831998 -2.263726 -3.516190 -2.274182 -1.991716 -2.735716
+#&gt; [3,] -2.090937 -2.822317 -2.004924 -1.637005 -2.158526 -3.052117 -3.463148
+#&gt; [4,] -2.749745 -1.510576 -2.148199 -2.918837 -2.197089 -2.338538 -2.562964
+#&gt; [5,] -2.687997 -2.235784 -4.315320 -2.997329 -2.146958 -2.329647 -1.371090
+#&gt;           [,8]      [,9]     [,10]
+#&gt; [1,] -4.075213 -2.456993 -2.262836
+#&gt; [2,] -1.121015 -2.527965 -3.211531
+#&gt; [3,] -3.530882 -1.932672 -2.123574
+#&gt; [4,] -3.534135 -2.416466 -1.955518
+#&gt; [5,] -2.313830 -2.298357 -2.359289
+#&gt; 
+#&gt; </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">

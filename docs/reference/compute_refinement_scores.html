@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot Topics Heatmap — plot_beta • alto</title>
+<title>Computes the refinement score of each topic in each model — compute_refinement_scores • alto</title>
 
 
 <!-- jquery -->
@@ -39,18 +39,12 @@
 
 
 
-<meta property="og:title" content="Plot Topics Heatmap — plot_beta" />
-<meta property="og:description" content="This function plots the \(\beta_{kd}^{m}\) topic parameters across models
-\(m\), topics \(k\), and dimensions \(d\). It takes as input a raw
-alignment object and then returns a heatmap from the superheatmap package.
-The shade of each cell corresponds to the value \(\beta_{kd}^m\) for the
-model in panel \(m\), topic in row \(k\), and dimension in column
-\(d\). The plot can be restricted to only a subset of models by using the
-models argument, which may be either a vector of model names or
-numeric indices into the list of models. The dimensions can be filtered by
-using the n_features or min_beta arguments -- by default, only
-dimensions with at least one topic satisfying \(\beta_{kd}^m &amp;gt; 0.025\) are
-displayed." />
+<meta property="og:title" content="Computes the refinement score of each topic in each model — compute_refinement_scores" />
+<meta property="og:description" content="This function computes a refinement score for each topic in an alignment. The
+refinement score is defined recursively from the leaves. All leaves are given
+scores of 1. To find the score of an intermediate node, a weighted average is
+taken of the refinement scores for all descendant nodes, with weights coming
+from the normalized alignment weights." />
 
 
 
@@ -137,53 +131,38 @@ displayed." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot Topics Heatmap</h1>
+    <h1>Computes the refinement score of each topic in each model</h1>
     
-    <div class="hidden name"><code>plot_beta.Rd</code></div>
+    <div class="hidden name"><code>compute_refinement_scores.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function plots the \(\beta_{kd}^{m}\) topic parameters across models
-\(m\), topics \(k\), and dimensions \(d\). It takes as input a raw
-alignment object and then returns a heatmap from the superheatmap package.
-The shade of each cell corresponds to the value \(\beta_{kd}^m\) for the
-model in panel \(m\), topic in row \(k\), and dimension in column
-\(d\). The plot can be restricted to only a subset of models by using the
-<code>models</code> argument, which may be either a vector of model names or
-numeric indices into the list of models. The dimensions can be filtered by
-using the <code>n_features</code> or <code>min_beta</code> arguments -- by default, only
-dimensions with at least one topic satisfying \(\beta_{kd}^m &gt; 0.025\) are
-displayed.</p>
+    <p>This function computes a refinement score for each topic in an alignment. The
+refinement score is defined recursively from the leaves. All leaves are given
+scores of 1. To find the score of an intermediate node, a weighted average is
+taken of the refinement scores for all descendant nodes, with weights coming
+from the normalized alignment weights.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>x</span>, models <span class='op'>=</span> <span class='st'>"all"</span>, min_beta <span class='op'>=</span> <span class='fl'>0.025</span>, n_features <span class='op'>=</span> <span class='cn'>NULL</span>, <span class='va'>...</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>compute_refinement_scores</span><span class='op'>(</span><span class='va'>weights</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>models</th>
-      <td><p>Which models to display in the heatmap? Defaults to
-<code>"all"</code>, meaning that all models are shown. If given <code>"last"</code>, only
-the last model in the models list will be plotted. If given a vector of
-characters, it will plot only models whose names in the original models list
-match. Similarly, if given a list of integers, only the models lying at those
-indices in the original model list will be visualized.</p></td>
-    </tr>
-    <tr>
-      <th>min_beta</th>
-      <td><p>(optional, default = 0.025) if <code>add_leaves</code> is
-<code>TRUE</code>, this option specifies the minimum beta value (i.e. proportion in
-topic) for a feature to be displayed in the leaves.</p></td>
-    </tr>
-    <tr>
-      <th>n_features</th>
-      <td><p>(optional) alternative to <code>min_beta</code>. if
-<code>add_leaves</code> is <code>TRUE</code>, this option specifies the minimum beta
-value (i.e. proportion in topic) for a feature to be displayed in the leaves.</p></td>
+      <th>weights</th>
+      <td><p>(required) <code>data.frame</code> with the alignment weights
+(the @weight field from an <code>alignment</code> object)</p></td>
     </tr>
     </table>
 
+    <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
+
+    <p>a <code>data.frame</code>
+with the refinement score of each topic in each model.</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>align_topics align_branches</p></div>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://purrr.tidyverse.org'>purrr</a></span><span class='op'>)</span>
@@ -191,11 +170,25 @@ value (i.e. proportion in topic) for a feature to be displayed in the leaves.</p
 <span class='va'>lda_params</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span><span class='op'>(</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='va'>.</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>lda_models</span> <span class='op'>&lt;-</span> <span class='fu'><a href='run_lda_models.html'>run_lda_models</a></span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>lda_params</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'><span class='va'>alignment</span> <span class='op'>&lt;-</span> <span class='fu'><a href='align_topics.html'>align_topics</a></span><span class='op'>(</span><span class='va'>lda_models</span><span class='op'>)</span>
-<span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
-</div><div class='img'><img src='plot_beta-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>alignment</span>, min_beta <span class='op'>=</span> <span class='fl'>0</span><span class='op'>)</span>
-</div><div class='img'><img src='plot_beta-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>alignment</span>, models <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='img'><img src='plot_beta-3.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>alignment</span>, models <span class='op'>=</span> <span class='st'>"last"</span><span class='op'>)</span>
-</div><div class='img'><img src='plot_beta-4.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>compute_refinement_scores</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/weights.html'>weights</a></span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 15 x 3</span>
+#&gt;    m     k_LDA refinement_score
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>            <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span> 1         1           0.041<span style='text-decoration: underline;'>7</span>
+#&gt; <span style='color: #BCBCBC;'> 2</span> 2         1           0.041<span style='text-decoration: underline;'>7</span>
+#&gt; <span style='color: #BCBCBC;'> 3</span> 2         2           0.041<span style='text-decoration: underline;'>7</span>
+#&gt; <span style='color: #BCBCBC;'> 4</span> 3         1           0.083<span style='text-decoration: underline;'>3</span>
+#&gt; <span style='color: #BCBCBC;'> 5</span> 3         2           0.083<span style='text-decoration: underline;'>3</span>
+#&gt; <span style='color: #BCBCBC;'> 6</span> 3         3           0.083<span style='text-decoration: underline;'>3</span>
+#&gt; <span style='color: #BCBCBC;'> 7</span> 4         1           0.250 
+#&gt; <span style='color: #BCBCBC;'> 8</span> 4         2           0.250 
+#&gt; <span style='color: #BCBCBC;'> 9</span> 4         3           0.250 
+#&gt; <span style='color: #BCBCBC;'>10</span> 4         4           0.250 
+#&gt; <span style='color: #BCBCBC;'>11</span> 5         1           1     
+#&gt; <span style='color: #BCBCBC;'>12</span> 5         2           1     
+#&gt; <span style='color: #BCBCBC;'>13</span> 5         3           1     
+#&gt; <span style='color: #BCBCBC;'>14</span> 5         4           1     
+#&gt; <span style='color: #BCBCBC;'>15</span> 5         5           1     </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
