@@ -32,7 +32,9 @@ Imports:
     topicmodels
 Suggests:
     rmarkdown,
-    knitr
+    knitr,
+    testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Depends:
     R (>= 3.6)
+Config/testthat/edition: 3
