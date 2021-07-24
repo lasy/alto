@@ -66,12 +66,12 @@ align_topics <- function(
   )
   # 3. reorder the topics, if k's are sequenced
   if (comparisons == "consecutive") {
-    ordered <- reorder_topics(weights, models)
-  } else {
-    ordered <- list(weights = weights, models = models)
+    #perms <- topic_ordering(weights)
+    #weights <- reorder_weights(weights, perms)
+    #models <- reorder_models(models, perms)
   }
 
-  new("alignment", weights = ordered$weights, models = ordered$models)
+  new("alignment", weights = weights, models = models)
 }
 
 #' Edgelists for Default Alignment
@@ -260,18 +260,20 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
 }
 
 #' @importFrom dplyr group_by bind_rows summarize mutate ungroup arrange across
+#' everything
 #' @importFrom magrittr %>%
 postprocess_weights <- function(weights, n_docs, m_levels) {
   bind_rows(weights) %>%
-    group_by(m, m_next, k_LDA, k_LDA_next) %>%
-    summarize(document_mass = sum(weight), .groups = "drop") %>%
-    mutate(weight = document_mass / n_docs) %>%
+    mutate(document_mass = weight, weight = document_mass / n_docs) %>%
     group_by(m_next, k_LDA_next) %>%
     mutate(norm_weight = weight / sum(weight)) %>%
     ungroup() %>%
-    mutate(across(c("m", "m_next"), factor, levels = m_levels)) %>%
-    mutate(across(c("k_LDA", "k_LDA_next"), as.integer)) %>%
-    arrange(m)
+    mutate(
+      across(c("m", "m_next"), factor, levels = m_levels),
+      across(c("k_LDA", "k_LDA_next"), as.integer)
+    ) %>%
+    arrange(m) %>%
+    select(m, m_next, k_LDA, k_LDA_next, everything())
 }
 
 ################################################################################

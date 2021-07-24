@@ -78,7 +78,7 @@ plot_alignment <- function(
 
 .add_topic_col <- function(x, weights, color_by){
 
-  if (color_by == "topic"){
+  if (color_by == "topic") {
     x <- x %>% mutate(topic_col = factor(k_LDA))
   }
   if (color_by == "branch"){
@@ -92,7 +92,6 @@ plot_alignment <- function(
                  levels = branches$branch %>% unique() %>% sort())
       ) %>%
       arrange(m, k_LDA)
-
 
   }
   if (color_by == "refinement") {
@@ -158,7 +157,7 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
     mutate(
       ymax = k_LDA_next / (max(k_LDA_next + 1)) + cumsum(weight),
       ymin = ymax - weight,
-      id = str_c(m, m_next,"_", k_LDA, "-",k_LDA_next),
+      id = str_c(m, m_next, "_", k_LDA, "-", k_LDA_next),
       m_num = match(m_next, levels(m_next)) + rect_gap
     )
 }
@@ -168,7 +167,7 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 topic_layout <- function(weights) {
   weights %>%
     group_by(m, k_LDA) %>%
-    summarise(topic_weight = sum(weight)) %>%
+    summarise(topic_weight = sum(weight), .groups = "rowwise") %>%
     group_by(m) %>%
     mutate(
       m_num = match(m, levels(m)),
