@@ -2,7 +2,6 @@ library(alto)
 library(MCMCpack)
 library(purrr)
 library(dplyr)
-set.seed(1234)
 
 simulate_lda <- function(betas, gammas, n0=NULL, lambda=1e4) {
   n <- nrow(gammas)
@@ -45,7 +44,7 @@ test_that(
         k_LDA == max_s[1],
         k_LDA_next == max_s[2]
       )
-    expect_gt(weight$norm_weight[1], 0.8)
+    expect_gt(weight$norm_weight[1], 0.7)
   }
 })
 
