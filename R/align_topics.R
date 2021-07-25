@@ -64,11 +64,17 @@ align_topics <- function(
     map(models, ~ exp(.$beta)),
     weight_fun, ...
   )
+
   # 3. reorder the topics, if k's are sequenced
   if (comparisons == "consecutive") {
-    #perms <- topic_ordering(weights)
-    #weights <- reorder_weights(weights, perms)
-    #models <- reorder_models(models, perms)
+    weights <- weights %>%
+      forward_ordering() %>%
+      backward_ordering() %>%
+      ungroup()
+
+    perms <- topic_ordering(weights)
+    models <- reorder_models(models, perms)
+    weights <- select(weights, -k_LDA_init)
   }
 
   new("alignment", weights = weights, models = models)
@@ -271,6 +277,11 @@ postprocess_weights <- function(weights, n_docs, m_levels) {
     mutate(
       across(c("m", "m_next"), factor, levels = m_levels),
       across(c("k_LDA", "k_LDA_next"), as.integer)
+    ) %>%
+    group_by(m, k_LDA) %>%
+    mutate(
+      k_LDA_init = k_LDA_next,
+      fw_weight = weight / sum(weight)
     ) %>%
     arrange(m) %>%
     select(m, m_next, k_LDA, k_LDA_next, everything())

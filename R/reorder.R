@@ -1,48 +1,19 @@
 #' @importFrom dplyr group_by ungroup mutate select rename filter bind_rows
 topic_ordering <- function(weights) {
-  weights <- weights %>%
-    group_by(m, k_LDA) %>%
-    mutate(
-      k_LDA_init = k_LDA_next,
-      fw_weight = weight / sum(weight)
-    ) %>%
-    ungroup()
-
-  weights_bw <- weights %>%
-    forward_ordering() %>%
-    backward_ordering()
-
-  permuted <- weights_bw %>%
+  permuted <- weights %>%
     select(m_next, k_LDA_init, k_LDA_next) %>%
     rename(k_LDA = k_LDA_next, m = m_next)
 
-  root <- weights_bw %>%
-    filter(!(m %in% weights_bw$m_next)) %>%
+  root <- weights %>%
+    filter(!(m %in% weights$m_next)) %>%
     select(m, k_LDA) %>%
     mutate(k_LDA_init = k_LDA)
 
-  unique(bind_rows(root, permuted))
-}
-
-#' @importFrom magrittr %>%
-#' @importFrom dplyr left_join select rename
-reorder_weights <- function(weights, perms) {
-  weights %>%
-    # reorder the k_LDA's
-    left_join(
-      perms %>% rename(k_LDA_final = k_LDA),
-      by = c("k_LDA" = "k_LDA_init", "m" = "m")
-    ) %>%
-    select(-k_LDA) %>%
-    rename(k_LDA = k_LDA_final) %>%
-    # reorder the k_LDA_next's
-    left_join(
-      perms %>% rename(k_LDA_next_final = k_LDA),
-      by = c("k_LDA_next" = "k_LDA_init", "m_next" = "m")
-    ) %>%
-    select(-k_LDA_next) %>%
-    rename(k_LDA_next = k_LDA_next_final) %>%
-    select(m, m_next, k_LDA, k_LDA_next, everything())
+  bind_rows(root, permuted) %>%
+    distinct() %>%
+    arrange(m, k_LDA) %>%
+    split(.$m) %>%
+    map(~ pull(., k_LDA_init))
 }
 
 #' @importFrom magrittr %>%
@@ -51,15 +22,11 @@ reorder_models <- function(models, perms) {
   result <- list()
   for (i in seq_along(models)) {
     m_ <- names(models)[i]
-    pi <- perms %>%
-      filter(m == m_) %>%
-      arrange(k_LDA_init) %>%
-      pull(k_LDA)
-
-     result[[m_]] <- list(
-       beta = models[[m_]]$beta[pi, , drop = F],
-       gamma = models[[m_]]$gamma[, pi, drop = F]
-     )
+    pi <- perms[[m_]]
+    result[[m_]] <- list(
+      beta = models[[m_]]$beta[pi, , drop = F],
+      gamma = models[[m_]]$gamma[, pi, drop = F]
+    )
   }
 
   result
