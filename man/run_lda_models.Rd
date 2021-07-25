@@ -9,34 +9,32 @@ run_lda_models(
   lda_varying_params_lists,
   lda_fixed_params_list = list(),
   dir = NULL,
-  reset = FALSE,
-  verbose = FALSE
+  reset = FALSE
 )
 }
 \arguments{
 \item{data}{(required) a \code{matrix}, \code{data.frame} or
-\code{slam::simple_triplet_matrix} containing the counts (integers)
-of each feature (e.g. words) and each sample (or document).
-If data is provided as \code{matrix} or \code{data.frame},
-each row is a sample, each column is a feature.}
+\code{slam::simple_triplet_matrix} containing the counts (integers) of each
+feature (e.g. words) and each sample (or document). If data is provided as
+\code{matrix} or \code{data.frame}, each row is a sample, each column is a
+feature.}
 
-\item{lda_varying_params_lists}{(required) a \code{list}
-specifying the parameter for each models that needs to be ran.
-Currently, supported parameters are "k" (the number of topic),
-"method" ("VEM" or "Gibbs"), and "control", a list of type \code{LDAcontrol}.
-See \code{topicmodels::LDA} for details and below for examples.}
+\item{lda_varying_params_lists}{(required) a \code{list} specifying the
+parameter for each models that needs to be ran. Currently, supported
+parameters are "k" (the number of topic), "method" ("VEM" or "Gibbs"), and
+"control", a list of type \code{LDAcontrol}. See \code{topicmodels::LDA} for
+details and below for examples.}
 
-\item{lda_fixed_params_list}{(optional) a \code{list}
-specifying the parameters common to all models to be fitted.
-Values provided by \code{lda_fixed_params_list} are overwritten
-by those provided by \code{lda_varying_params_lists}.}
+\item{lda_fixed_params_list}{(optional) a \code{list} specifying the
+parameters common to all models to be fitted. Values provided by
+\code{lda_fixed_params_list} are overwritten by those provided by
+\code{lda_varying_params_lists}.}
 
-\item{dir}{(optional) a \code{character} specifying the directory
-in which individual LDA models should be stored.
-If not specified, individual LDA models are not stored.
-This option is especially useful for data exploration
-as it allows to save execution time if one wishes to add models
-to an existing model list. (see examples)}
+\item{dir}{(optional) a \code{character} specifying the directory in which
+individual LDA models should be stored. If not specified, individual LDA
+models are not stored. This option is especially useful for data exploration
+as it allows to save execution time if one wishes to add models to an
+existing model list. (see examples)}
 
 \item{reset}{(optional, default = \code{FALSE})}
 }
@@ -47,7 +45,10 @@ a list of LDA models (see package \code{topicmodels}).
 2. some metadata about the alignement
 }
 \description{
-[Description]
+This function fits a collection of lda models to a dataset, fitting one model
+for each hyperparameter setting specified by the
+\code{lda_varying_params_list} argument. Its output can be directly used by
+\code{align_topics}.
 }
 \examples{
 set.seed(1)

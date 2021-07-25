@@ -11,11 +11,24 @@ compute_stability_along_branches(weights)
 (the @weight field from an \code{alignment} object)}
 }
 \value{
-a \code{data.frame}
-with the stability score of each branch along k's.
+a \code{data.frame} with the stability score of each branch along
+k's.
 }
 \description{
-[Description]
+Stability is defined as the product of weights along a branch. Therefore, if
+weights are concentrated on specific descendants, then a branch is stable.
+This metric is useful for identifying topics that are recovered in models
+across a range of values of K (they are "stable" to changes in the K
+parameter).
+}
+\examples{
+library(purrr)
+data <- rmultinom(10, 20, rep(0.1, 20))
+lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
+lda_models <- run_lda_models(data, lda_params)
+alignment <- align_topics(lda_models)
+compute_stability_along_branches(weights(alignment))
+
 }
 \seealso{
 align_topics align_branches

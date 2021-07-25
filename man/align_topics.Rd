@@ -4,33 +4,53 @@
 \alias{align_topics}
 \title{Align topics from distinct LDA models}
 \usage{
-align_topics(
-  models,
-  comparisons = "consecutive",
-  method = "product",
-  order_constrain = NULL,
-  perm_search = 2,
-  order_version = "kris",
-  ...
-)
+align_topics(models, comparisons = "consecutive", method = "product", ...)
 }
 \arguments{
-\item{models}{(required) a \code{lda_models} object. See
+\item{models}{(required) a list of LDA models object. Each list component
+must be a list with two named entries, $gamma (containing mixed memberships)
+and $beta (containing topic parameters in log sapce). See
 \code{run_lda_models} for details.}
 
 \item{comparisons}{(optional) either a character indicating if topics
 should be aligned between \code{consecutive} or \code{all} models, or a
-list of model pairs between which topics should be aligned.}
-
-\item{perm_search}{(optional) How large should the search be for topic
-reordering?}
+\code{data.frame} containing the pairs of models within which topics should
+be aligned. See the \code{setup_edges} function for examples of custom
+topic comparison by passing in an edgelist.}
 }
 \value{
-a \code{data.frame} (? or some specific object) providing the weights
-  between every pair of topics of each model pairs in the input edgelist
-  (\code{comparisons}). ? Do we also return the lda_models with ordered
-  topics?
+An object of class \code{alignment} providing the weights between
+every pair of topics of each model pairs in the input edgelist
+(\code{comparisons}).
 }
 \description{
-[Description]
+This function takes a list of LDA models and returns an object of class
+\code{alignment}. Each element in the models list must be itself a named
+list, corresponding to the mixed memberships (\code{$gamma}) and topics
+(\code{$beta}). The resulting alignment object can be plotted using `plot`
+and its weights can be extracted using the `weights` accessor function. See
+the documentation for class \code{alignment} for further details.
+}
+\examples{
+library(purrr)
+data <- rmultinom(10, 20, rep(0.1, 20))
+lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
+lda_models <- run_lda_models(data, lda_params)
+
+alignment <- align_topics(lda_models)
+alignment
+plot(alignment)
+
+plot(alignment, color_by = "refinement")
+alignment <- align_topics(lda_models, method = "transport")
+plot(alignment)
+plot_beta(alignment)
+
+align_topics(lda_models, comparisons = "all")
+
+weights(alignment)
+models(alignment)
+}
+\seealso{
+alignment
 }

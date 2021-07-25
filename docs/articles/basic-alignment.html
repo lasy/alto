@@ -81,7 +81,7 @@
 
       
 
-      </header><script src="basic-alignment_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="basic-alignment_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>basic-alignment</h1>
@@ -98,131 +98,109 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'alto'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     weights</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org">stringr</a></span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/Random.html">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></code></pre></div>
 <p>First fit 10 models to toy data.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">data</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/Multinom.html">rmultinom</a></span><span class="op">(</span><span class="fl">20</span>, <span class="fl">5000</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="fl">0.1</span>, <span class="fl">500</span><span class="op">)</span><span class="op">)</span>
-<span class="va">lda_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html">lapply</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="kw">function</span><span class="op">(</span><span class="va">z</span><span class="op">)</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">z</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">lda_params</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span><span class="op">(</span><span class="st">"K"</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
+<span class="va">lda_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">10</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>, <span class="fl">1</span><span class="op">:</span><span class="fl">10</span><span class="op">)</span>
 <span class="va">lda_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_lda_models.html">run_lda_models</a></span><span class="op">(</span>data <span class="op">=</span> <span class="va">data</span>, lda_varying_params_lists <span class="op">=</span> <span class="va">lda_params</span><span class="op">)</span>
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span></code></pre></div>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></code></pre></div>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="st">"consecutive"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~class(.) == "list")): coercing argument of</span>
-<span class="co">#&gt; type 'list' to logical</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~all(names(.) %in% c("gamma", "beta")))):</span>
-<span class="co">#&gt; coercing argument of type 'list' to logical</span>
+<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span><span class="op">)</span>
 <span class="va">result</span>
 <span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
-<span class="co">#&gt; # A tibble: 6 x 7</span>
-<span class="co">#&gt;   m     m_next k_LDA k_LDA_next document_mass weight norm_weight</span>
-<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;      &lt;int&gt;         &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 K1    K2         1          2         250.   0.500       1    </span>
-<span class="co">#&gt; 2 K1    K2         1          1         250.   0.500       1    </span>
-<span class="co">#&gt; 3 K2    K3         2          3          83.3  0.167       0.500</span>
-<span class="co">#&gt; 4 K2    K3         2          1          83.3  0.167       0.500</span>
-<span class="co">#&gt; 5 K2    K3         2          2          83.3  0.167       0.500</span>
-<span class="co">#&gt; 6 K2    K3         1          3          83.3  0.167       0.500</span>
+<span class="co">#&gt; # A tibble: 6 x 8</span>
+<span class="co">#&gt;   m     m_next k_LDA k_LDA_next document_mass weight norm_weight fw_weight</span>
+<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;      &lt;int&gt;         &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 1     2          1          1         250.   0.500       1         0.500</span>
+<span class="co">#&gt; 2 1     2          1          2         250.   0.500       1         0.500</span>
+<span class="co">#&gt; 3 2     3          1          1          83.3  0.167       0.500     0.333</span>
+<span class="co">#&gt; 4 2     3          1          3          83.3  0.167       0.500     0.333</span>
+<span class="co">#&gt; 5 2     3          1          2          83.3  0.167       0.500     0.333</span>
+<span class="co">#&gt; 6 2     3          2          1          83.3  0.167       0.500     0.333</span>
 <span class="co">#&gt; # … with 324 more rows</span>
 <span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></code></pre></div>
 <p><img src="basic-alignment_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></code></pre></div>
 <p><img src="basic-alignment_files/figure-html/unnamed-chunk-3-2.png" width="700"></p>
-<p>Some more variants of <code>plot_beta</code>.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"all"</span>, n_features <span class="op">=</span> <span class="fl">20</span>, bottom.label.text.size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span></code></pre></div>
-<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<code class="sourceCode R"><span class="fu"><a href="../reference/compute_refinement_scores.html">compute_refinement_scores</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/stats/weights.html">weights</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span><span class="op">)</span>
+<span class="co">#&gt; # A tibble: 55 x 3</span>
+<span class="co">#&gt;    m     k_LDA refinement_score</span>
+<span class="co">#&gt;    &lt;fct&gt; &lt;int&gt;            &lt;dbl&gt;</span>
+<span class="co">#&gt;  1 1         1       0.00000276</span>
+<span class="co">#&gt;  2 2         1       0.00000276</span>
+<span class="co">#&gt;  3 2         2       0.00000276</span>
+<span class="co">#&gt;  4 3         1       0.00000551</span>
+<span class="co">#&gt;  5 3         2       0.00000551</span>
+<span class="co">#&gt;  6 3         3       0.00000551</span>
+<span class="co">#&gt;  7 4         1       0.0000165 </span>
+<span class="co">#&gt;  8 4         2       0.0000165 </span>
+<span class="co">#&gt;  9 4         3       0.0000165 </span>
+<span class="co">#&gt; 10 4         4       0.0000165 </span>
+<span class="co">#&gt; # … with 45 more rows</span></code></pre></div>
+<p>Some more variants of <code>plot_beta</code>.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span>, n_features <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt; Warning in if (subset == "last") {: the condition has length &gt; 1 and only the</span>
-<span class="co">#&gt; first element will be used</span>
-<span class="co">#&gt; Warning in if (!(subset == "all") &amp; (is.vector(subset))) {: the condition has</span>
-<span class="co">#&gt; length &gt; 1 and only the first element will be used</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span></code></pre></div>
-<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-2.png" width="700"></p>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"all"</span>, n_features <span class="op">=</span> <span class="fl">20</span>, bottom.label.text.size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></code></pre></div>
+<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"K2"</span>, <span class="st">"K5"</span>, <span class="st">"K10"</span><span class="op">)</span>, n_features <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt; Warning in if (subset == "last") {: the condition has length &gt; 1 and only the</span>
-<span class="co">#&gt; first element will be used</span>
-
-<span class="co">#&gt; Warning in if (subset == "last") {: the condition has length &gt; 1 and only the</span>
-<span class="co">#&gt; first element will be used</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span></code></pre></div>
-<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-3.png" width="700"></p>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">3</span>, <span class="fl">5</span><span class="op">)</span>, n_features <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
+<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-2.png" width="700"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"last"</span>, n_features <span class="op">=</span> <span class="fl">10</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span></code></pre></div>
-<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-4.png" width="700"></p>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"2"</span>, <span class="st">"5"</span>, <span class="st">"10"</span><span class="op">)</span>, n_features <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
+<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-3.png" width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="st">"all"</span><span class="op">)</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~class(.) == "list")): coercing argument of</span>
-<span class="co">#&gt; type 'list' to logical</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~all(names(.) %in% c("gamma", "beta")))):</span>
-<span class="co">#&gt; coercing argument of type 'list' to logical</span>
-<span class="co">#&gt; Warning: The `x` argument of `as_tibble.matrix()` must have unique column names if `.name_repair` is omitted as of tibble 2.0.0.</span>
-<span class="co">#&gt; Using compatibility `.name_repair`.</span>
-<span class="va">result</span>
-<span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
-<span class="co">#&gt; # A tibble: 6 x 7</span>
-<span class="co">#&gt;   m     m_next k_LDA k_LDA_next document_mass weight norm_weight</span>
-<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;      &lt;int&gt;         &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 K1    K10        1          1          50.0  0.100       0.111</span>
-<span class="co">#&gt; 2 K1    K10        1         10          50.0  0.100       0.111</span>
-<span class="co">#&gt; 3 K1    K10        1          2          50.0  0.100       0.111</span>
-<span class="co">#&gt; 4 K1    K10        1          3          50.0  0.100       0.111</span>
-<span class="co">#&gt; 5 K1    K10        1          4          50.0  0.100       0.111</span>
-<span class="co">#&gt; 6 K1    K10        1          5          50.0  0.100       0.111</span>
-<span class="co">#&gt; # … with 1314 more rows</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span>, <span class="st">"last"</span>, n_features <span class="op">=</span> <span class="fl">10</span><span class="op">)</span></code></pre></div>
+<p><img src="basic-alignment_files/figure-html/unnamed-chunk-4-4.png" width="700"></p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="st">"consecutive"</span>, method <span class="op">=</span> <span class="st">"transport"</span>, top_n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~class(.) == "list")): coercing argument of</span>
-<span class="co">#&gt; type 'list' to logical</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~all(names(.) %in% c("gamma", "beta")))):</span>
-<span class="co">#&gt; coercing argument of type 'list' to logical</span>
+<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="st">"all"</span><span class="op">)</span>
 <span class="va">result</span>
 <span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
 <span class="co">#&gt; # A tibble: 6 x 7</span>
 <span class="co">#&gt;   m     m_next k_LDA k_LDA_next document_mass weight norm_weight</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;      &lt;int&gt;         &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 K1    K2         1          2         250.  0.500        1    </span>
-<span class="co">#&gt; 2 K1    K2         1          1         250.  0.500        1    </span>
-<span class="co">#&gt; 3 K2    K3         2          1          26.9 0.0537       0.161</span>
-<span class="co">#&gt; 4 K2    K3         2          2         130.  0.259        0.778</span>
-<span class="co">#&gt; 5 K2    K3         2          3          93.5 0.187        0.561</span>
-<span class="co">#&gt; 6 K2    K3         1          1         140.  0.280        0.839</span>
-<span class="co">#&gt; # … with 324 more rows</span></code></pre></div>
+<span class="co">#&gt; 1 1     10         1          1          50.0  0.100       0.111</span>
+<span class="co">#&gt; 2 1     10         1         10          50.0  0.100       0.111</span>
+<span class="co">#&gt; 3 1     10         1          2          50.0  0.100       0.111</span>
+<span class="co">#&gt; 4 1     10         1          3          50.0  0.100       0.111</span>
+<span class="co">#&gt; 5 1     10         1          4          50.0  0.100       0.111</span>
+<span class="co">#&gt; 6 1     10         1          5          50.0  0.100       0.111</span>
+<span class="co">#&gt; # … with 1314 more rows</span></code></pre></div>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="st">"consecutive"</span>, method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span>
+<span class="va">result</span>
+<span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
+<span class="co">#&gt; # A tibble: 6 x 8</span>
+<span class="co">#&gt;   m     m_next k_LDA k_LDA_next document_mass weight norm_weight fw_weight</span>
+<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;      &lt;int&gt;         &lt;dbl&gt;  &lt;dbl&gt;       &lt;dbl&gt;     &lt;dbl&gt;</span>
+<span class="co">#&gt; 1 1     2          1          1         250.  0.500        1        0.500 </span>
+<span class="co">#&gt; 2 1     2          1          2         250.  0.500        1        0.500 </span>
+<span class="co">#&gt; 3 2     3          1          1         127.  0.254        0.762    0.508 </span>
+<span class="co">#&gt; 4 2     3          1          3          25.0 0.0499       0.150    0.0998</span>
+<span class="co">#&gt; 5 2     3          1          2          98.1 0.196        0.588    0.392 </span>
+<span class="co">#&gt; 6 2     3          2          1          39.7 0.0793       0.238    0.159 </span>
+<span class="co">#&gt; # … with 324 more rows</span></code></pre></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></code></pre></div>
 <p><img src="basic-alignment_files/figure-html/unnamed-chunk-7-1.png" width="700"></p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span></code></pre></div>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></code></pre></div>
 <p><img src="basic-alignment_files/figure-html/unnamed-chunk-7-2.png" width="700"></p>
   </div>
 

@@ -11,6 +11,7 @@ reference:
 - contents:
   - plot_alignment
   - plot_beta
+  - superheat_defaults
 
 - title: "Diagnostic functions"
 - contents:
@@ -30,9 +31,10 @@ reference:
 - title: "Helper functions"
 - contents:
   - align_graph
-  - cost_fun
-  - optimize_permutation
-  - superheat_defaults
+  - setup_edges
+  - product_weights
+  - transport_weights
+  - identify_branches
   - trim_betas
 
 - title: "Demo data"

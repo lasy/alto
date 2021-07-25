@@ -40,7 +40,9 @@
 
 
 <meta property="og:title" content="Alignment Class Definition — alignment-class" />
-<meta property="og:description" content="Alignment Class Definition" />
+<meta property="og:description" content="The alignment class contains all the information available associated with an
+alignment across an ensemble of topic models. The available accessor methods
+are," />
 
 
 
@@ -133,11 +135,30 @@
     </div>
 
     <div class="ref-description">
-    <p>Alignment Class Definition</p>
+    <p>The alignment class contains all the information available associated with an
+alignment across an ensemble of topic models. The available accessor methods
+are,</p>
     </div>
 
 
 
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>* <code>weights</code>: Extract weights between all pairs of topics within an
+ alignment. Topic pairs with high alignment scores are more similar to one
+ another, though the precise implementation will depend on the <code>method</code>
+ used during <code>align_topics</code>. Note that only the weights are needed in
+ order to compute stability, refinement, and key topics summaries.
+* <code>models</code>: Extract the model parameters that were used in the original
+  alignment. Note that the latent topics may have been reordered, to maximize
+  the consistency across all models according to their alignment.
+* <code>n_topics</code>: How many topics are there total, within the alignment
+  object?
+<code>n_models</code>: How many models total are there, within the alignment
+  object?</p>
+    <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
+
+    <div class='dont-index'><p>align_topics</p></div>
 
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

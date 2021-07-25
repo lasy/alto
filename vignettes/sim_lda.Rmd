@@ -10,9 +10,9 @@ params:
   method: "product"
   id: 1
   K: 5
-  V: 1000
-  N: 250
-  n_models: 10
+  V: 50
+  N: 30
+  n_models: 5
   save: TRUE
 ---
 

@@ -81,7 +81,7 @@
 
       
 
-      </header><script src="sim_equivalence_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="sim_equivalence_files/header-attrs-2.8/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>equivalence-simulation</h1>
@@ -97,17 +97,17 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'alto'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     weights</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'dplyr'</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:base':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     intersect, setdiff, setequal, union</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
@@ -122,38 +122,18 @@
 <p>Now include the perturbed betas in the plot, and compare with estimates at a more refined <span class="math inline">\(K\)</span>.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sim_data</span> <span class="op">&lt;-</span> <span class="fu">equivalence_data</span><span class="op">(</span><span class="va">N</span>, <span class="va">V</span>, <span class="va">K</span>, <span class="va">lambdas</span>, <span class="va">S</span><span class="op">)</span>
-<span class="co">#&gt; Warning in .recacheSubclasses(def@className, def, env): undefined subclass</span>
-<span class="co">#&gt; "numericVector" of class "Mnumeric"; definition not updated</span>
 <span class="va">lda_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n_models</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
 <span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">lda_params</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span><span class="op">(</span><span class="st">"K"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_models</span><span class="op">)</span>
 <span class="va">alignment</span> <span class="op">&lt;-</span> <span class="va">sim_data</span><span class="op">$</span><span class="va">x</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/run_lda_models.html">run_lda_models</a></span><span class="op">(</span><span class="va">lda_params</span>, reset <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span>method <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">method</span><span class="op">)</span>
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-
-<span class="co">#&gt; Warning in .f(.x[[i]], ...): Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~class(.) == "list")): coercing argument of</span>
-<span class="co">#&gt; type 'list' to logical</span>
-<span class="co">#&gt; Warning in all(purrr::map(models, ~all(names(.) %in% c("gamma", "beta")))):</span>
-<span class="co">#&gt; coercing argument of type 'list' to logical</span></code></pre></div>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
+<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></code></pre></div>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">beta_hat</span> <span class="op">&lt;-</span> <span class="fu">alto</span><span class="fu">:::</span><span class="fu">plot_beta_layout</span><span class="op">(</span><span class="va">alignment</span><span class="op">)</span><span class="op">$</span><span class="va">betas</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span>
 <span class="va">perturbed_topics</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/do.call.html">do.call</a></span><span class="op">(</span><span class="va">rbind</span>, <span class="va">sim_data</span><span class="op">$</span><span class="va">perturbed_topics</span><span class="op">)</span>
 <span class="va">similarities</span> <span class="op">&lt;-</span> <span class="fu">cosine_similarity</span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">beta_hat</span>, <span class="op">-</span><span class="va">m</span><span class="op">)</span>, <span class="va">perturbed_topics</span><span class="op">)</span> <span class="op">%&gt;%</span>
   <span class="fu"><a href="https://tibble.tidyverse.org/reference/as_tibble.html">as_tibble</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
@@ -169,20 +149,22 @@
 <span class="fu">superheat</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/superheat/man/superheat.html">superheat</a></span><span class="op">(</span><span class="va">perturbed_topics</span>, pretty.order.cols <span class="op">=</span> <span class="cn">TRUE</span>, heat.pal <span class="op">=</span> <span class="va">cols</span><span class="op">)</span></code></pre></div>
 <p><img src="sim_equivalence_files/figure-html/unnamed-chunk-5-1.png" width="960"></p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">alignment</span>, min_beta <span class="op">=</span> <span class="fl">0</span>, pretty.order.rows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; Joining, by = "k_LDA"</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">alignment</span>, min_beta <span class="op">=</span> <span class="fl">0</span>, pretty.order.rows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="sim_equivalence_files/figure-html/unnamed-chunk-5-2.png" width="960"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">alignment</span><span class="op">)</span></code></pre></div>
-<p><img src="sim_equivalence_files/figure-html/unnamed-chunk-6-1.png" width="960"></p>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">alignment</span>, <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"K3"</span>, <span class="st">"K5"</span><span class="op">)</span>, pretty.order.rows <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<p><img src="sim_equivalence_files/figure-html/unnamed-chunk-5-3.png" width="960"></p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">alignment</span><span class="op">)</span></code></pre></div>
+<p><img src="sim_equivalence_files/figure-html/unnamed-chunk-6-1.png" width="480"></p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">sensitivity</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>
   diff <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">similarities</span><span class="op">[</span>, <span class="fl">2</span><span class="op">]</span> <span class="op">-</span> <span class="va">similarities</span><span class="op">[</span>, <span class="fl">1</span><span class="op">]</span><span class="op">)</span> <span class="op">+</span>
                <span class="fu"><a href="https://rdrr.io/r/base/MathFun.html">abs</a></span><span class="op">(</span><span class="va">similarities</span><span class="op">[</span>, <span class="fl">4</span><span class="op">]</span> <span class="op">-</span> <span class="va">similarities</span><span class="op">[</span>, <span class="fl">3</span><span class="op">]</span><span class="op">)</span><span class="op">)</span>,
   subset_size <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">S</span>,
   rep <span class="op">=</span> <span class="va">params</span><span class="op">$</span><span class="va">rep</span>
 <span class="op">)</span></code></pre></div>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">id_vars</span> <span class="op">&lt;-</span> <span class="va">params</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"out_dir"</span>, <span class="st">"method"</span>, <span class="st">"S"</span>, <span class="st">"rep"</span>, <span class="st">"N"</span>, <span class="st">"V"</span>, <span class="st">"K"</span><span class="op">)</span><span class="op">]</span>
 <span class="kw">if</span> <span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">save</span><span class="op">)</span> <span class="op">{</span>
   <span class="fu"><a href="https://rdrr.io/r/base/files2.html">dir.create</a></span><span class="op">(</span><span class="va">params</span><span class="op">$</span><span class="va">out_dir</span>, recursive <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
@@ -190,7 +172,9 @@
   <span class="fu"><a href="https://readr.tidyverse.org/reference/write_delim.html">write_csv</a></span><span class="op">(</span><span class="va">sensitivity</span>, <span class="fu">save_str</span><span class="op">(</span><span class="st">"sensitivity"</span>, <span class="va">id_vars</span><span class="op">)</span><span class="op">)</span>
   <span class="va">exper</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="va">sim_data</span>, <span class="va">alignment</span><span class="op">)</span>
   <span class="fu"><a href="https://rdrr.io/r/base/save.html">save</a></span><span class="op">(</span><span class="va">exper</span>, file <span class="op">=</span> <span class="fu">save_str</span><span class="op">(</span><span class="st">"exper"</span>, <span class="va">id_vars</span>, <span class="st">"rda"</span><span class="op">)</span><span class="op">)</span>
-<span class="op">}</span></code></pre></div>
+<span class="op">}</span>
+<span class="co">#&gt; Warning in dir.create(params$out_dir, recursive = TRUE): 'equivalence' existe</span>
+<span class="co">#&gt; déjà</span></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
