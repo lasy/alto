@@ -1,35 +1,35 @@
-#' @importFrom dplyr group_by ungroup mutate
-reorder_topics <- function(weights, models) {
-  weights <-
-    weights %>%
-    group_by(m, k_LDA) %>%
-    mutate(fw_weight = weight / sum(weight)) %>%
-    ungroup()
-  weights_fw <- forward_ordering(weights)
-  weights_bw <- backward_ordering(weights_fw)
-  models <- reorder_models(models, weights_bw)
+#' @importFrom dplyr group_by ungroup mutate select rename filter bind_rows
+topic_ordering <- function(weights) {
+  permuted <- weights %>%
+    select(m_next, k_LDA_init, k_LDA_next) %>%
+    rename(k_LDA = k_LDA_next, m = m_next)
 
-  list(weights = weights_bw, models = models)
+  root <- weights %>%
+    filter(!(m %in% weights$m_next)) %>%
+    select(m, k_LDA) %>%
+    mutate(k_LDA_init = k_LDA)
+
+  bind_rows(root, permuted) %>%
+    distinct() %>%
+    arrange(m, k_LDA) %>%
+    split(.$m) %>%
+    map(~ pull(., k_LDA_init))
 }
 
-#' @importFrom dplyr pull first
-reorder_models <- function(models, weights) {
-  unique_ms <- unique(weights$m)
-  for (m_ in unique_ms) {
-    # get current permutation
-    weights_ <- weights %>%
-      filter(k_LDA == first(k_LDA), m == m_)
-    perm <- pull(weights_, k_LDA_next)
-    m_next <- first(weights_$m_next)
-
-    # reorder gamma and betas
-    tmp <- models[[m_next]]$gamma[, perm]
-    models[[m_next]]$gamma <- tmp
-    tmp <- models[[m_next]]$beta[perm, ]
-    models[[m_next]]$beta <- tmp
+#' @importFrom magrittr %>%
+#' @importFrom dplyr filter arrange pull
+reorder_models <- function(models, perms) {
+  result <- list()
+  for (i in seq_along(models)) {
+    m_ <- names(models)[i]
+    pi <- perms[[m_]]
+    result[[m_]] <- list(
+      beta = models[[m_]]$beta[pi, , drop = F],
+      gamma = models[[m_]]$gamma[, pi, drop = F]
+    )
   }
 
-  models
+  result
 }
 
 #' @importFrom dplyr filter group_by ungroup mutate summarize arrange
