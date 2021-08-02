@@ -188,7 +188,7 @@ setup_edges <- function(comparisons, model_names) {
 #' all pairs of topics between two models. The first argument must accept a list
 #' of two gamma_hat matrices, the second argument must accept a list of two
 #' beta_hat matrices. See `product_weights` or `transport_weights` for examples.
-#' @importFrom dplyr mutate ungroup()
+#' @importFrom dplyr mutate ungroup
 #' @importFrom magrittr %>%
 #' @export
 align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
