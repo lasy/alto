@@ -260,17 +260,18 @@ trim_betas <- function(betas, min_beta = -1, n_features = NULL) {
     return(betas)
   }
 
-  beta_tilde <- dplyr::select(betas, -m)
+  beta_tilde <- select(betas, -m)
   beta_tilde <- beta_tilde[, colMeans(beta_tilde) > min_beta]
   if (ncol(beta_tilde) == 0) {
     warning("min_beta removed all columns. Try a smaller min_beta?
              Returning without filtering.\n")
-    beta_tilde <- dplyr::select(betas, -m)
+    beta_tilde <- select(betas, -m)
   }
 
-  ix <- order(colSums(beta_tilde), decreasing = TRUE)
+  discrepancies <- apply(beta_tilde, 2, discrepancy)
+  ix <- order(discrepancies, decreasing = TRUE)
   beta_tilde <- beta_tilde[, ix[seq_len(min(n_features, ncol(beta_tilde)))]]
-  dplyr::bind_cols(m = betas$m, beta_tilde)
+  bind_cols(m = betas$m, beta_tilde)
 }
 
 #' @importFrom purrr map map_dfr
@@ -309,6 +310,31 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   list(betas = betas, weights = topic_weights)
 }
 
+#' Equation (3) from https://doi.org/10.1371/journal.pgen.1006599
+kl_div <- function(p1, p2) {
+  p1 * log(p1 / p2) + (p2 - p1)
+}
+
+#' Pairwise KL divergences
+kl_mat <- function(p) {
+  K <- matrix(0, nrow = length(p), ncol = length(p))
+  for (i in seq_along(p)) {
+    for (j in seq_len(i - 1)) {
+      K[i, j] <- kl_div(p[i], p[j])
+    }
+  }
+  K
+}
+
+#' Discrepancy for ordering words in plot_betas
+#'
+#' This implements equation (4) from
+#' https://doi.org/10.1371/journal.pgen.1006599
+discrepancy <- function(p, lambda = 1e-7) {
+  p <- (p + lambda) / sum(p + lambda) # Laplace smoothing
+  K <- kl_mat(p)
+  max(K)
+}
 
 #' Plot Method for Alignment Class
 #' @import methods
