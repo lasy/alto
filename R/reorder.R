@@ -32,16 +32,121 @@ reorder_models <- function(models, perms) {
   result
 }
 
+
+
 #' @importFrom dplyr filter group_by ungroup mutate summarize arrange
 #' @importFrom magrittr %>%
 forward_ordering <- function(weights) {
   models <- weights$m_next %>% unique() %>% sort()
 
   for (model in models) {
+
+    this_model_weights = get_pre_and_post_weights(weights, model)
+
+    k_order <-
+      this_model_weights %>%
+      mutate(force = 0.7 * bw_weight * k_prev + 0.3 * fw_weight * k_next) %>%
+      group_by(k) %>%
+      summarize(gravity_center = sum(force), .groups = "drop") %>%
+      arrange(gravity_center) %>%
+      mutate(new_k = row_number()) %>%
+      arrange(k)
+
+    weights <-
+      weights %>%
+      mutate(
+        k_LDA_next =
+          ifelse(m_next == model,
+                 k_order$new_k[k_LDA_next],
+                 k_LDA_next),
+        k_LDA =
+          ifelse(m == model,
+                 k_order$new_k[k_LDA],
+                 k_LDA)
+      )
+  }
+  weights
+}
+
+
+#' @importFrom dplyr filter group_by ungroup mutate summarize arrange
+#' @importFrom magrittr %>%
+backward_ordering <- function(weights) {
+  models <- weights$m %>% unique() %>% sort()
+
+  for (model in rev(models[-1])) {
+
+    this_model_weights = get_pre_and_post_weights(weights, model)
+
+    k_order <-
+      this_model_weights %>%
+      mutate(force = 0.3 * bw_weight * k_prev + 0.7 * fw_weight * k_next) %>%
+      group_by(k) %>%
+      summarize(gravity_center = sum(force), .groups = "drop") %>%
+      arrange(gravity_center) %>%
+      mutate(new_k = row_number()) %>%
+      arrange(k)
+
+    weights <-
+      weights %>%
+      mutate(
+        k_LDA_next =
+          ifelse(m_next == model,
+                 k_order$new_k[k_LDA_next],
+                 k_LDA_next),
+        k_LDA =
+          ifelse(m == model,
+                 k_order$new_k[k_LDA],
+                 k_LDA)
+      )
+  }
+  weights
+}
+
+
+
+get_pre_and_post_weights = function(weights, model){
+
+  pre_weights <-
+    weights %>%
+    filter(m_next == model) %>%
+    dplyr::rename(k_prev = k_LDA, k = k_LDA_next, bw_weight = norm_weight) %>%
+    select(k_prev, k, bw_weight)
+
+  post_weights <-
+    weights %>%
+    filter(m == model) %>%
+    dplyr::rename(k = k_LDA, k_next = k_LDA_next) %>%
+    select(k, k_next, fw_weight)
+
+  if (nrow(post_weights) > 0) {
+    this_model_weights <-
+      left_join(
+        pre_weights,
+        post_weights,
+        by = "k"
+      )
+  } else {
+    this_model_weights <-
+      pre_weights %>%
+      mutate(k_next = 0,
+             fw_weight = 0)
+  }
+  this_model_weights
+}
+
+
+
+#' @importFrom dplyr filter group_by ungroup mutate summarize arrange
+#' @importFrom magrittr %>%
+forward_ordering_v1 <- function(weights) {
+  models <- weights$m_next %>% unique() %>% sort()
+
+  for (model in models) {
     this_trans_weights <-
       weights %>%
       filter(m_next == model) %>%
-      mutate(force = norm_weight * k_LDA)
+      mutate(force = norm_weight * k_LDA) # norm_weight
     k_LDA_next_order <-
       this_trans_weights %>%
       group_by(k_LDA_next) %>%
@@ -61,21 +166,21 @@ forward_ordering <- function(weights) {
           ifelse(m == model,
                  k_LDA_next_order$new_k_LDA_next[k_LDA],
                  k_LDA)
-      )
+        )
   }
   weights
 }
 
 #' @importFrom dplyr filter group_by ungroup mutate summarize arrange
 #' @importFrom magrittr %>%
-backward_ordering <- function(weights) {
+backward_ordering_v1 <- function(weights) {
   models <- weights$m %>% unique() %>% sort()
 
   for (model in rev(models)) {
     this_trans_weights <-
       weights %>%
       filter(m == model) %>%
-      mutate(force = fw_weight * k_LDA)
+      mutate(force = fw_weight * k_LDA_next) # fw_weight
     k_LDA_order <-
       this_trans_weights %>%
       group_by(k_LDA) %>%

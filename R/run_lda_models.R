@@ -110,7 +110,9 @@ run_lda_models <-
                       method = param_list$method,
                       control = param_list$control
                     )
-              lda_model <- list(gamma = tm@gamma, beta = tm@beta)
+              lda_model <-
+                list(gamma = tm@gamma,
+                     beta = tm@beta %>% set_colnames(colnames(data)))
             }
 
             save(lda_model, file = paste0(dir, m, ".Rdata"))

@@ -48,29 +48,29 @@ plot_alignment <- function(
       ),
       alpha = 0.4
     ) +
-  geom_rect(
-    data = rect,
-    aes(
-      xmin = m_num - rect_gap,
-      xmax = m_num + rect_gap,
-      ymin = ymin,
-      ymax = ymax,
-      fill = topic_col
-    )
-  ) +
+    geom_rect(
+      data = rect,
+      aes(
+        xmin = m_num - rect_gap,
+        xmax = m_num + rect_gap,
+        ymin = ymin,
+        ymax = ymax,
+        fill = topic_col
+      )
+    ) +
     scale_x_continuous(breaks = ms, labels = ms) +
     theme(legend.position = "bottom")
 
   # replace choices below by a better color scheme...
   if (color_by %in% c("refinement", "stability"))
-    g <- g + scale_fill_gradient(color_by,
+    g <- g + scale_fill_gradient(str_c(color_by, "(log10)"),
                                  low = "brown1",
                                  high = "cornflowerblue",
-                                 limits = c(0, 1))
+                                 limits = c(min(rect$topic_col), 0))
   else
     g <- g +
-      scale_fill_discrete(limits = levels(rect$topic_col)) +
-      guides(fill = "none")
+    scale_fill_discrete(limits = levels(rect$topic_col)) +
+    guides(fill = "none")
 
   g
 }
@@ -99,7 +99,7 @@ plot_alignment <- function(
     x <-
       x %>%
       left_join(., refinement_score, by = c("m", "k_LDA")) %>%
-      mutate(topic_col = refinement_score)
+      mutate(topic_col = refinement_score %>% log10())
 
   }
   if (color_by == "stability") {
@@ -109,7 +109,7 @@ plot_alignment <- function(
       x %>%
       left_join(., branches, by = c("m", "k_LDA")) %>%
       left_join(., stability, by = c("m", "branch")) %>%
-      mutate(topic_col = stability)
+      mutate(topic_col = stability %>% log10())
 
   }
   x
@@ -235,6 +235,78 @@ plot_beta <- function(x, models = "all", min_beta = 0.025, n_features = NULL,
   do.call(superheat::superheat, c(layout_args, style_args))
 }
 
+
+plot_beta_lsy <- function(x, models = "all", min_beta = 0.001, n_features = NULL, beta_aes = c("size","alpha")){
+  beta_aes = beta_aes[1]
+  beta_aes = match.arg(beta_aes, choices = c("size","alpha"))
+
+  p <- plot_beta_layout(x, models, min_beta, n_features)
+  beta <- format_beta(p)
+
+
+  if (beta_aes == "size") {
+    g <- ggplot(beta %>% filter(b > min_beta),
+                aes(x = k_LDA %>% factor(., levels = 1:100), y = w,
+                    col = col, size = b)) +
+      geom_point() +
+      guides(col = "none", size = "none") +
+      scale_color_identity() +
+      scale_size(range = c(0,5), limits = c(0,1))
+
+
+  } else{
+    g <- ggplot(beta %>% filter(b > min_beta),
+                aes(x = k_LDA %>% factor(., levels = 1:100), y = w,
+                    fill = col, alpha = b)) +
+      geom_tile() +
+      guides(fill = "none", alpha = "none") +
+      scale_fill_identity() +
+      scale_alpha(range = c(0,1), limits = c(0,1))
+  }
+
+  g +
+    facet_grid(. ~ m, scales = "free", space = "free") +
+    theme_bw() +
+    xlab("") + ylab("") +
+    theme(
+      panel.spacing.x = unit(0,"pt"),
+      strip.text.y = element_text(angle = 0, hjust = 0, color = "black"))
+}
+
+
+#' @importFrom dplyr select group_by mutate ungroup left_join pivot_longer arrange filter slice_head
+format_beta <-  function(p){
+  beta <-
+    p$betas %>%
+    group_by(m) %>%
+    mutate(k_LDA = row_number()) %>%
+    ungroup() %>%
+    left_join(p$weights %>% select(m, k_LDA, topic_col, col), by = c("m","k_LDA")) %>%
+    pivot_longer(
+      -c(m,k_LDA, col, topic_col),
+      names_to = "w",
+      values_to = "b"
+    )
+
+  w_order <-
+    beta %>%
+    arrange(m) %>%
+    filter(m == m[1]) %>%
+    arrange(w, -b) %>%
+    group_by(w) %>%
+    slice_head(n = 1) %>%
+    ungroup() %>%
+    arrange(k_LDA)
+
+  beta <-
+    beta %>%
+    mutate(w = w %>% factor(., levels = w_order$w %>%  rev()),
+           m = m %>% factor(., levels = rev(levels(m))))
+  beta
+}
+
+
+
 #' Style Defaults for plot_beta
 #' @importFrom utils modifyList
 superheat_defaults <- function(...) {
@@ -284,7 +356,9 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   model_params <- models(x)
   if (length(subset) == 1 && subset == "last") {
     model_params <- model_params[n_models(x)]
-  } else if (length(subset) > 1) {
+  } else if (length(subset) == 1 && subset == "all") {
+    model_params <- model_params
+  } else {
     model_params <- model_params[subset]
   }
 
@@ -295,17 +369,19 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     mutate(m = factor(m, levels = rev(names(model_params))))
 
   # extract topic weights for the side plot
-  final_topic <- weights(x) %>%
+  final_topic <-
+    weights(x) %>%
     filter(m_next == tail(levels(m_next), 1)) %>%
     select(-m, -k_LDA) %>%
     rename(m = m_next, k_LDA = k_LDA_next)
-  topic_weights <- bind_rows(
+  topic_weights <-
+    bind_rows(
       topic_layout(weights(x)),
       topic_layout(final_topic)
     ) %>%
-     filter(m %in% betas$m) %>%
-     .add_topic_col(weights(x), "branch") %>%
-     mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
+    filter(m %in% betas$m) %>%
+    .add_topic_col(weights(x), "branch") %>%
+    mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
 
   list(betas = betas, weights = topic_weights)
 }

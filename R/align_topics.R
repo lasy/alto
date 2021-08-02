@@ -46,6 +46,8 @@ align_topics <- function(
   models,
   comparisons = "consecutive",
   method = "product",
+  maxit = 4,
+  cost_threshold  = 0.01,
   ...
 ) {
 
@@ -67,10 +69,7 @@ align_topics <- function(
 
   # 3. reorder the topics, if k's are sequenced
   if (comparisons == "consecutive") {
-    weights <- weights %>%
-      forward_ordering() %>%
-      backward_ordering() %>%
-      ungroup()
+    weights <- order_topics(weights, maxit, cost_threshold)
 
     perms <- topic_ordering(weights)
     models <- reorder_models(models, perms)
@@ -79,6 +78,41 @@ align_topics <- function(
 
   new("alignment", weights = weights, models = models)
 }
+
+
+order_topics <-  function(weights, maxit, cost_threshold){
+
+  ordering_cost <- compute_ordering_cost(weights)
+  it <-  0
+  while(it <= maxit) {
+    #cat(it,"\n")
+    weights <- weights %>%
+      forward_ordering() %>%
+      backward_ordering() %>%
+      ungroup()
+    new_ordering_cost = compute_ordering_cost(weights)
+    #cat(ordering_cost %>% round(.,3), " -> ", new_ordering_cost %>% round(.,3), "\n")
+    if(abs(ordering_cost - new_ordering_cost) < cost_threshold) break()
+    ordering_cost <- new_ordering_cost
+    it <- it + 1
+  }
+
+  weights
+}
+
+
+compute_ordering_cost <- function(weights) {
+  tmp <-
+    weights %>%
+    group_by(m) %>%
+    mutate(y = k_LDA/max(k_LDA),
+           y_next = k_LDA_next/max(k_LDA_next)) %>%
+    ungroup() %>%
+    mutate(c = abs(y_next - y) * weight)
+  tmp$c %>%  sum()
+}
+
+
 
 #' Edgelists for Default Alignment
 #'
@@ -154,7 +188,7 @@ setup_edges <- function(comparisons, model_names) {
 #' all pairs of topics between two models. The first argument must accept a list
 #' of two gamma_hat matrices, the second argument must accept a list of two
 #' beta_hat matrices. See `product_weights` or `transport_weights` for examples.
-#' @importFrom dplyr mutate
+#' @importFrom dplyr mutate ungroup()
 #' @importFrom magrittr %>%
 #' @export
 align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
@@ -164,7 +198,8 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
     weights[[i]] <- weight_fun(gamma_hats[pair], beta_hats[pair], ...) %>%
       mutate(m = pair[1], m_next = pair[2])
   }
-  postprocess_weights(weights, nrow(gamma_hats[[1]]), names(gamma_hats))
+  postprocess_weights(weights, nrow(gamma_hats[[1]]), names(gamma_hats)) %>%
+    ungroup()
 }
 
 #' Product Weights between Model Pair
