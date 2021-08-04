@@ -274,8 +274,9 @@ plot_beta_lsy <- function(x, models = "all", min_beta = 0.001, n_features = NULL
 }
 
 
-#' @importFrom dplyr select group_by mutate ungroup left_join pivot_longer arrange filter slice_head
-format_beta <-  function(p){
+#' @importFrom dplyr select group_by mutate ungroup left_join arrange filter slice_head
+#' @importFrom tidyr pivot_longer
+format_beta <-  function(p) {
   beta <-
     p$betas %>%
     group_by(m) %>%

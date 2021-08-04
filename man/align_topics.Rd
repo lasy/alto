@@ -4,7 +4,14 @@
 \alias{align_topics}
 \title{Align topics from distinct LDA models}
 \usage{
-align_topics(models, comparisons = "consecutive", method = "product", ...)
+align_topics(
+  models,
+  comparisons = "consecutive",
+  method = "product",
+  maxit = 4,
+  cost_threshold = 0.01,
+  ...
+)
 }
 \arguments{
 \item{models}{(required) a list of LDA models object. Each list component
