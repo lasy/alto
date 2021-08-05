@@ -44,60 +44,86 @@
 #' @export
 align_topics <- function(
   models,
-  comparisons = "consecutive",
   method = "product",
-  maxit = 4,
-  cost_threshold  = 0.01,
   ...
 ) {
 
   # 1. Check input and initialize key objects
-  .check_align_input(models, comparisons, method)
+  .check_align_input(models, method)
   weight_fun <- ifelse(method == "product", product_weights, transport_weights)
-  if (is.null(names(models))) {
-    names(models) <- seq_along(models)
-  }
-  edges <- setup_edges(comparisons, names(models))
+  if (is.null(names(models))) { names(models) <- seq_along(models) }
 
-  # 2. perform alignment
-  weights <- align_graph(
-    edges,
-    map(models, ~ .$gamma),
-    map(models, ~ exp(.$beta)),
-    weight_fun, ...
-  )
+  # 2. topics
+  topics = get_topic_list(models)
 
-  # 3. reorder the topics, if k's are sequenced
-  if (comparisons == "consecutive") {
-    weights <- order_topics(weights, maxit, cost_threshold)
+  # 3. perform alignment
+  weights <-
+    align_graph(
+      edges = setup_edges("all", names(models)),
+      gamma_hats = map(models, ~ .$gamma),
+      beta_hats = map(models, ~ exp(.$beta)),
+      weight_fun = weight_fun, ...
+    )
 
-    perms <- topic_ordering(weights)
-    models <- reorder_models(models, perms)
-    weights <- select(weights, -k_LDA_init)
-  }
+  aligned_topics <-  new("alignment", topics = topics, weights = weights, models = models)
 
-  new("alignment", weights = weights, models = models)
+  # 4. re-order the topics, identify the branches and compute summary diagnostics
+  aligned_topics <- order_topics(aligned_topics)
+  aligned_topics <- add_branches(aligned_topics)
+  aligned_topics <- add_summaries(aligned_topics)
+
+  aligned_topics
+}
+
+#' @importFrom magrittr %>%
+#' @importFrom purrr map_dfr
+#' @importFrom dplyr tibble mutate
+get_topic_list <-  function(models) {
+  map_dfr(
+    .x = names(models),
+    .f = function(model){
+      tibble(m = model,
+             k = 1:nrow(models[[model]]$beta),
+             mass = colSums(models[[model]]$gamma)) %>%
+        mutate(prop = mass/sum(mass))
+    }
+  ) %>%
+    mutate(m = m %>% factor(., levels = names(models)))
 }
 
 
-order_topics <-  function(weights, maxit, cost_threshold){
+order_topics <-  function(aligned_topics){
 
-  ordering_cost <- compute_ordering_cost(weights)
-  it <-  0
-  while(it <= maxit) {
-    #cat(it,"\n")
-    weights <- weights %>%
-      forward_ordering() %>%
-      backward_ordering() %>%
-      ungroup()
-    new_ordering_cost = compute_ordering_cost(weights)
-    #cat(ordering_cost %>% round(.,3), " -> ", new_ordering_cost %>% round(.,3), "\n")
-    if(abs(ordering_cost - new_ordering_cost) < cost_threshold) break()
-    ordering_cost <- new_ordering_cost
-    it <- it + 1
-  }
+  cons_weights <-
+    get_consecutive_weights(aligned_topics) %>%
+    mutate(k_init = k_next)
 
-  weights
+  cons_weights <- cons_weights %>%
+    forward_ordering() %>%
+    backward_ordering() %>%
+    ungroup()
+
+  perms <- topic_ordering(cons_weights)
+  aligned_topics@models <- reorder_models(aligned_topics@models, perms)
+  aligned_topics@topics <- reorder_topics(aligned_topics@topics, perms)
+  aligned_topics@weights <- reorder_weights(aligned_topics@weights, perms)
+
+  new("alignment", topics = aligned_topics@topics, weights = aligned_topics@weights, models = aligned_topics@models)
+}
+
+
+get_consecutive_weights <- function(aligned_topics){
+  model_names <-
+    names(aligned_topics@models) %>%
+    factor(., levels = names(aligned_topics@models))
+  cons_models <-
+    tibble(
+      m = model_names %>% head(-1),
+      m_next = model_names %>% tail(-1)
+    )
+  left_join(cons_models,
+            aligned_topics@weights,
+            by = c("m", "m_next"))
 }
 
 
@@ -105,8 +131,8 @@ compute_ordering_cost <- function(weights) {
   tmp <-
     weights %>%
     group_by(m) %>%
-    mutate(y = k_LDA/max(k_LDA),
-           y_next = k_LDA_next/max(k_LDA_next)) %>%
+    mutate(y = k/max(k),
+           y_next = k_next/max(k_next)) %>%
     ungroup() %>%
     mutate(c = abs(y_next - y) * weight)
   tmp$c %>%  sum()
@@ -145,7 +171,6 @@ setup_edges <- function(comparisons, model_names) {
 #' @importFrom stringr str_starts
 .check_align_input <- function(
   models,
-  comparisons,
   method
 ) {
   # check model list input
@@ -156,12 +181,6 @@ setup_edges <- function(comparisons, model_names) {
   stopifnot(
     all(map_int(models, ~ all(names(.) %in% c("gamma", "beta"))))
   )
-
-  # check models to compare options
-  if (!comparisons %in% c("consecutive", "all")) {
-    stopifnot(typeof(comparisons) == "matrix")
-    stopifnot(ncol(comparisons) == 2)
-  }
 
   # check method used
   match.arg(tolower(method), c("product", "transport"))
@@ -295,9 +314,9 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
 #' @importFrom stringr str_replace
 .lengthen_weights <- function(weights) {
   weights %>%
-    rownames_to_column("k_LDA") %>%
-    pivot_longer(-k_LDA, names_to = "k_LDA_next", values_to = "weight") %>%
-    mutate(k_LDA_next = str_replace(k_LDA_next, "X", ""))
+    rownames_to_column("k") %>%
+    pivot_longer(-k, names_to = "k_next", values_to = "weight") %>%
+    mutate(k_next = str_replace(k_next, "X", ""))
 }
 
 #' @importFrom dplyr group_by bind_rows summarize mutate ungroup arrange across
@@ -306,20 +325,19 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
 postprocess_weights <- function(weights, n_docs, m_levels) {
   bind_rows(weights) %>%
     mutate(document_mass = weight, weight = document_mass / n_docs) %>%
-    group_by(m_next, k_LDA_next) %>%
-    mutate(norm_weight = weight / sum(weight)) %>%
+    group_by(m, m_next, k_next) %>%
+    mutate(bw_weight = weight / sum(weight)) %>%
     ungroup() %>%
     mutate(
       across(c("m", "m_next"), factor, levels = m_levels),
-      across(c("k_LDA", "k_LDA_next"), as.integer)
+      across(c("k", "k_next"), as.integer)
     ) %>%
-    group_by(m, k_LDA) %>%
+    group_by(m, m_next, k) %>%
     mutate(
-      k_LDA_init = k_LDA_next,
       fw_weight = weight / sum(weight)
     ) %>%
     arrange(m) %>%
-    select(m, m_next, k_LDA, k_LDA_next, everything())
+    select(m, m_next, k, k_next, everything())
 }
 
 ################################################################################
@@ -359,12 +377,13 @@ print_alignment <- function(object) {
 #' @import methods
 #' @exportClass alignment
 setClass("alignment",
-  representation(
-    weights = "data.frame",
-    models = "list",
-    n_models = "numeric",
-    n_topics = "numeric"
-  )
+         representation(
+           topics = "data.frame",
+           weights = "data.frame",
+           models = "list",
+           n_models = "numeric",
+           n_topics = "numeric"
+         )
 )
 
 #' Show Method for Alignment Class
@@ -385,27 +404,22 @@ setGeneric("n_models", function(x) standardGeneric("n_models"))
 #' @export
 setMethod("n_models", "alignment", function(x) nlevels(x@weights$m))
 
-#' Number of Topics in Alignment
-#' @importFrom magrittr %>% set_colnames
-#' @importFrom dplyr select bind_rows
-.n_topics <- function(x) {
-  w <- x@weights
-  w1 <- w %>%
-    select(m, k_LDA)
-  w2 <- w %>%
-    select(m_next, k_LDA_next) %>%
-    set_colnames(c("m", "k_LDA"))
-  nrow(unique(bind_rows(w1, w2)))
-}
 
 setGeneric("n_topics", function(x) standardGeneric("n_topics"))
 #' Number of Topics Method for Alignment Class
 #' @import methods
 #' @export
-setMethod("n_topics", "alignment", .n_topics)
+setMethod("n_topics", "alignment", function(x) nrow(x@topics))
 
 setGeneric("models", function(x) standardGeneric("models"))
 #' Extract Models underlying Alignment
 #' @import methods
 #' @export
 setMethod("models", "alignment", function(x) x@models)
+
+
+setGeneric("topics", function(x) standardGeneric("topics"))
+#' Extract List of Topics and their Summaries
+#' @import methods
+#' @export
+setMethod("topics", "alignment", function(x) x@topics)

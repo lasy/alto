@@ -65,7 +65,8 @@ run_lda_models <-
     lda_varying_params_lists,
     lda_fixed_params_list = list(),
     dir = NULL,
-    reset = FALSE
+    reset = FALSE,
+    verbose = FALSE
   ) {
 
     # 1. CHECKS
@@ -97,11 +98,12 @@ run_lda_models <-
         map(
           .x = names(param_lists),
           .f = function(m) {
+            if(verbose) cat(m,"\n")
             param_list <- param_lists[[m]]
             if (param_list$k == 1) {
               lda_model <- list(
                 gamma = matrix(1, nrow = nrow(data), ncol = 1),
-                beta = log(matrix(colSums(data) / sum(data), nrow = 1))
+                beta = log(matrix(colSums(data) / sum(data), nrow = 1)) %>% set_colnames(colnames(data))
               )
             } else {
               tm <- LDA(

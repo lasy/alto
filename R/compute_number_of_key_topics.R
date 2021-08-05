@@ -35,35 +35,38 @@
 #' @importFrom dplyr group_by summarise n n_distinct
 #' @importFrom magrittr %>%
 #' @export
-compute_number_of_key_topics <- function(weights, plot = FALSE) {
+compute_number_of_key_topics <- function(aligned_topics, plot = FALSE) {
 
-  branches <- identify_branches(weights)
-  n_key_topics <- branches %>%
+  n_key_topics <-
+    aligned_topics@topics %>%
     group_by(m) %>%
     summarise(
       n_key_topics = n_distinct(branch),
-      n_topics = n(),
+      n_topics = n_distinct(k),
       .groups = "drop"
     )
 
-  if (plot) {
-    g <- ggplot(n_key_topics, aes(x = n_topics)) +
-      geom_line(aes(y = n_topics), col = "gray80", size = 3) +
-      geom_line(aes(y = n_key_topics)) +
-      geom_point(aes(y = n_key_topics, col = n_key_topics < n_topics),
-                          size = 3) +
-      guides(col = "none") +
-      theme_minimal() +
-      scale_x_continuous(
-        breaks = n_key_topics$n_topics, labels = n_key_topics$m,
-        minor_breaks = NULL) +
-      scale_y_continuous(
-        breaks = n_key_topics$n_topics,
-        minor_breaks = NULL) +
-        labs(x = "models", y = "# of key topics")
+  if (plot) plot_number_of_key_topics(n_key_topics) %>% print()
 
-    print(g)
-  }
 
   n_key_topics
+}
+
+
+
+plot_number_of_key_topics <- function(n_key_topics) {
+  ggplot(n_key_topics, aes(x = n_topics)) +
+    geom_line(aes(y = n_topics), col = "gray80", size = 3) +
+    geom_line(aes(y = n_key_topics)) +
+    geom_point(aes(y = n_key_topics, col = n_key_topics < n_topics),
+               size = 3) +
+    guides(col = "none") +
+    theme_minimal() +
+    scale_x_continuous(
+      breaks = n_key_topics$n_topics, labels = n_key_topics$m,
+      minor_breaks = NULL) +
+    scale_y_continuous(
+      breaks = n_key_topics$n_topics,
+      minor_breaks = NULL) +
+    labs(x = "models", y = "# of key topics")
 }
