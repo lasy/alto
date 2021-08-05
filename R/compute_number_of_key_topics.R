@@ -35,14 +35,14 @@
 #' @importFrom dplyr group_by summarise n n_distinct
 #' @importFrom magrittr %>%
 #' @export
-compute_number_of_key_topics <- function(weights, plot = FALSE) {
+compute_number_of_key_topics <- function(aligned_topics, plot = FALSE) {
 
-  branches <- identify_branches(weights)
-  n_key_topics <- branches %>%
+  n_key_topics <-
+    aligned_topics@topics %>%
     group_by(m) %>%
     summarise(
       n_key_topics = n_distinct(branch),
-      n_topics = n(),
+      n_topics = n_distinct(k),
       .groups = "drop"
     )
 

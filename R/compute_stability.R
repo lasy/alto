@@ -25,34 +25,26 @@
 #' slice_head ungroup mutate bind_rows
 #' @export
 compute_stability_along_branches <- function(weights) {
-  branches <-
-    identify_branches(weights)
-
-  weights_with_branches <-
-    weights %>%
-    left_join(
-      .,
-      branches,
-      by = c("m", "k_LDA")
-    ) %>%
-    left_join(
-      .,
-      branches %>%
-        rename(k_LDA_next = k_LDA, m_next = m, branch_next = branch),
-      by = c("m_next", "k_LDA_next")
-    )
 
   weights_along_branches <-
-    weights_with_branches %>%
+    weights %>%
     filter(branch == branch_next) %>%
+    rowwise() %>%
+    mutate(s_weight = min(norm_weight, fw_weight)) %>%
     group_by(m, m_next, branch, branch_next, k_LDA_next) %>%
-    summarize(norm_weight = sum(norm_weight), .groups = "drop") %>%
+    summarize(s_weight = sum(s_weight), .groups = "drop") %>%
     group_by(m, m_next, branch, branch_next) %>%
-    summarize(norm_weight = mean(norm_weight), .groups = "drop")
+    summarize(s_weight = mean(s_weight), .groups = "drop")
 
   stability <-
-    branches %>%
-    select(m, branch) %>%
+    bind_rows(
+      weights_along_branches%>%
+        select(m, branch),
+      weights %>%  filter(m_next == last(levels(weights$m))) %>%
+        select(m_next, branch_next) %>%
+        rename(m = m_next, branch = branch_next)
+    ) %>%
+    distinct() %>%
     arrange(branch, m) %>%
     group_by(branch) %>%
     slice_head(n = 1) %>%
@@ -65,8 +57,12 @@ compute_stability_along_branches <- function(weights) {
     s <-
       weights_along_branches %>%
       filter(m == model) %>%
-      left_join(., stability %>%  filter(m == model), by = c("m", "branch")) %>%
-      mutate(stability = stability * norm_weight) %>%
+      left_join(
+        .,
+        stability %>%
+          filter(m == model),
+        by = c("m", "branch")) %>%
+      mutate(stability = stability * s_weight) %>%
       select(m_next, branch, stability) %>%
       rename(m = m_next)
 

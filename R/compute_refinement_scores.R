@@ -55,3 +55,64 @@ compute_refinement_scores <- function(weights) {
   scores %>%
     arrange(m, k_LDA)
 }
+
+
+
+
+compute_refinement_scores_v2 <- function(aligned_topics) {
+
+  topics <-
+    bind_rows(
+      aligned_topics@weights %>%
+        select(m, k_LDA),
+      aligned_topics@weights %>%
+        select(m_next, k_LDA_next) %>%
+        rename(m = m_next, k_LDA = k_LDA_next)
+
+    ) %>%
+    distinct() %>%
+    arrange(m, k_LDA)
+
+
+  all_weigh
+
+map_dfr(
+  .x = 1:nrow(topics),
+  .f = function(i){
+    r =
+
+    tibble(m = topics$m[i], k = topics$k_LDA[i], refinement_score = 1)
+  }
+)
+
+
+
+  models <- levels(weights$m)
+  scores <- weights %>%
+    filter(m_next == rev(models)[1]) %>%
+    select(m_next, k_LDA_next) %>%
+    rename(m = m_next, k_LDA = k_LDA_next) %>%
+    distinct() %>%
+    mutate(refinement_score = 1)
+
+  for (model in rev(models)[-1]) {
+    s <- weights %>%
+      filter(m == model) %>%
+      left_join(
+        .,
+        scores %>% rename(m_next = m, k_LDA_next = k_LDA),
+        by = c("m_next", "k_LDA_next")
+      ) %>%
+      group_by(m, k_LDA) %>%
+      mutate(fw_norm_weight = weight / sum(weight)) %>%
+      summarise(
+        refinement_score =
+          sum(fw_norm_weight * norm_weight * refinement_score),
+        .groups = "drop"
+      )
+    scores <- bind_rows(scores, s)
+  }
+  scores %>%
+    arrange(m, k_LDA)
+}
+
