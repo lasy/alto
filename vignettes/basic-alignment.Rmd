@@ -26,22 +26,24 @@ set.seed(123)
 First fit 10 models to toy data.
 
 ```{r}
-data <- rmultinom(20, 5000, rep(0.1, 500))
+data <- rmultinom(20, 5000, rep(0.1, 50))
+colnames(data) <- 1:ncol(data)
 lda_params <- setNames(map(1:10, ~ list(k = .)), 1:10)
 lda_models <- run_lda_models(data = data, lda_varying_params_lists = lda_params)
 ```
 ```{r}
 result <- align_topics(lda_models)
 result
-plot(result)
+topics(result)
+plot(result, color_by = "refinement")
+plot(result, color_by = "robustness")
 plot_beta(result)
-compute_refinement_scores(weights(result))
 ```
 
 Some more variants of `plot_beta`.
 
 ```{r}
-plot_beta(result, "all", n_features = 20, bottom.label.text.size = 3)
+plot_beta(result, "all")
 plot_beta(result, c(2, 3, 5), n_features = 10)
 plot_beta(result, c("2", "5", "10"), n_features = 10)
 plot_beta(result, "last", n_features = 10)
@@ -49,12 +51,7 @@ plot_beta(result, "last", n_features = 10)
 
 
 ```{r}
-result <- align_topics(lda_models, "all")
-result
-```
-
-```{r}
-result <- align_topics(lda_models, "consecutive", method = "transport")
+result <- align_topics(lda_models, method = "transport")
 result
 ```
 

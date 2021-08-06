@@ -9,7 +9,8 @@ run_lda_models(
   lda_varying_params_lists,
   lda_fixed_params_list = list(),
   dir = NULL,
-  reset = FALSE
+  reset = FALSE,
+  verbose = FALSE
 )
 }
 \arguments{
