@@ -1,31 +1,33 @@
+
+#' @importFrom magrittr %>%
 add_summaries <-  function(aligned_topics) {
-  aligned_topics <- add_robustness(aligned_topics)
-  aligned_topics <- add_refinement(aligned_topics)
+  aligned_topics %>%
+    add_robustness() %>%
+    add_refinement()
 }
 
-
 add_robustness <- function(aligned_topics) {
-
   robustness <-
     map_dfr(
       .x = 1:nrow(aligned_topics@topics),
-      .f = function(i){
-        compute_robustness_of_topic(model = aligned_topics@topics$m[i],
-                                    topic = aligned_topics@topics$k[i],
-                                    aligned_topics = aligned_topics)
+      .f = function(i) {
+        topic_robustness(model = aligned_topics@topics$m[i],
+                         topic = aligned_topics@topics$k[i],
+                         aligned_topics = aligned_topics)
       }
     )
 
   aligned_topics@topics <-
     aligned_topics@topics %>%
-    left_join(robustness, by = c("m","k"))
+    left_join(robustness, by = c("m", "k"))
 
   aligned_topics
 }
 
-
-compute_robustness_of_topic <- function(model, topic, aligned_topics) {
-
+#' @importFrom dplyr filter select rowwise left_join select rename group_by
+#'  summarize
+#' @importFrom tibble tibble
+topic_robustness <- function(model, topic, aligned_topics) {
   topic_branch <-
     aligned_topics@topics %>%
     filter(m == model, k == topic) %>%
@@ -45,7 +47,7 @@ compute_robustness_of_topic <- function(model, topic, aligned_topics) {
       branch == branch_next
     )
 
-  if(nrow(this_topic_peers) > 0){
+  if(nrow(this_topic_peers) > 0) {
     ans <-
       this_topic_peers %>%
       rowwise() %>%
@@ -56,25 +58,22 @@ compute_robustness_of_topic <- function(model, topic, aligned_topics) {
       mutate(m = model, k = topic) %>%
       select(m, k, robustness)
 
-  } else{
+  } else {
     ans <-
       tibble(m = model, k = topic, robustness = 0)
   }
   ans
 }
 
-
-
-
+#' @importFrom purrr map_dfr
 add_refinement <- function(aligned_topics) {
-
   refinement <-
     map_dfr(
       .x = 1:nrow(aligned_topics@topics),
-      .f = function(i){
-        compute_refinement_of_topic(model = aligned_topics@topics$m[i],
-                                    topic = aligned_topics@topics$k[i],
-                                    aligned_topics = aligned_topics)
+      .f = function(i) {
+        topic_refinement(model = aligned_topics@topics$m[i],
+                         topic = aligned_topics@topics$k[i],
+                         aligned_topics = aligned_topics)
       }
     )
 
@@ -85,16 +84,12 @@ add_refinement <- function(aligned_topics) {
   aligned_topics
 }
 
-
-
-
-compute_refinement_of_topic <- function(model, topic, aligned_topics) {
-
+topic_refinement <- function(model, topic, aligned_topics) {
   this_topic_descendants <-
     aligned_topics@weights %>%
     filter(m == model, k == topic)
 
-  if(nrow(this_topic_descendants) > 0){
+  if(nrow(this_topic_descendants) > 0) {
     ans <-
       this_topic_descendants %>%
       mutate(r = fw_weight * bw_weight) %>%
@@ -102,11 +97,9 @@ compute_refinement_of_topic <- function(model, topic, aligned_topics) {
       summarize(r = sum(r), .groups = "drop") %>%
       group_by(m, k) %>%
       summarize(refinement = mean(r), .groups = "drop")
-  } else{
+  } else {
     ans <-
       tibble(m = model, k = topic, refinement = 1)
   }
   ans
 }
-
-
