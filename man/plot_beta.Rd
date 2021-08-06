@@ -4,7 +4,14 @@
 \alias{plot_beta}
 \title{Plot Topics Heatmap}
 \usage{
-plot_beta(x, models = "all", min_beta = 0.025, n_features = NULL, ...)
+plot_beta(
+  x,
+  models = "all",
+  min_beta = 0.001,
+  n_features = NULL,
+  beta_aes = "size",
+  color_by = "branch"
+)
 }
 \arguments{
 \item{models}{Which models to display in the heatmap? Defaults to

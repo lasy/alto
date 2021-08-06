@@ -54,7 +54,7 @@ align_topics <- function(
   if (is.null(names(models))) { names(models) <- seq_along(models) }
 
   # 2. topics
-  topics = get_topic_list(models)
+  topics <- topics_list(models)
 
   # 3. perform alignment
   weights <-
@@ -68,77 +68,70 @@ align_topics <- function(
   aligned_topics <-  new("alignment", topics = topics, weights = weights, models = models)
 
   # 4. re-order the topics, identify the branches and compute summary diagnostics
-  aligned_topics <- order_topics(aligned_topics)
-  aligned_topics <- add_branches(aligned_topics)
-  aligned_topics <- add_summaries(aligned_topics)
-
-  aligned_topics
+  aligned_topics %>%
+    order_topics() %>%
+    add_branches() %>%
+    add_summaries()
 }
 
 #' @importFrom magrittr %>%
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr tibble mutate
-get_topic_list <-  function(models) {
+topics_list <-  function(models) {
   map_dfr(
     .x = names(models),
-    .f = function(model){
+    .f = function(model) {
       tibble(m = model,
              k = 1:nrow(models[[model]]$beta),
              mass = colSums(models[[model]]$gamma)) %>%
-        mutate(prop = mass/sum(mass))
+        mutate(prop = mass / sum(mass))
     }
   ) %>%
     mutate(m = m %>% factor(., levels = names(models)))
 }
 
 
-order_topics <-  function(aligned_topics){
+order_topics <-  function(aligned_topics) {
 
-  cons_weights <-
-    get_consecutive_weights(aligned_topics) %>%
-    mutate(k_init = k_next)
-
-  cons_weights <- cons_weights %>%
+  perms <- consecutive_weights(aligned_topics) %>%
+    mutate(k_init = k_next) %>%
     forward_ordering() %>%
     backward_ordering() %>%
-    ungroup()
+    ungroup() %>%
+    topic_ordering()
 
-  perms <- topic_ordering(cons_weights)
   aligned_topics@models <- reorder_models(aligned_topics@models, perms)
   aligned_topics@topics <- reorder_topics(aligned_topics@topics, perms)
   aligned_topics@weights <- reorder_weights(aligned_topics@weights, perms)
 
-  new("alignment", topics = aligned_topics@topics, weights = aligned_topics@weights, models = aligned_topics@models)
+  new(
+    "alignment",
+    topics = aligned_topics@topics,
+    weights = aligned_topics@weights,
+    models = aligned_topics@models
+  )
 }
 
-
-get_consecutive_weights <- function(aligned_topics){
-  model_names <-
-    names(aligned_topics@models) %>%
+consecutive_weights <- function(aligned_topics) {
+  model_names <- names(aligned_topics@models) %>%
     factor(., levels = names(aligned_topics@models))
-  cons_models <-
-    tibble(
+
+  tibble(
       m = model_names %>% head(-1),
       m_next = model_names %>% tail(-1)
-    )
-  left_join(cons_models,
-            aligned_topics@weights,
-            by = c("m", "m_next"))
+    ) %>%
+    left_join(aligned_topics@weights, by = c("m", "m_next"))
 }
-
 
 compute_ordering_cost <- function(weights) {
-  tmp <-
-    weights %>%
+  weights %>%
     group_by(m) %>%
-    mutate(y = k/max(k),
-           y_next = k_next/max(k_next)) %>%
+    mutate(y = k / max(k), y_next = k_next / max(k_next)) %>%
     ungroup() %>%
-    mutate(c = abs(y_next - y) * weight)
-  tmp$c %>%  sum()
+    mutate(c = abs(y_next - y) * weight) %>%
+    pull(c) %>%
+    sum()
 }
-
-
 
 #' Edgelists for Default Alignment
 #'

@@ -4,14 +4,14 @@
 \alias{compute_number_of_key_topics}
 \title{Computes the number of key topics}
 \usage{
-compute_number_of_key_topics(weights, plot = FALSE)
+compute_number_of_key_topics(aligned_topics, plot = FALSE)
 }
 \arguments{
-\item{weights}{(required) \code{data.frame} with the alignment weights
-(the @weight field from an \code{alignment} object).}
-
 \item{plot}{(optional, default = FALSE) whether to visualize the number of
 key topics.}
+
+\item{weights}{(required) \code{data.frame} with the alignment weights
+(the @weight field from an \code{alignment} object).}
 }
 \value{
 a \code{data.frame} with the number of key topic for each model. The

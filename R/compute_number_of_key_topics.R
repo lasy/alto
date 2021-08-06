@@ -36,7 +36,6 @@
 #' @importFrom magrittr %>%
 #' @export
 compute_number_of_key_topics <- function(aligned_topics, plot = FALSE) {
-
   n_key_topics <-
     aligned_topics@topics %>%
     group_by(m) %>%
@@ -47,13 +46,12 @@ compute_number_of_key_topics <- function(aligned_topics, plot = FALSE) {
     )
 
   if (plot) plot_number_of_key_topics(n_key_topics) %>% print()
-
-
   n_key_topics
 }
 
-
-
+#' @importFrom ggplot2 ggplot aes geom_line geom_point guides theme_minimal
+#'  scale_x_continuous scale_y_continuous labs
+#' @export
 plot_number_of_key_topics <- function(n_key_topics) {
   ggplot(n_key_topics, aes(x = n_topics)) +
     geom_line(aes(y = n_topics), col = "gray80", size = 3) +
