@@ -1,4 +1,5 @@
 #' @importFrom dplyr group_by ungroup mutate select rename filter bind_rows
+#'   distinct
 topic_ordering <- function(weights) {
   permuted <- weights %>%
     select(m_next, k_init, k_next) %>%
@@ -48,7 +49,7 @@ reorder_topics <- function(topics, perms){
 
 #' @importFrom magrittr %>%
 #' @importFrom dplyr tibble left_join select rename everything
-reorder_weights <- function(weights, perms){
+reorder_weights <- function(weights, perms) {
   perms <- perms_as_tibble(perms)
   weights <-
     weights %>%
@@ -62,10 +63,9 @@ reorder_weights <- function(weights, perms){
     select(m, m_next, k, k_next, everything())
 }
 
-
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr mutate
-perms_as_tibble <- function(perms){
+perms_as_tibble <- function(perms) {
   map_dfr(
     .x = names(perms),
     .f = function(model){
@@ -77,8 +77,6 @@ perms_as_tibble <- function(perms){
     mutate(m = m %>% factor(., levels = names(perms)))
 }
 
-
-
 #' @importFrom dplyr filter group_by ungroup mutate summarize arrange
 #' @importFrom magrittr %>%
 forward_ordering <- function(weights) {
@@ -86,8 +84,7 @@ forward_ordering <- function(weights) {
 
   for (model in models) {
 
-    this_model_weights = get_pre_and_post_weights(weights, model)
-
+    this_model_weights = pre_post_weights(weights, model)
     k_order <-
       this_model_weights %>%
       mutate(force = 0.7 * bw_weight * k_prev + 0 * fw_weight * k_next) %>%
@@ -113,7 +110,6 @@ forward_ordering <- function(weights) {
   weights
 }
 
-
 #' @importFrom dplyr filter group_by ungroup mutate summarize arrange
 #' @importFrom magrittr %>%
 backward_ordering <- function(weights) {
@@ -121,7 +117,7 @@ backward_ordering <- function(weights) {
 
   for (model in rev(models[-1])) {
 
-    this_model_weights = get_pre_and_post_weights(weights, model)
+    this_model_weights = pre_post_weights(weights, model)
 
     k_order <-
       this_model_weights %>%
@@ -150,8 +146,7 @@ backward_ordering <- function(weights) {
 
 
 
-get_pre_and_post_weights = function(weights, model){
-
+pre_post_weights <- function(weights, model){
   pre_weights <-
     weights %>%
     filter(m_next == model) %>%
@@ -163,8 +158,6 @@ get_pre_and_post_weights = function(weights, model){
     filter(m == model) %>%
     dplyr::rename(k = k, k_next = k_next) %>%
     select(k, k_next, fw_weight)
-
-
 
   if (nrow(post_weights) > 0) {
     this_model_weights <-
@@ -192,76 +185,5 @@ get_pre_and_post_weights = function(weights, model){
     left_join(topic_weights, by = "k") %>%
     select(k_prev, k, k_next, bw_weight, fw_weight, topic_weight)
 
-
   this_model_weights
-}
-
-
-
-#' @importFrom dplyr filter group_by ungroup mutate summarize arrange
-#' @importFrom magrittr %>%
-forward_ordering_v1 <- function(weights) {
-  models <- weights$m_next %>% unique() %>% sort()
-
-  for (model in models) {
-    this_trans_weights <-
-      weights %>%
-      filter(m_next == model) %>%
-      mutate(force = bw_weight * k) # norm_weight
-    k_next_order <-
-      this_trans_weights %>%
-      group_by(k_next) %>%
-      summarize(force = sum(force), .groups = "drop") %>%
-      arrange(force) %>%
-      mutate(new_k_next = row_number()) %>%
-      arrange(k_next)
-
-    weights <-
-      weights %>%
-      mutate(
-        k_next =
-          ifelse(m_next == model,
-                 k_next_order$new_k_next[k_next],
-                 k_next),
-        k =
-          ifelse(m == model,
-                 k_next_order$new_k_next[k],
-                 k)
-        )
-  }
-  weights
-}
-
-#' @importFrom dplyr filter group_by ungroup mutate summarize arrange
-#' @importFrom magrittr %>%
-backward_ordering_v1 <- function(weights) {
-  models <- weights$m %>% unique() %>% sort()
-
-  for (model in rev(models)) {
-    this_trans_weights <-
-      weights %>%
-      filter(m == model) %>%
-      mutate(force = fw_weight * k_next) # fw_weight
-    k_order <-
-      this_trans_weights %>%
-      group_by(k) %>%
-      summarize(force = sum(force), .groups = "drop") %>%
-      arrange(force) %>%
-      mutate(new_k = row_number()) %>%
-      arrange(k)
-
-    weights <-
-      weights %>%
-      mutate(
-        k_next =
-          ifelse(m_next == model,
-                 k_order$new_k[k_next],
-                 k_next),
-        k =
-          ifelse(m == model,
-                 k_order$new_k[k],
-                 k)
-      )
-  }
-  weights
 }

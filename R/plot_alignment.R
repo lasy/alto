@@ -17,10 +17,11 @@ plot_alignment <- function(
   rect_gap = 0.2,
   color_by = "branch"
 ) {
+
   # inputs
   .check_input(x)
-  color_by <- color_by[1]
   color_by <- match.arg(color_by, c("topic", "branch", "refinement", "robustness"))
+
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
   .plot_from_layout(x, layouts, rect_gap, color_by)
@@ -31,7 +32,7 @@ plot_alignment <- function(
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by) {
 
-  rect <-  .add_topic_col(layouts$rect , aligned_topics, color_by)
+  rect <-  .add_topic_col(layouts$rect, aligned_topics, color_by)
   ribbon <- .add_topic_col(layouts$ribbon, aligned_topics, color_by)
 
   ms <- unique(rect$m_num)
@@ -62,33 +63,36 @@ plot_alignment <- function(
     theme(legend.position = "bottom")
 
   # replace choices below by a better color scheme...
-  if (color_by %in% c("refinement", "robustness"))
-    g <- g + scale_fill_gradient(color_by,
-                                 low = "brown1",
-                                 high = "cornflowerblue",
-                                 limits = c(0,1))
-  else
+  if (color_by %in% c("refinement", "robustness")) {
+    g <- g +
+      scale_fill_gradient(
+        color_by, low = "brown1", high = "cornflowerblue", limits = c(0, 1)
+      )
+  } else {
     g <- g +
     scale_fill_discrete(limits = levels(rect$topic_col)) +
     guides(fill = "none")
+  }
 
   g
 }
 
 
-.add_topic_col <- function(df, x, color_by){
-
+#' @importFrom dplyr mutate all_of
+#' @importFrom magrittr %>%
+.add_topic_col <- function(df, x, color_by) {
   if (color_by == "topic") {
-    df <- df %>% mutate(topic_col = factor(k))
-  }else{
-    df <-
+    df <- df %>%
+    mutate(topic_col = factor(k))
+  } else {
+    df <- df %>%
       left_join(
-        df,
         x@topics %>% select(m, k, all_of(color_by)),
-        by = c("m","k")
+        by = c("m", "k")
       )
-    df$topic_col = df[,color_by] %>%  unlist()
+    df$topic_col <- df[, color_by] %>%  unlist()
   }
+
   df
 }
 
@@ -97,7 +101,6 @@ plot_alignment <- function(
 #' @importFrom dplyr bind_rows group_by arrange summarise mutate rename select
 #' @importFrom utils tail
 .compute_layout <- function(aligned_topics, rect_gap = 0.2) {
-
   layout_rect <-
     aligned_topics@topics %>%
     select(m, k, prop) %>%
@@ -108,13 +111,11 @@ plot_alignment <- function(
       ymin = ymax - prop
     )
 
-
   # compute flows out and into rectangles (input to geom_ribbon)
-  r_out <- ribbon_out(get_consecutive_weights(aligned_topics), rect_gap)
-  r_in <- ribbon_in(get_consecutive_weights(aligned_topics), -rect_gap)
+  r_out <- ribbon_out(consecutive_weights(aligned_topics), rect_gap)
+  r_in <- ribbon_in(consecutive_weights(aligned_topics), -rect_gap)
   list(rect = layout_rect, ribbon = bind_rows(r_out, r_in))
 }
-
 
 ribbon_out <- function(weights, rect_gap = 0.1) {
   weights %>%
@@ -123,7 +124,7 @@ ribbon_out <- function(weights, rect_gap = 0.1) {
     mutate(
       ymax = k / (max(k + 1)) + cumsum(weight),
       ymin = ymax - weight,
-      id = str_c(m, m_next,"_", k, "-",k_next),
+      id = str_c(m, m_next, "_", k, "-", k_next),
       m_num = match(m, levels(m)) + rect_gap
     )
 }
@@ -139,8 +140,6 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
       m_num = match(m_next, levels(m_next)) + rect_gap
     )
 }
-
-
 
 .check_input <- function(aligned_topics) {
   stopifnot(class(aligned_topics) == "alignment")
@@ -185,37 +184,19 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' plot_beta(alignment, models = "last")
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select starts_with
+#' @importFrom dplyr select starts_with filter
 #' @importFrom superheat superheat
+#' @importFrom ggplot2 ggplot aes scale_color_identity geom_point geom_tile
+#' guides scale_fill_identity scale_size scale_alpha facet_grid labs theme_bw
+#' theme element_text
+#' @importFrom grid unit
 #' @export
-plot_beta <- function(x, models = "all", min_beta = 0.025, n_features = NULL,
-                      ...) {
-  p <- plot_beta_layout(x, models, min_beta, n_features)
-  layout_args <- list(
-    X = p$betas %>% select(-m),
-    membership.rows = p$betas$m,
-    yr = p$weights$topic_weight,
-    yr.obs.col = p$weights$col
-  )
-  style_args <- superheat_defaults(...)
-  do.call(superheat::superheat, c(layout_args, style_args))
-}
-
-
-plot_beta_lsy <-
-  function(x, models = "all",
-           min_beta = 0.001, n_features = NULL,
-           beta_aes = c("size","alpha"),
-           color_by = c("branch", "refinement","robustness")) {
-    beta_aes = beta_aes[1]
-    beta_aes = match.arg(beta_aes, choices = c("size","alpha"))
-
-    color_by = color_by[1]
-    color_by = match.arg(color_by, choices = c("topic","branch", "refinement","robustness"))
-
+plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
+                      beta_aes = "size", color_by = "branch") {
+    beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
+    color_by <- match.arg(color_by, choices = c("topic", "branch", "refinement", "robustness"))
     p <- plot_beta_layout(x, models, min_beta, n_features, color_by = color_by)
     beta <- format_beta(p)
-
 
     if (beta_aes == "size") {
       g <- ggplot(beta %>% filter(b > min_beta),
@@ -224,26 +205,26 @@ plot_beta_lsy <-
         geom_point() +
         guides(col = "none", size = "none") +
         scale_color_identity() +
-        scale_size(range = c(0,5), limits = c(0,1))
+        scale_size(range = c(0, 5), limits = c(0, 1))
 
-
-    } else{
+    } else {
       g <- ggplot(beta %>% filter(b > min_beta),
                   aes(x = k %>% factor(., levels = 1:100), y = w,
                       fill = col, alpha = b)) +
         geom_tile() +
         guides(fill = "none", alpha = "none") +
         scale_fill_identity() +
-        scale_alpha(range = c(0,1), limits = c(0,1))
+        scale_alpha(range = c(0, 1), limits = c(0, 1))
     }
 
     g +
       facet_grid(. ~ m, scales = "free", space = "free") +
       theme_bw() +
-      xlab("") + ylab("") +
+      labs(x = "", y = "") +
       theme(
-        panel.spacing.x = unit(0,"pt"),
-        strip.text.y = element_text(angle = 0, hjust = 0, color = "black"))
+        panel.spacing.x = unit(0, "pt"),
+        strip.text.y = element_text(angle = 0, hjust = 0, color = "black")
+      )
   }
 
 
@@ -264,8 +245,7 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   }
 
   # filter betas to those that pass thresholds
-  betas <-
-    model_params %>%
+  betas <- model_params %>%
     map_dfr(~ data.frame(exp(.$beta)), .id = "m") %>%
     set_colnames(c("m", colnames(model_params[[1]]$beta))) %>%
     trim_betas(min_beta, n_features) %>%
@@ -283,14 +263,13 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   }else{
     topic_weights$topic_col = topic_weights[,color_by] %>% unlist()
   }
-  if (color_by %in% c("topic","branch")) {
-    topic_weights <-
-      topic_weights %>%
+  if (color_by %in% c("topic", "branch")) {
+    topic_weights <- topic_weights %>%
       mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
   }else{
     topic_weights <-
     topic_weights %>%
-      mutate(col = colorRampPalette(colors = c("brown1","cornflowerblue"))(11)[round(topic_col,1)*10+1])
+      mutate(col = colorRampPalette(colors = c("brown1", "cornflowerblue"))(11)[round(topic_col,1)*10+1])
   }
 
   list(betas = betas, weights = topic_weights)
@@ -326,24 +305,6 @@ format_beta <-  function(p) {
     mutate(w = w %>% factor(., levels = w_order$w %>%  rev()),
            m = m %>% factor(., levels = rev(levels(m))))
   beta
-}
-
-
-
-#' Style Defaults for plot_beta
-#' @importFrom utils modifyList
-superheat_defaults <- function(...) {
-  plot_defaults <- list(
-    bottom.label.text.size = 4,
-    grid.vline = FALSE,
-    heat.pal = c("#f6eff7", "#bdc9e1", "#67a9cf", "#1c9099", "#016c59"),
-    left.label.text.size = 5,
-    legend.text.size = 6,
-    pretty.order.cols = TRUE,
-    yr.axis.name = "Topic Weight",
-    yr.plot.type = "bar"
-  )
-  modifyList(plot_defaults, list(...))
 }
 
 #' Filter to words of interest
