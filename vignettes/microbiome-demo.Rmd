@@ -78,7 +78,6 @@ For this, we use the `run_lda_models` function. This can take a while on a perso
 For example, it takes about x minutes on the authors' laptops.
 
 ```{r run-lda-models}
-
 lda_varying_params_lists <-  list()
 for (k in 1:20) {lda_varying_params_lists[[paste0("k",k)]] <- list(k = k)}
 
@@ -111,7 +110,7 @@ aligned_topics_transport <-
     method = "transport") 
 
 
-aligned_topics@weights %>% head()
+aligned_topics_product@weights %>% head()
 
 
 
@@ -135,8 +134,8 @@ g_refinement_transport <- plot_alignment(aligned_topics_transport, color_by = "r
 g_robustness_product <- plot_alignment(aligned_topics_product, color_by = "ro")
 g_robustness_transport <- plot_alignment(aligned_topics_transport, color_by = "ro")
 
-g_beta_product <-  plot_beta_lsy(aligned_topics_product, models = c("k3", "k6","k12","k20"), min_beta = 0.005)
-g_beta_transport <-  plot_beta_lsy(aligned_topics_transport, models = c("k3", "k6","k12","k20"), min_beta = 0.005)
+g_beta_product <-  plot_beta(aligned_topics_product, models = c("k3", "k6","k12","k20"), min_beta = 0.005)
+g_beta_transport <-  plot_beta(aligned_topics_transport, models = c("k3", "k6","k12","k20"), min_beta = 0.005)
 
 
 figure = ggpubr::ggarrange(
@@ -175,7 +174,7 @@ ggsave(figure, filename = "microbiome_figure.png", height = 22, width = 18, unit
 
 ```{r}
 
-plot_alignment(aligned_topics, color_by = "re")
+plot_alignment(aligned_topics_product, color_by = "re")
 plot_alignment(aligned_topics_transport, color_by = "re")
 
 ```
@@ -187,16 +186,17 @@ plot_alignment(aligned_topics_transport, color_by = "re")
 ```{r}
 
 
-plot_alignment(aligned_topics, color_by = "ro")
+plot_alignment(aligned_topics_product, color_by = "ro")
 plot_alignment(aligned_topics_transport, color_by = "ro")
 
 ```
 
 ```{r}
 
-plot_beta_lsy(aligned_topics, models = c("k3","k6","k12", "k20"), min_beta = 0.005, color_by  = "branch")
+plot_beta(aligned_topics_product, models = c("k3","k3","k12", "k20"), min_beta = 0.005, color_by  = "branch")
+plot_beta(aligned_topics_product, models = c("k3","k6","k12", "k20"), min_beta = 0.005, color_by  = "branch")
 
-plot_beta_lsy(aligned_topics, models = c("k3","k6","k12", "k20"), min_beta = 0.005, color_by  = "robustness")
+plot_beta(aligned_topics_product, models = c("k3","k6","k12", "k20"), min_beta = 0.005, color_by  = "robustness")
 
 ```
 
