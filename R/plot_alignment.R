@@ -103,8 +103,9 @@ plot_alignment <- function(
     )
 
   # compute flows out and into rectangles (input to geom_ribbon)
-  r_out <- ribbon_out(consecutive_weights(aligned_topics), rect_gap)
-  r_in <- ribbon_in(consecutive_weights(aligned_topics), -rect_gap)
+  weights <- consecutive_weights(aligned_topics)
+  r_out <- ribbon_out(weights, rect_gap)
+  r_in <- ribbon_in(weights, -rect_gap)
   list(rect = layout_rect, ribbon = bind_rows(r_out, r_in))
 }
 
@@ -187,31 +188,28 @@ plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
     beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
     color_by <- match.arg(color_by, choices = c("topic", "branch", "refinement", "robustness"))
     beta <- plot_beta_layout(x, models, min_beta, n_features, color_by) %>%
-      format_beta()
+      format_beta() %>%
+      filter(b > min_beta)
+
+    g <- ggplot(beta, aes(x = factor(k, levels = 1:100), y = w, col = col)) +
+      guides(col = "none", size = "none")
 
     if (beta_aes == "size") {
-      g <- ggplot(beta %>% filter(b > min_beta),
-                  aes(x = k %>% factor(., levels = 1:100), y = w,
-                      col = col, size = b)) +
-        geom_point() +
-        guides(col = "none", size = "none") +
+      g <- g +
+        geom_point(aes(size = b)) +
         scale_color_identity() +
         scale_size(range = c(0, 5), limits = c(0, 1))
-
     } else {
-      g <- ggplot(beta %>% filter(b > min_beta),
-                  aes(x = k %>% factor(., levels = 1:100), y = w,
-                      fill = col, alpha = b)) +
-        geom_tile() +
-        guides(fill = "none", alpha = "none") +
+      g <- g +
+        geom_tile(aes(alpha = b)) +
         scale_fill_identity() +
         scale_alpha(range = c(0, 1), limits = c(0, 1))
     }
 
     g +
       facet_grid(. ~ m, scales = "free", space = "free") +
-      theme_bw() +
       labs(x = "", y = "") +
+      theme_bw() +
       theme(
         panel.spacing.x = unit(0, "pt"),
         strip.text.y = element_text(angle = 0, hjust = 0, color = "black")
