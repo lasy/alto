@@ -230,7 +230,7 @@ plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
 
 #' @importFrom purrr map map_dfr
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select row_number mutate n left_join
+#' @importFrom dplyr select row_number mutate n left_join rename_with
 #' @importFrom scales hue_pal
 plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
                              cols = NULL, color_by = "branch") {
@@ -251,60 +251,51 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     trim_betas(min_beta, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
-  # extract topic weights for the side plot
-  topic_weights <-
-    x@topics %>%
-    filter(m %in% betas$m)
+  # associate topics with the variable to shade in by
+  topic_weights <- topics(x) %>%
+    filter(m %in% betas$m) %>%
+    mutate(topic = k) %>%
+    rename(topic_col = !!color_by)
 
-  if (color_by == "topic") {
-    topic_weights <-
-      topic_weights %>%
-      mutate(topic_col = k)
-  } else {
-    topic_weights$topic_col = topic_weights[, color_by] %>% unlist()
-  }
   if (color_by %in% c("topic", "branch")) {
     topic_weights <- topic_weights %>%
       mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
   } else {
-    topic_weights <-
-    topic_weights %>%
+    topic_weights <- topic_weights %>%
       mutate(col = colorRampPalette(colors = c("brown1", "cornflowerblue"))(11)[round(topic_col,1)*10+1])
   }
 
   list(betas = betas, weights = topic_weights)
 }
 
-#' @importFrom dplyr select group_by mutate ungroup left_join arrange filter slice_head
+#' @importFrom dplyr select group_by mutate ungroup left_join arrange filter
+#'  slice_head slice_min
 #' @importFrom tidyr pivot_longer
 format_beta <-  function(p) {
-  beta <-
-    p$betas %>%
+  beta <- p$betas %>%
     group_by(m) %>%
     mutate(k = row_number()) %>%
     ungroup() %>%
-    left_join(p$weights %>% select(m, k, topic_col, col), by = c("m","k")) %>%
+    left_join(p$weights %>% select(m, k, topic_col, col), by = c("m", "k")) %>%
     pivot_longer(
-      -c(m,k, col, topic_col),
+      -c(m, k, col, topic_col),
       names_to = "w",
       values_to = "b"
     )
 
-  w_order <-
-    beta %>%
-    arrange(m) %>%
-    filter(m == m[1]) %>%
+  w_order <- beta %>%
+    slice_min(m) %>%
     arrange(w, -b) %>%
     group_by(w) %>%
     slice_head(n = 1) %>%
     ungroup() %>%
     arrange(k)
 
-  beta <-
-    beta %>%
-    mutate(w = w %>% factor(., levels = w_order$w %>%  rev()),
-           m = m %>% factor(., levels = rev(levels(m))))
-  beta
+  beta %>%
+    mutate(
+      w = factor(w, levels = w_order$w %>%  rev()),
+      m = factor(m, levels = rev(levels(m)))
+    )
 }
 
 #' Filter to words of interest
