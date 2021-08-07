@@ -32,7 +32,7 @@ plot_alignment <- function(
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by) {
 
-  rect <-  .add_topic_col(layouts$rect, aligned_topics, color_by)
+  rect <- .add_topic_col(layouts$rect, aligned_topics, color_by)
   ribbon <- .add_topic_col(layouts$ribbon, aligned_topics, color_by)
 
   ms <- unique(rect$m_num)
@@ -81,19 +81,10 @@ plot_alignment <- function(
 #' @importFrom dplyr mutate all_of
 #' @importFrom magrittr %>%
 .add_topic_col <- function(df, x, color_by) {
-  if (color_by == "topic") {
-    df <- df %>%
-    mutate(topic_col = factor(k))
-  } else {
-    df <- df %>%
-      left_join(
-        x@topics %>% select(m, k, all_of(color_by)),
-        by = c("m", "k")
-      )
-    df$topic_col <- df[, color_by] %>%  unlist()
-  }
-
-  df
+  df %>%
+    mutate(topic = factor(k)) %>%
+    left_join(topics(x), by = c("m", "k")) %>%
+    rename(topic_col = !!color_by)
 }
 
 #' @importFrom magrittr %>%
@@ -195,8 +186,8 @@ plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
                       beta_aes = "size", color_by = "branch") {
     beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
     color_by <- match.arg(color_by, choices = c("topic", "branch", "refinement", "robustness"))
-    p <- plot_beta_layout(x, models, min_beta, n_features, color_by = color_by)
-    beta <- format_beta(p)
+    beta <- plot_beta_layout(x, models, min_beta, n_features, color_by) %>%
+      format_beta()
 
     if (beta_aes == "size") {
       g <- ggplot(beta %>% filter(b > min_beta),
@@ -233,7 +224,7 @@ plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
 #' @importFrom dplyr select row_number mutate n left_join rename_with
 #' @importFrom scales hue_pal
 plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
-                             cols = NULL, color_by = "branch") {
+                             color_by = "branch") {
   # subset to only the models of interest
   model_params <- models(x)
   if (length(subset) == 1 && subset == "last") {
@@ -254,7 +245,7 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   # associate topics with the variable to shade in by
   topic_weights <- topics(x) %>%
     filter(m %in% betas$m) %>%
-    mutate(topic = k) %>%
+    mutate(topic = factor(k)) %>%
     rename(topic_col = !!color_by)
 
   if (color_by %in% c("topic", "branch")) {
