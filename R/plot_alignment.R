@@ -219,7 +219,7 @@ plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
 
 #' @importFrom purrr map map_dfr
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select row_number mutate n left_join rename_with
+#' @importFrom dplyr select row_number mutate n left_join
 #' @importFrom scales hue_pal
 plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
                              color_by = "branch") {
