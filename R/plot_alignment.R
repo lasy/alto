@@ -260,13 +260,13 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     topic_weights <-
       topic_weights %>%
       mutate(topic_col = k)
-  }else{
-    topic_weights$topic_col = topic_weights[,color_by] %>% unlist()
+  } else {
+    topic_weights$topic_col = topic_weights[, color_by] %>% unlist()
   }
   if (color_by %in% c("topic", "branch")) {
     topic_weights <- topic_weights %>%
       mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
-  }else{
+  } else {
     topic_weights <-
     topic_weights %>%
       mutate(col = colorRampPalette(colors = c("brown1", "cornflowerblue"))(11)[round(topic_col,1)*10+1])

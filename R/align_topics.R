@@ -91,7 +91,7 @@ topics_list <-  function(models) {
 }
 
 
-order_topics <-  function(aligned_topics) {
+order_topics <- function(aligned_topics) {
 
   perms <- consecutive_weights(aligned_topics) %>%
     mutate(k_init = k_next) %>%
