@@ -32,7 +32,7 @@ plot_alignment <- function(
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by) {
 
-  rect <-  .add_topic_col(layouts$rect, aligned_topics, color_by)
+  rect <- .add_topic_col(layouts$rect, aligned_topics, color_by)
   ribbon <- .add_topic_col(layouts$ribbon, aligned_topics, color_by)
 
   ms <- unique(rect$m_num)
@@ -81,19 +81,10 @@ plot_alignment <- function(
 #' @importFrom dplyr mutate all_of
 #' @importFrom magrittr %>%
 .add_topic_col <- function(df, x, color_by) {
-  if (color_by == "topic") {
-    df <- df %>%
-    mutate(topic_col = factor(k))
-  } else {
-    df <- df %>%
-      left_join(
-        x@topics %>% select(m, k, all_of(color_by)),
-        by = c("m", "k")
-      )
-    df$topic_col <- df[, color_by] %>%  unlist()
-  }
-
-  df
+  df %>%
+    mutate(topic = factor(k)) %>%
+    left_join(topics(x), by = c("m", "k")) %>%
+    rename(topic_col = !!color_by)
 }
 
 #' @importFrom magrittr %>%
@@ -112,8 +103,9 @@ plot_alignment <- function(
     )
 
   # compute flows out and into rectangles (input to geom_ribbon)
-  r_out <- ribbon_out(consecutive_weights(aligned_topics), rect_gap)
-  r_in <- ribbon_in(consecutive_weights(aligned_topics), -rect_gap)
+  weights <- consecutive_weights(aligned_topics)
+  r_out <- ribbon_out(weights, rect_gap)
+  r_in <- ribbon_in(weights, -rect_gap)
   list(rect = layout_rect, ribbon = bind_rows(r_out, r_in))
 }
 
@@ -195,32 +187,29 @@ plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
                       beta_aes = "size", color_by = "branch") {
     beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
     color_by <- match.arg(color_by, choices = c("topic", "branch", "refinement", "robustness"))
-    p <- plot_beta_layout(x, models, min_beta, n_features, color_by = color_by)
-    beta <- format_beta(p)
+    beta <- plot_beta_layout(x, models, min_beta, n_features, color_by) %>%
+      format_beta() %>%
+      filter(b > min_beta)
+
+    g <- ggplot(beta, aes(x = factor(k, levels = 1:100), y = w, col = col)) +
+      guides(col = "none", size = "none")
 
     if (beta_aes == "size") {
-      g <- ggplot(beta %>% filter(b > min_beta),
-                  aes(x = k %>% factor(., levels = 1:100), y = w,
-                      col = col, size = b)) +
-        geom_point() +
-        guides(col = "none", size = "none") +
+      g <- g +
+        geom_point(aes(size = b)) +
         scale_color_identity() +
         scale_size(range = c(0, 5), limits = c(0, 1))
-
     } else {
-      g <- ggplot(beta %>% filter(b > min_beta),
-                  aes(x = k %>% factor(., levels = 1:100), y = w,
-                      fill = col, alpha = b)) +
-        geom_tile() +
-        guides(fill = "none", alpha = "none") +
+      g <- g +
+        geom_tile(aes(alpha = b)) +
         scale_fill_identity() +
         scale_alpha(range = c(0, 1), limits = c(0, 1))
     }
 
     g +
       facet_grid(. ~ m, scales = "free", space = "free") +
-      theme_bw() +
       labs(x = "", y = "") +
+      theme_bw() +
       theme(
         panel.spacing.x = unit(0, "pt"),
         strip.text.y = element_text(angle = 0, hjust = 0, color = "black")
@@ -233,7 +222,7 @@ plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
 #' @importFrom dplyr select row_number mutate n left_join
 #' @importFrom scales hue_pal
 plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
-                             cols = NULL, color_by = "branch") {
+                             color_by = "branch") {
   # subset to only the models of interest
   model_params <- models(x)
   if (length(subset) == 1 && subset == "last") {
@@ -251,60 +240,51 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     trim_betas(min_beta, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
-  # extract topic weights for the side plot
-  topic_weights <-
-    x@topics %>%
-    filter(m %in% betas$m)
+  # associate topics with the variable to shade in by
+  topic_weights <- topics(x) %>%
+    filter(m %in% betas$m) %>%
+    mutate(topic = factor(k)) %>%
+    rename(topic_col = !!color_by)
 
-  if (color_by == "topic") {
-    topic_weights <-
-      topic_weights %>%
-      mutate(topic_col = k)
-  }else{
-    topic_weights$topic_col = topic_weights[,color_by] %>% unlist()
-  }
   if (color_by %in% c("topic", "branch")) {
     topic_weights <- topic_weights %>%
       mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
-  }else{
-    topic_weights <-
-    topic_weights %>%
+  } else {
+    topic_weights <- topic_weights %>%
       mutate(col = colorRampPalette(colors = c("brown1", "cornflowerblue"))(11)[round(topic_col,1)*10+1])
   }
 
   list(betas = betas, weights = topic_weights)
 }
 
-#' @importFrom dplyr select group_by mutate ungroup left_join arrange filter slice_head
+#' @importFrom dplyr select group_by mutate ungroup left_join arrange filter
+#'  slice_head slice_min
 #' @importFrom tidyr pivot_longer
 format_beta <-  function(p) {
-  beta <-
-    p$betas %>%
+  beta <- p$betas %>%
     group_by(m) %>%
     mutate(k = row_number()) %>%
     ungroup() %>%
-    left_join(p$weights %>% select(m, k, topic_col, col), by = c("m","k")) %>%
+    left_join(p$weights %>% select(m, k, topic_col, col), by = c("m", "k")) %>%
     pivot_longer(
-      -c(m,k, col, topic_col),
+      -c(m, k, col, topic_col),
       names_to = "w",
       values_to = "b"
     )
 
-  w_order <-
-    beta %>%
-    arrange(m) %>%
-    filter(m == m[1]) %>%
+  w_order <- beta %>%
+    slice_min(m) %>%
     arrange(w, -b) %>%
     group_by(w) %>%
     slice_head(n = 1) %>%
     ungroup() %>%
     arrange(k)
 
-  beta <-
-    beta %>%
-    mutate(w = w %>% factor(., levels = w_order$w %>%  rev()),
-           m = m %>% factor(., levels = rev(levels(m))))
-  beta
+  beta %>%
+    mutate(
+      w = factor(w, levels = w_order$w %>%  rev()),
+      m = factor(m, levels = rev(levels(m)))
+    )
 }
 
 #' Filter to words of interest
