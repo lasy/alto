@@ -48,19 +48,9 @@ x <- simulate_lda(betas, gammas, lambda = lambdas$count)
 ```{r}
 lda_params <- map(1:n_models, ~ list(k = .))
 names(lda_params) <- str_c("K", 1:n_models)
-#alignment <- x %>%
-#  run_lda_models(lda_params, reset = TRUE) %>%
-#  align_topics(method = params$method)
-```
-
-```{r}
-lda_models <- x %>%
-  run_lda_models(lda_params, reset = TRUE)
-```
-
-
-```{r}
-alignment <- align_topics(lda_models, method = params$method)
+alignment <- x %>%
+  run_lda_models(lda_params, reset = TRUE) %>%
+  align_topics(method = params$method)
 ```
 
 ```{r}
@@ -69,34 +59,31 @@ plot_beta(alignment, c(2, 4))
 ```
 
 ```{r}
-stability <- alto:::compute_stability_along_branches(alignment@weights) %>%
-  mutate(id = params$id)
-ggplot(stability, aes(m, stability)) +
+ggplot(topics(alignment), aes(m, robustness)) +
   geom_line(aes(group = branch), alpha = 0.5)
 ```
 
 ```{r}
-refinement <- alto:::compute_refinement_scores(alignment@weights) %>%
-  filter(m != str_c("K", n_models)) %>%
-  mutate(id = params$id)
-ggplot(refinement) +
-  geom_point(aes(m, refinement_score)) +
+ggplot(topics(alignment)) +
+  geom_point(aes(m, refinement)) +
   scale_y_log10()
 ```
 
 ```{r}
-key_topics <- alto:::compute_number_of_key_topics(alignment@weights, T) %>%
+key_topics <- compute_number_of_key_topics(alignment) %>%
   mutate(id = params$id)
 ```
 
 ```{r}
 id_vars <- params[c("out_dir", "method", "id", "N", "V", "K")]
+scores <- topics(alignment) %>%
+  mutate(id = params$id)
+
 if (params$save) {
   dir.create(params$out_dir, recursive = TRUE)
   write_csv(key_topics, save_str("key_topics", id_vars))
-  write_csv(refinement, save_str("refinement", id_vars))
-  write_csv(stability, save_str("stability", id_vars))
-  exper <- list(x, alignment)
+  write_csv(scores, save_str("topics", id_vars))
+  exper <- list(x, betas, gammas, alignment)
   save(exper, file = save_str("exper", id_vars, "rda"))
 }
 ```

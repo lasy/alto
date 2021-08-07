@@ -65,11 +65,9 @@ similarities <- cosine_similarity(select(beta_hat, -m), perturbed_topics) %>%
   )
 ```
 
-```{r, fig.width = 10, fig.height = 3}
-cols <- alto:::superheat_defaults()$heat.pal
-superheat::superheat(perturbed_topics, pretty.order.cols = TRUE, heat.pal = cols)
-plot_beta(alignment, min_beta = 0, pretty.order.rows = TRUE)
-plot_beta(alignment, c("K3", "K5"), pretty.order.rows = TRUE)
+```{r, fig.width = 5, fig.height = 2}
+plot_beta(alignment)
+plot_beta(alignment, c("K3", "K5"))
 ```
 
 ```{r, fig.width = 5, fig.height = 3}

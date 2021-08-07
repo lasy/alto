@@ -56,9 +56,9 @@ alignment <- sim_data$x %>%
 ```
 
 ```{r}
-stability <- alto:::compute_stability_along_branches(alignment@weights)
-refinement <- alto:::compute_refinement_scores(alignment@weights)
-key_topics <- alto:::compute_number_of_key_topics(alignment@weights)
+scores <- topics(alignment)  %>%
+  mutate(id = params$id)
+key_topics <- compute_number_of_key_topics(alignment@weights)
 ```
 
 
@@ -66,8 +66,7 @@ key_topics <- alto:::compute_number_of_key_topics(alignment@weights)
 id_vars <- params[c("out_dir", "method", "alpha", "id", "N", "V", "K")]
 if (params$save) {
   dir.create(params$out_dir, recursive = TRUE)
-  write_csv(stability, save_str("stability", id_vars))
-  write_csv(refinement, save_str("refinement", id_vars))
+  write_csv(scores, save_str("scores", id_vars))
   write_csv(key_topics, save_str("key_topics", id_vars))
   exper <- list(sim_data, alignment)
   save(exper, file = save_str("exper", id_vars, "rda"))
