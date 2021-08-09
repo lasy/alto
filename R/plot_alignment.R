@@ -15,7 +15,8 @@ plot_alignment <- function(
   x,
   reverse_x_axis = FALSE,
   rect_gap = 0.2,
-  color_by = "branch"
+  color_by = "branch",
+  model_name_repair_fun = paste0
 ) {
 
   # inputs
@@ -24,13 +25,13 @@ plot_alignment <- function(
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
-  .plot_from_layout(x, layouts, rect_gap, color_by)
+  .plot_from_layout(x, layouts, rect_gap, color_by, model_name_repair_fun = model_name_repair_fun)
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
 #' theme guides scale_fill_gradient scale_fill_discrete
 #' @importFrom dplyr mutate left_join
-.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by) {
+.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0) {
 
   rect <- .add_topic_col(layouts$rect, aligned_topics, color_by)
   ribbon <- .add_topic_col(layouts$ribbon, aligned_topics, color_by)
@@ -59,8 +60,12 @@ plot_alignment <- function(
         fill = topic_col
       )
     ) +
-    scale_x_continuous(breaks = ms, labels = ms) +
-    theme(legend.position = "bottom")
+    scale_x_continuous(breaks = ms, labels = levels(rect$m)[ms] %>% model_name_repair_fun , minor_breaks = NULL) +
+    scale_y_continuous(breaks = NULL) +
+    theme(legend.position = "bottom",
+          axis.text.y = element_blank()) +
+    xlab("models") +
+    ylab("")
 
   # replace choices below by a better color scheme...
   if (color_by %in% c("refinement", "robustness")) {
@@ -234,9 +239,15 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   }
 
   # filter betas to those that pass thresholds
+<<<<<<< Updated upstream
   betas <- model_params %>%
     map_dfr(~ data.frame(exp(.$beta)), .id = "m") %>%
     set_colnames(c("m", colnames(model_params[[1]]$beta))) %>%
+=======
+  betas <-
+    model_params %>%
+    map_dfr(~ as.data.frame(exp(.$beta)), .id = "m") %>%
+>>>>>>> Stashed changes
     trim_betas(min_beta, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
