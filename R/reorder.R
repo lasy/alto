@@ -56,7 +56,7 @@ reorder_weights <- function(weights, perms) {
     left_join(perms, by = c("m", "k")) %>%
     select(-k) %>%
     rename(k = new_k) %>%
-    left_join(perms %>% rename(m_next = m, k_next = k), by = c("m_next", "k_next")) %>%
+    left_join(perms, by = c("m_next" = "m", "k_next" = "k")) %>%
     select(-k_next) %>%
     rename(k_next = new_k) %>%
     arrange(m, m_next, k, k_next) %>%
@@ -68,13 +68,9 @@ reorder_weights <- function(weights, perms) {
 perms_as_tibble <- function(perms) {
   map_dfr(
     .x = names(perms),
-    .f = function(model){
-      tibble(m = model,
-             k = seq_along(perms[[model]]),
-             new_k = order(perms[[model]]))
-    }
+    .f = ~ tibble(m = ., k = seq_along(perms[[.]]), new_k = order(perms[[.]]))
   ) %>%
-    mutate(m = m %>% factor(., levels = names(perms)))
+    mutate(m = factor(m, levels = names(perms)))
 }
 
 #' @importFrom dplyr filter group_by ungroup mutate summarize arrange
@@ -117,10 +113,7 @@ backward_ordering <- function(weights) {
 
   for (model in rev(models[-1])) {
 
-    this_model_weights = pre_post_weights(weights, model)
-
-    k_order <-
-      this_model_weights %>%
+    k_order <- pre_post_weights(weights, model) %>%
       mutate(force = 0 * bw_weight * k_prev + 0.7 * fw_weight * k_next) %>%
       group_by(k, topic_weight) %>%
       summarize(gravity_center = sum(force), .groups = "drop") %>%
@@ -145,45 +138,39 @@ backward_ordering <- function(weights) {
 }
 
 
-
-pre_post_weights <- function(weights, model){
-  pre_weights <-
-    weights %>%
-    filter(m_next == model) %>%
-    dplyr::rename(k_prev = k, k = k_next) %>%
+#' @importFrom dplyr filter rename select left_join
+#' @importFrom magrittr %>%
+pre_post_weights <- function(weights, model) {
+  # get weights one layer before and after current model
+  prev_model <- weights %>%
+    filter(m_next == model)
+  pre_weights <- prev_model %>%
+    rename(k_prev = k, k = k_next) %>%
     select(k_prev, k, bw_weight)
 
-  post_weights <-
-    weights %>%
+  post_weights <- weights %>%
     filter(m == model) %>%
-    dplyr::rename(k = k, k_next = k_next) %>%
+    rename(k = k, k_next = k_next) %>%
     select(k, k_next, fw_weight)
 
+  # join weights before and after current model
   if (nrow(post_weights) > 0) {
-    this_model_weights <-
-      left_join(
+    model_weights <- left_join(
         pre_weights,
         post_weights,
         by = "k"
       )
   } else {
-    this_model_weights <-
-      pre_weights %>%
-      mutate(k_next = 0,
-             fw_weight = 0)
+    model_weights <- pre_weights %>%
+      mutate(k_next = 0, fw_weight = 0)
   }
 
-  topic_weights <-
-    weights %>%
-    filter(m == model) %>%
+  # get total topic weights and return
+  topic_weights <- prev_model %>%
     group_by(k) %>%
-    summarize(topic_weight = sum(weight), .groups = "drop") %>%
-    dplyr::rename(k = k)
+    summarize(topic_weight = sum(weight), .groups = "drop")
 
-  this_model_weights <-
-    this_model_weights %>%
+  model_weights %>%
     left_join(topic_weights, by = "k") %>%
     select(k_prev, k, k_next, bw_weight, fw_weight, topic_weight)
-
-  this_model_weights
 }
