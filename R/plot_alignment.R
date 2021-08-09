@@ -239,15 +239,10 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   }
 
   # filter betas to those that pass thresholds
-<<<<<<< Updated upstream
-  betas <- model_params %>%
-    map_dfr(~ data.frame(exp(.$beta)), .id = "m") %>%
-    set_colnames(c("m", colnames(model_params[[1]]$beta))) %>%
-=======
+
   betas <-
     model_params %>%
     map_dfr(~ as.data.frame(exp(.$beta)), .id = "m") %>%
->>>>>>> Stashed changes
     trim_betas(min_beta, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
