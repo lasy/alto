@@ -110,14 +110,6 @@ aligned_topics_transport <-
     models = lda_models,
     method = "transport") 
 
-
-aligned_topics_product@weights %>% head()
-<<<<<<< Updated upstream
-
-
-=======
->>>>>>> Stashed changes
-
 ```
 
 ## Alignement viz
@@ -131,15 +123,8 @@ g_branches_product
 g_branches_transport <- plot_alignment(aligned_topics_transport)
 g_branches_transport
 
-
 ```
 
-
-<<<<<<< Updated upstream
-g_beta_product <-  plot_beta(aligned_topics_product, models = c("k3", "k6","k12","k20"), min_beta = 0.005)
-g_beta_transport <-  plot_beta(aligned_topics_transport, models = c("k3", "k6","k12","k20"), min_beta = 0.005)
-=======
->>>>>>> Stashed changes
 
 ## Key number of topics
 
@@ -171,19 +156,12 @@ g_refinement_transport
 
 
 
-
-
-<<<<<<< Updated upstream
-plot_alignment(aligned_topics_product, color_by = "re")
-plot_alignment(aligned_topics_transport, color_by = "re")
-=======
 ```{r robustness}
 
 g_robustness_product <- plot_alignment(aligned_topics_product, color_by = "ro")
 g_robustness_product
 g_robustness_transport <- plot_alignment(aligned_topics_transport, color_by = "ro")
 g_robustness_transport
->>>>>>> Stashed changes
 
 ```
 
@@ -197,32 +175,15 @@ g_beta_transport
 
 
 ```
+
+
 ```{r}
 
-
-<<<<<<< Updated upstream
-plot_alignment(aligned_topics_product, color_by = "ro")
-plot_alignment(aligned_topics_transport, color_by = "ro")
-=======
 g_beta_product_ro <-  plot_beta_lsy(aligned_topics_product, models = c("k3", "k6","k12","k20"), min_beta = 0.005, color_by = "ro")
 g_beta_product_ro
 
 
-#plot_beta_lsy(aligned_topics_product, models = c("k12"), min_beta = 0.005, color_by = "ro")
-
->>>>>>> Stashed changes
-
 ```
-
-
-<<<<<<< Updated upstream
-plot_beta(aligned_topics_product, models = c("k3","k3","k12", "k20"), min_beta = 0.005, color_by  = "branch")
-plot_beta(aligned_topics_product, models = c("k3","k6","k12", "k20"), min_beta = 0.005, color_by  = "branch")
-
-plot_beta(aligned_topics_product, models = c("k3","k6","k12", "k20"), min_beta = 0.005, color_by  = "robustness")
-=======
-
->>>>>>> Stashed changes
 
 
 
