@@ -58,7 +58,7 @@ alignment <- sim_data$x %>%
 ```{r}
 scores <- topics(alignment)  %>%
   mutate(id = params$id)
-key_topics <- compute_number_of_key_topics(alignment@weights)
+key_topics <- compute_number_of_key_topics(alignment)
 ```
 
 
