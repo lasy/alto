@@ -4,7 +4,13 @@
 \alias{plot,alignment,missing-method}
 \title{Plot Method for Alignment Class}
 \usage{
-\S4method{plot}{alignment,missing}(x, reverse_x_axis = FALSE, rect_gap = 0.2, color_by = "branch")
+\S4method{plot}{alignment,missing}(
+  x,
+  reverse_x_axis = FALSE,
+  rect_gap = 0.2,
+  color_by = "branch",
+  model_name_repair_fun = paste0
+)
 }
 \description{
 Plot Method for Alignment Class

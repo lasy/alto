@@ -41,10 +41,10 @@ test_that(
     weight <- weights(alignment) %>%
       filter(
         m == names(lda_models)[i],
-        k_LDA == max_s[1],
-        k_LDA_next == max_s[2]
+        k == max_s[1],
+        k_next == max_s[2]
       )
-    expect_gt(weight$norm_weight[1], 0.7)
+    expect_gt(weight$fw_weight[1], 0.5)
   }
 })
 
@@ -56,8 +56,8 @@ test_that(
 
     ks <- weights(alignment) %>%
       filter(m == names(lda_models)[i]) %>%
-      slice_max(norm_weight)
+      slice_max(fw_weight)
     topics_cor <- cor(lda_models[[i]]$gamma, lda_models[[i + 1]]$gamma)
-    expect_gt(topics_cor[ks$k_LDA[1], ks$k_LDA_next[1]], 0.8)
+    expect_gt(topics_cor[ks$k[1], ks$k_next[1]], 0.8)
   }
 })

@@ -29,7 +29,7 @@ plot_alignment <- function(
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
-#' theme guides scale_fill_gradient scale_fill_discrete
+#' theme guides scale_fill_gradient scale_fill_discrete element_blank labs
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0) {
 
@@ -64,8 +64,7 @@ plot_alignment <- function(
     scale_y_continuous(breaks = NULL) +
     theme(legend.position = "bottom",
           axis.text.y = element_blank()) +
-    xlab("models") +
-    ylab("")
+    labs(x = "models", y = "")
 
   # replace choices below by a better color scheme...
   if (color_by %in% c("refinement", "robustness")) {
@@ -176,7 +175,6 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' lda_models <- run_lda_models(data, lda_params)
 #' alignment <- align_topics(lda_models)
 #' plot_beta(alignment)
-#' plot_beta(alignment, min_beta = 0)
 #' plot_beta(alignment, models = c(3, 4))
 #' plot_beta(alignment, models = "last")
 #'

@@ -49,7 +49,6 @@ lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
 lda_models <- run_lda_models(data, lda_params)
 alignment <- align_topics(lda_models)
 plot_beta(alignment)
-plot_beta(alignment, min_beta = 0)
 plot_beta(alignment, models = c(3, 4))
 plot_beta(alignment, models = "last")
 

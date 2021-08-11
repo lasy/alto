@@ -4,7 +4,13 @@
 \alias{plot_alignment}
 \title{Visualize alignments between topics of distinct LDA models}
 \usage{
-plot_alignment(x, reverse_x_axis = FALSE, rect_gap = 0.2, color_by = "branch")
+plot_alignment(
+  x,
+  reverse_x_axis = FALSE,
+  rect_gap = 0.2,
+  color_by = "branch",
+  model_name_repair_fun = paste0
+)
 }
 \arguments{
 \item{reverse_x_axis}{(optional, default = TRUE) specifies whether

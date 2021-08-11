@@ -38,7 +38,7 @@ data <- rmultinom(10, 20, rep(0.1, 20))
 lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
 lda_models <- run_lda_models(data, lda_params)
 alignment <- align_topics(lda_models)
-compute_number_of_key_topics(weights(alignment), plot = TRUE)
+compute_number_of_key_topics(alignment, plot = TRUE)
 
 }
 \seealso{

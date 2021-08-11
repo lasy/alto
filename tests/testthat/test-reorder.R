@@ -49,11 +49,11 @@ test_that(
 test_weights <- data.frame(
     m = c(rep("K1", 2), rep("K2", 6), rep("K3", 12)),
     m_next = c(rep("K2", 2), rep("K3", 6), rep("K4", 12)),
-    k_LDA = c(1, 1, rep(1:2, 3), rep(1:3, 4)),
-    k_LDA_init = c(1:2, rep(1:3, 2), rep(1:4, 3)),
-    k_LDA_next = c(2:1, rep(1:3, 2), rep(c(4, 3, 2, 1), 3)),
+    k = c(1, 1, rep(1:2, 3), rep(1:3, 4)),
+    k_init = c(1:2, rep(1:3, 2), rep(1:4, 3)),
+    k_next = c(2:1, rep(1:3, 2), rep(c(4, 3, 2, 1), 3)),
     weight = runif(20),
-    norm_weight = runif(20)
+    fw_weight = runif(20)
 )
 
 perms <- topic_ordering(test_weights)

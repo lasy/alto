@@ -28,7 +28,7 @@
 #' lda_params <- setNames(map(1:5, ~ list(k = .)), 1:5)
 #' lda_models <- run_lda_models(data, lda_params)
 #' alignment <- align_topics(lda_models)
-#' compute_number_of_key_topics(weights(alignment), plot = TRUE)
+#' compute_number_of_key_topics(alignment, plot = TRUE)
 #'
 #' @importFrom ggplot2 ggplot geom_line geom_point aes guides theme_minimal
 #' scale_x_continuous scale_y_continuous labs %+%

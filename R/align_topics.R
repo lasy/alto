@@ -38,6 +38,7 @@
 #'
 #' align_topics(lda_models, comparisons = "all")
 #'
+#' topics(alignment)
 #' weights(alignment)
 #' models(alignment)
 #' @importFrom purrr map
