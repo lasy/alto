@@ -24,7 +24,10 @@
 #' models are not stored. This option is especially useful for data exploration
 #' as it allows to save execution time if one wishes to add models to an
 #' existing model list. (see examples)
-#' @param reset (optional, default = \code{FALSE})
+#' @param reset (optional, default = \code{FALSE}). Should any cached models in
+#' the save directory be cleared?
+#' @param verbose (optional, default = \code{FALSE}) Print verbose output while
+#' running models?
 #'
 #' @return a list of LDA models (see package \code{topicmodels}).
 #' ? or a \code{lda_models} object which would be a list of
@@ -153,13 +156,25 @@ run_lda_models <-
 }
 
 
+#' Check validity of arguments arguments to run_lda_models
+#'
+#' For each element of the lda_varying_params_lists, we check the varying params
+#' and we add the fixed params to the varying params list. The end result is a
+#' list of lists. Each sub-list has the element k, method and control.
+#'
+#' @param lda_varying_params_lists (required) a \code{list} specifying the
+#' parameter for each models that needs to be ran. Currently, supported
+#' parameters are "k" (the number of topic), "method" ("VEM" or "Gibbs"), and
+#' "control", a list of type \code{LDAcontrol}. See \code{topicmodels::LDA} for
+#' details and below for examples.
+#' @param lda_fixed_params_list (optional) a \code{list} specifying the
+#' parameters common to all models to be fitted. Values provided by
+#' \code{lda_fixed_params_list} are overwritten by those provided by
+#' \code{lda_varying_params_lists}.
+#'
 #' @importFrom purrr map
+#' @importFrom utils modifyList
 .check_params <- function(lda_varying_params_lists, lda_fixed_params_list) {
-  # for each element of the lda_varying_params_lists,
-  # we check the varying params and
-  # we add the fixed params to the varying params list.
-  # the end result is a list of lists.
-  # each sub-list has the element k, method and control
   defaults <- list(k = 5, method = "VEM", "control" = NULL)
   map(
      .x = lda_varying_params_lists,

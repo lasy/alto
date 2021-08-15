@@ -6,13 +6,12 @@
 #' leaving it such that the linked topic received most of its weight from this
 #' parent edge.
 #'
-#' Given the weights from an \code{alignment} object, this function computes the
-#' number of key topics at each level in the alignment. The result is a
-#' \code{data.frame} mapping each level to a number from 1 to the number of
-#' current levels.
+#' Given an \code{alignment} object, this function computes the number of key
+#' topics at each level in the alignment. The result is a \code{data.frame}
+#' mapping each level to a number from 1 to the number of current levels.
 #'
-#' @param weights (required) \code{data.frame} with the alignment weights
-#' (the @weight field from an \code{alignment} object).
+#' @param aligned_topics (required) An \code{alignment} class with the alignment
+#' results.
 #' @param plot (optional, default = FALSE) whether to visualize the number of
 #' key topics.
 #'
