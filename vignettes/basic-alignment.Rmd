@@ -1,8 +1,8 @@
 ---
-title: "basic-alignment"
+title: "Introduction to Alignment"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{basic-alignment}
+  %\VignetteIndexEntry{Introduction to Alignment}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
@@ -89,6 +89,15 @@ manuscript accompanying this package.
 ```{r}
 topics(result)
 ```
+
+An alternative measure is the `key_topics` measure. This looks at how many
+topics have similar descendents across resolution levels, and it can be accessed
+using the `compute_number_of_key_topics` function,
+
+```{r}
+compute_number_of_key_topics(result, plot=TRUE)
+```
+
 
 ### Visualizations
 

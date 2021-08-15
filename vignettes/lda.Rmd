@@ -2,7 +2,7 @@
 title: "Identifying True Topics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{lda-simulation}
+  %\VignetteIndexEntry{Identifying True Topics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:

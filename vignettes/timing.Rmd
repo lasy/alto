@@ -2,7 +2,7 @@
 title: "Measuring Runtimes"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{lda-simulation}
+  %\VignetteIndexEntry{Measuring Runtimes}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:

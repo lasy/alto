@@ -2,7 +2,7 @@
 title: "Characterizing Topics with Background Noise"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{gradient-simulation}
+  %\VignetteIndexEntry{Characterizing Topics with Background Noise}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
@@ -18,7 +18,8 @@ params:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(collapse = TRUE, comment = "#>") set.seed(params$id)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
+set.seed(params$id)
 ```
 
 This vignette demonstrates the use of alignment to characterize topics that are

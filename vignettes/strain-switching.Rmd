@@ -2,7 +2,7 @@
 title: "Strain Switching"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{equivalence-simulation}
+  %\VignetteIndexEntry{Strain Switching}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
@@ -82,7 +82,7 @@ fine-grained heatmaps in the accompanying manuscript.
 ```{r}
 beta_hat <- alto:::plot_beta_layout(alignment)$betas
 perturbed_topics <- do.call(rbind, sim_data$perturbed_topics)
-similarities <- cosine_similarity(select(beta_hat, -m), perturbed_topics) %>%
+similarities <- cosine_similarity(dplyr::select(beta_hat, -m), perturbed_topics) %>%
   as_tibble() %>%
   mutate(
     m = beta_hat$m,
