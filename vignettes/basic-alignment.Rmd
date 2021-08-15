@@ -7,14 +7,18 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 ---
 
-This is mainly a way to test our code without having a full `testthat` workflow.
-
 ```{r, include = FALSE}
-knitr::opts_chunk$set(
-  collapse = TRUE,
-  comment = "#>"
-)
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>")
 ```
+
+This vignette describes the main functions of the `alto` package on a simple
+simulated dataset. We will introduce,
+
+* `run_lda_models` for fitting a sequence of LDA models to a fixed dataset
+* `align_topics` for aligning topics across a set of fitted models
+* `plot` and `plot_beta` for displaying the results
+
+First, we load some packages that are used in this vignette.
 
 ```{r setup}
 library(alto)
@@ -23,41 +27,162 @@ library(stringr)
 set.seed(123)
 ```
 
-First fit 10 models to toy data.
+Next, we simulate a dataset (50 samples with 20 dimensions each) samples and run
+a sequence of LDA models to it. The data, `x`, are all independent multinomials
+and there is no low-rank structure for any models to learn. Nonetheless, it is sufficient for illustrating the package.
 
-```{r}
-data <- rmultinom(20, 5000, rep(0.1, 50))
-colnames(data) <- 1:ncol(data)
+The arguments to `run_lda_models` are the matrix `x` and a list of lists,
+`lda_params`, which specifies how hyperparameters are to be varied across the
+sequence of models. The $i^{th}$ element of the list contains hyperparameters
+that will be used in the $i^{th}$ model fit. Any hyperparmeters that are
+accepted by `topicmodels::LDA` can be passed into these internal lists. We use
+`map` to construct a list whose $i^{th}$ element specifies that the $i^{th}$ LDA
+model should fit $k = i$ topics.
+
+```{r run_models}
+x <- rmultinom(20, 500, rep(0.1, 50))
+colnames(x) <- seq_len(ncol(x))
 lda_params <- setNames(map(1:10, ~ list(k = .)), 1:10)
-lda_models <- run_lda_models(data = data, lda_varying_params_lists = lda_params)
+lda_models <- run_lda_models(x, lda_params)
 ```
+
+The output of this function is a list of two element lists. The first element
+are the mixed-membership estimates $\gamma$. This is an $N \times K$ matrix
+specifying the membership of each sample across the $K$ topics. THe second
+element are the estimated topic log-probabilities, $\log\beta$. This is a $K
+\times D$ matrix whose rows give the log probabilities for each dimension within
+that topic.
+
+Given this output, we can compute a tpoic alignment. This is done by the
+`align_topics` function. By default, the `product` method is used to compute
+weights (below, we show how to use the `transport` or more custom methods).
+
+This function returns an object of class `alignment`. Its print method shows the
+topic weights between pairs of topics across models. The first two columns give
+the index $m$ of the models from the input. The next two columns give the index
+$k$ of topics within those models. For example, the first row gives the
+alignment between the first topics estimated in the $K = 1$ and $K = 2$ models.
+Since there is no low-rank structure in this model, all outgoing weights from a
+given topic are equal.
+
 ```{r}
 result <- align_topics(lda_models)
 result
+```
+
+We can access the full weights (not just the first few rows), by using the
+`weights` method.
+
+```{r}
+weights(result)
+```
+
+The `align_topics` function also computes a few per-topic measures. These can be
+accessed using `topics`. For example, `mass` describes the total mass $\sum_{i =
+1}^{n}\gamma_{ik}^{m}$ for topic $k$ in model $m$. The `prop` column normalizes
+the `mass` column according to the total mass within that model. `branch`
+specifies which overall branch each topic belongs to (this corresponds to colors
+in the flow diagrams below). Coherence and refinement are complementary measures
+of topic quality. For details on their properties, please refer to the
+manuscript accompanying this package.
+
+```{r}
 topics(result)
-plot(result, color_by = "refinement")
-plot(result, color_by = "branch")
-plot(result, color_by = "topic")
-plot(result, color_by = "robustness")
-plot_beta(result)
 ```
 
-Some more variants of `plot_beta`.
+### Visualizations
 
-```{r}
-plot_beta(result, "all")
-plot_beta(result, c(2, 3, 5), n_features = 10)
-plot_beta(result, c("2", "5", "10"), n_features = 10)
-plot_beta(result, "last", n_features = 10)
-```
-
-
-```{r}
-result <- align_topics(lda_models, method = "transport")
-result
-```
+The information in the `weights` and `topics` functions can be displayed
+visually using the `alignment` class' `plot` method. Each column in the flow
+diagram corresponds to one model, and each rectangle gives a topic. The height
+of each rectangle gives the topic mass defined above. The size of the edges
+between rectangles corresponds to the weight of that edge in the alignment. In
+this multinomial dataset, the perfect "fanning" structure suggests that there is
+no topic structure -- there are no emergent branches. This makes sense, since
+there is no low-rank structure when simulating a 50-dimensional multinomial.
 
 ```{r}
 plot(result)
-plot_beta(result)
 ```
+
+By default, `plot` shades each topic and edge in according to its branch
+membership. We could alternatively color by refinement, robustness, or topic ID.
+
+```{r}
+plot(result, color_by = "refinement")
+plot(result, color_by = "robustness")
+plot(result, color_by = "topic")
+```
+
+To understand the content of the topics, we can use `plot_beta`. This shows the
+probabilities $\beta_{kd}^{m}$ across topics and models. Dimensions are sorted
+from those with the highest distinctiveness across topics to those with the
+lowest. By default, all dimensions $d$ with at least one $\beta_{kd}^{m} >
+0.001$ will be displayed. This can be adjusted using the `min_beta` parameter.
+For clarity, circles with $\beta_{kd}^{m} < \text{min_beta}$ are not shown.
+
+```{r}
+plot_beta(result)
+plot_beta(result, min_beta = 0.05)
+```
+
+Alternatively, we can filter the number of dimensions shown using the
+`n_features` parameter.
+
+```{r}
+plot_beta(result, n_features = 5)
+```
+
+Finally, we can visualize topics associated with subsets of models, either by
+specifying the name of that model in the `lda_models` list or giving the model
+index.
+
+```{r}
+plot_beta(result, c(2, 5, 10))
+plot_beta(result, c("2", "5", "10"))
+plot_beta(result, "last")
+```
+
+### Alternative Alignments
+
+We can compute an alignment using the transport approach using the `method`
+argument.
+
+```{r}
+result <- align_topics(lda_models, method = "transport")
+plot(result)
+```
+
+`align_topics` computes an alignment sequentially across the input `gamma` and
+`beta` lists. In principle, an alignment can be computed between arbitrary pairs
+of topics. This functionality is supported by the `align_graph` function. For
+example, we can fit an alignment between all pairs of topics, across all models.
+
+```{r}
+edges <- alto:::setup_edges("all", names(lda_models))
+gamma <- map(lda_models, ~ .$gamma)
+beta <- map(lda_models, ~ .$beta)
+align_graph(edges, gamma, beta, transport_weights)
+```
+
+Finally, arbitrary weight methods can be passed to `align_graph`. The only
+requirement is that, given pairs of matrices of mixed-memberships and log-topics
+between two models, the function must return a data.frame of weights between all
+pairs of topics. The `transport_weights` function above is an example,
+
+```{r}
+transport_weights(gamma[1:2], beta[1:2])
+```
+
+Here is a dummy example that always returns a weight of 0 between all pairs of
+topics.
+
+```{r}
+dummy_weights <- function(gamma, beta) {
+  zeros <- matrix(0, ncol(gamma[[1]]),nrow(gamma[[2]]))
+  alto:::.lengthen_weights(data.frame(zeros))
+}
+
+align_graph(edges, gamma, beta, weight_fun = dummy_weights)
+```
+

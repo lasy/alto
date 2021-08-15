@@ -1,0 +1,99 @@
+---
+title: "Characterizing Topics with Background Noise"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{gradient-simulation}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  K: 5
+  N: 30
+  V: 50
+  alpha: 0
+  id: 1
+  method: "product"
+  n_models: 5
+  out_dir: "gradient"
+  save: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>") set.seed(params$id)
+```
+
+This vignette demonstrates the use of alignment to characterize topics that are
+contaminated by a kind of background noise. It corresponds to the second
+simulation in the manuscript accompanying this package. The arguments to this
+vignette (which can be modified in the original rmarkdown's YAML) are,
+
+* `K`: The true number of topics underlying the simulated data. In the
+manuscript, $K = 5$.
+* `N`: The number of samples (i.e., documents) to simulate. In the manuscript, this is set to 250.
+* `V`: The number of dimensions (i.e. vocabulary size) per sample. In the manuscript, this is set to 1000.
+* `alpha`: To what extent are the simulated data from a true LDA model (as
+opposed to background noise). Set to 1 for data from an LDA model and 0 for pure
+background noise.
+* `id`: A descriptive ID to associate with any saved results.
+* `method`: The alignment strategy to pass to `align_topics`.
+* `n_models`: The total number of models to fit to the simulated data. In the
+manuscript, this is set to 10.
+* `out_dir`: If results are saved, where should they be saved to?
+* `save`: Should any results be saved?
+
+We load packages. The `sim_gradient` function that generates the contaminated
+LDA model is sourced from the link below.
+
+```{r}
+library(alto)
+library(dplyr)
+library(purrr)
+library(readr)
+library(stringr)
+source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
+my_theme()
+```
+
+The block below simulates from the contaminated LDA model. The $\lambda_{\beta}$
+and $\lambda_{\gamma}$ parameters are as in the LDA simulation in the
+`sim_lda.Rmd` vignette. The $\lambda_{\nu}$ parameter specifies the
+hyperparameter of the Dirichlet distribution used in the background noise.
+
+```{r}
+attach(params)
+lambdas <- list(beta = 0.1, gamma = 0.5, nu = 0.5, count = 1e4)
+sim_data <- simulate_gradient(N, K, V, lambdas, alpha = params$alpha)
+```
+
+Next, we run a sequence of LDA models and compute an alignment. This code is
+identical across vignettes.
+
+```{r}
+lda_params <- map(1:n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:n_models)
+alignment <- sim_data$x %>%
+  run_lda_models(lda_params, reset = TRUE) %>%
+  align_topics(method = params$method)
+```
+
+Next, we extract the data that summarize the quality of topics emerging from the
+alignment.
+
+```{r}
+scores <- topics(alignment)  %>%
+  mutate(id = params$id)
+key_topics <- compute_number_of_key_topics(alignment)
+```
+
+By saving these data into different directories, we can gather results across a
+variety of $\alpha$'s.
+
+```{r}
+id_vars <- params[c("out_dir", "method", "alpha", "id", "N", "V", "K")]
+if (params$save) {
+  dir.create(params$out_dir, recursive = TRUE)
+  write_csv(scores, save_str("scores", id_vars))
+  write_csv(key_topics, save_str("key_topics", id_vars))
+  exper <- list(sim_data, alignment)
+  save(exper, file = save_str("exper", id_vars, "rda"))
+}
+```
