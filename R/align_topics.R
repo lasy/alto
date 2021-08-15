@@ -144,6 +144,7 @@ compute_ordering_cost <- function(weights) {
 #' @importFrom dplyr filter
 #' @importFrom tibble tibble as_tibble
 #' @importFrom utils combn head tail
+#' @export
 setup_edges <- function(comparisons, model_names) {
   edges <- comparisons
   if (comparisons == "consecutive") {
