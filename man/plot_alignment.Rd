@@ -6,26 +6,38 @@
 \usage{
 plot_alignment(
   x,
-  reverse_x_axis = FALSE,
   rect_gap = 0.2,
   color_by = "branch",
   model_name_repair_fun = paste0
 )
 }
 \arguments{
-\item{reverse_x_axis}{(optional, default = TRUE) specifies whether
-the x-axis (models) should be reversed.}
+\item{x}{(required) An alignment class object resulting from
+\code{align_topics}.}
 
-\item{aligned_topics}{(required)}
+\item{rect_gap}{(optional) A float describing how much vertical space to put
+between topics within the same model. The units correspond to topic masses.
+Defaults to 0.2.}
 
-\item{add_leaves}{(optional, default = TRUE) whether topic composition of
-last model should be displayed.}
+\item{color_by}{(optional) What should the color of topics and branches
+encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+'refinement', or 'topic'.}
+
+\item{model_name_repair_fun}{How should names be repaired before plotting?}
 }
 \value{
-a \code{ggplot} object (?) .
+A \code{ggplot2} object describing the alignment weights across
+models.
 }
 \description{
-[Description]
+This function creates flow diagrams of alignment weight across collections of
+topics. It is the default plot method associated with alignment objects. The
+x-axis indexes models from those with few to those with many topics. Each
+rectangle matches a topic; its height is the weight associated wtih that
+topic from across all samples. The width of edges between topics corresponds
+ot the alignment weight between that pair of topics. By default, topics are
+shaded according to their branch membership. Other topic measures can be
+provided by modifying the `color_by` argument.
 }
 \seealso{
 align_topics

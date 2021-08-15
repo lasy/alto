@@ -11,6 +11,16 @@ transport_weights(gammas, betas, reg = 0.1, ...)
 membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
 compare. The number of columns may be different, but the number of samples
 must be equal.}
+
+\item{betas}{(required). A lsit of length two, containing the topic matrices
+(a \code{matrix} of dimension k-topics by d-dimensions).) The number of rows
+may be different, but the number of columns must remain fixed.}
+
+\item{reg}{(optional) How much regularization to use in the Sinkhorn optimal
+transport algorithm? Defaults to 0.1.}
+
+\item{...}{(optional) Other keyword arguments. Not used here, but included
+for consistency with other weight functions.}
 }
 \value{
 products A \code{data.frame} giving the product similarity of each

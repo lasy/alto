@@ -6,6 +6,9 @@
 \usage{
 \S4method{models}{alignment}(x)
 }
+\arguments{
+\item{x}{An alignment object output from \code{align_topics}.}
+}
 \description{
 Extract Models underlying Alignment
 }

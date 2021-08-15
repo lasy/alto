@@ -7,16 +7,20 @@
 align_topics(models, method = "product", ...)
 }
 \arguments{
-\item{models}{(required) a list of LDA models object. Each list component
+\item{models}{(required) A list of LDA models object. Each list component
 must be a list with two named entries, $gamma (containing mixed memberships)
 and $beta (containing topic parameters in log sapce). See
 \code{run_lda_models} for details.}
 
-\item{comparisons}{(optional) either a character indicating if topics
-should be aligned between \code{consecutive} or \code{all} models, or a
-\code{data.frame} containing the pairs of models within which topics should
-be aligned. See the \code{setup_edges} function for examples of custom
-topic comparison by passing in an edgelist.}
+\item{method}{(required) Either \code{product} or \code{transport}, giving
+two types of alignment strategies, using inner products between gamma vectors
+or optimal transport between gamma-beta pairs, respectively. Defaults to
+\code{product}.}
+
+\item{...}{(optional) Further keyword arguments passed to the weight
+function. For example, passing \code{reg = 10} when using the
+\code{transport} method will use a regularization level fo 10 in the Sinkhorn
+optimal transport algorithm.}
 }
 \value{
 An object of class \code{alignment} providing the weights between

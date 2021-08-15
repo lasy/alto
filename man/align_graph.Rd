@@ -23,6 +23,11 @@ to the names of models to compare in `edges`.}
 all pairs of topics between two models. The first argument must accept a list
 of two gamma_hat matrices, the second argument must accept a list of two
 beta_hat matrices. See `product_weights` or `transport_weights` for examples.}
+
+\item{...}{(optional) Further keyword arguments passed to the weight
+function. For example, passing \code{reg = 10} when using the
+\code{transport} method will use a regularization level fo 10 in the Sinkhorn
+optimal transport algorithm.}
 }
 \description{
 This provides a more generic interface to alignment between arbitrary pairs

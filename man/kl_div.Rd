@@ -2,10 +2,20 @@
 % Please edit documentation in R/plot_alignment.R
 \name{kl_div}
 \alias{kl_div}
-\title{Equation (3) from https://doi.org/10.1371/journal.pgen.1006599}
+\title{KL Divergence of Categoricals}
 \usage{
 kl_div(p1, p2)
 }
-\description{
+\arguments{
+\item{p1}{The first probability in KL(p1 || p2)}
+
+\item{p2}{The second probability in KL(p1 || p2)}
+}
+\value{
+The KL divergence between pairs of discrete probability categorical
+vectors.
 Equation (3) from https://doi.org/10.1371/journal.pgen.1006599
+}
+\description{
+KL Divergence of Categoricals
 }

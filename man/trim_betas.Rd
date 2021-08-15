@@ -7,6 +7,10 @@
 trim_betas(betas, min_beta = -1, n_features = NULL)
 }
 \arguments{
+\item{betas}{A \code{data.frame} whose rows correpond to topics and whose
+columns are \code{m}, the model ID, and the words for which estimates are
+made.}
+
 \item{min_beta}{Words with less than this beta in all topics are ignored}
 
 \item{n_features}{Maximum number of features to show}

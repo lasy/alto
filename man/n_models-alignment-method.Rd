@@ -6,6 +6,9 @@
 \usage{
 \S4method{n_models}{alignment}(x)
 }
+\arguments{
+\item{x}{An alignment object output from \code{align_topics}.}
+}
 \description{
 Number of Models Method for Alignment Class
 }

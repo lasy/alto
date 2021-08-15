@@ -6,6 +6,13 @@
 \usage{
 kl_mat(p)
 }
+\arguments{
+\item{p}{A matrix whose rows correspond to discrete probability vectors.}
+}
+\value{
+K A matrix whose \code{ij} entry is the KL divergence between rows
+\code{i} and \code{j} of \code{p}.
+}
 \description{
 Pairwise KL divergences
 }

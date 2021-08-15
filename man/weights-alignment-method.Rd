@@ -6,6 +6,9 @@
 \usage{
 \S4method{weights}{alignment}(x)
 }
+\arguments{
+\item{x}{An alignment object output from \code{align_topics}.}
+}
 \description{
 Weights Accessor for Alignment Class
 }

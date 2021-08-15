@@ -2,7 +2,7 @@
 % Please edit documentation in R/align_topics.R
 \name{product_weights}
 \alias{product_weights}
-\title{Product Weights between Model Pair}
+\title{Product Weights between a Model Pair}
 \usage{
 product_weights(gammas, ...)
 }
@@ -11,6 +11,10 @@ product_weights(gammas, ...)
 membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
 compare. The number of columns may be different, but the number of samples
 must be equal.}
+
+\item{...}{(optional) Other keyword arguments. These are unused by the
+\code{product_weights} alignment strategy, but is included for consistency
+across weight functions.}
 }
 \value{
 products A \code{data.frame} giving the product similarity of each

@@ -26,13 +26,15 @@ Imports:
     purrr,
     scales,
     stringr,
-    superheat,
     tibble,
     tidyr,
     topicmodels
 Suggests:
     rmarkdown,
     knitr,
+    MCMCpack,
+    readr,
+    tictoc,
     testthat (>= 3.0.0)
 VignetteBuilder: knitr
 Depends:
