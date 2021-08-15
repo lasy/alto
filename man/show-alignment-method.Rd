@@ -6,6 +6,9 @@
 \usage{
 \S4method{show}{alignment}(object)
 }
+\arguments{
+\item{object}{An alignment object output from \code{align_topics}.}
+}
 \description{
 Show Method for Alignment Class
 }

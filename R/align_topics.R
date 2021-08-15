@@ -7,15 +7,18 @@
 #' and its weights can be extracted using the `weights` accessor function. See
 #' the documentation for class \code{alignment} for further details.
 #'
-#' @param models (required) a list of LDA models object. Each list component
+#' @param models (required) A list of LDA models object. Each list component
 #' must be a list with two named entries, $gamma (containing mixed memberships)
 #' and $beta (containing topic parameters in log sapce). See
 #' \code{run_lda_models} for details.
-#' @param comparisons (optional) either a character indicating if topics
-#'   should be aligned between \code{consecutive} or \code{all} models, or a
-#'   \code{data.frame} containing the pairs of models within which topics should
-#'   be aligned. See the \code{setup_edges} function for examples of custom
-#'   topic comparison by passing in an edgelist.
+#' @param method (required) Either \code{product} or \code{transport}, giving
+#' two types of alignment strategies, using inner products between gamma vectors
+#' or optimal transport between gamma-beta pairs, respectively. Defaults to
+#' \code{product}.
+#' @param ... (optional) Further keyword arguments passed to the weight
+#' function. For example, passing \code{reg = 10} when using the
+#' \code{transport} method will use a regularization level fo 10 in the Sinkhorn
+#' optimal transport algorithm.
 #' @return An object of class \code{alignment} providing the weights between
 #' every pair of topics of each model pairs in the input edgelist
 #' (\code{comparisons}).
@@ -134,7 +137,12 @@ compute_ordering_cost <- function(weights) {
     sum()
 }
 
-#' Edgelists for Default Alignment
+#' Edgelists for Default Alignments
+#'
+#' This is a helper function for setting up edges that can be used by
+#' align_graph. It implements two types of comparisons, 'consecutive' and 'all'.
+#' It returns a data frame specifying which topics to compare from across all
+#' models.
 #'
 #' @param comparisons A string describing the type of model comparisons to
 #'   compute.
@@ -144,6 +152,7 @@ compute_ordering_cost <- function(weights) {
 #' @importFrom dplyr filter
 #' @importFrom tibble tibble as_tibble
 #' @importFrom utils combn head tail
+#' @export
 setup_edges <- function(comparisons, model_names) {
   edges <- comparisons
   if (comparisons == "consecutive") {
@@ -201,6 +210,10 @@ setup_edges <- function(comparisons, model_names) {
 #' all pairs of topics between two models. The first argument must accept a list
 #' of two gamma_hat matrices, the second argument must accept a list of two
 #' beta_hat matrices. See `product_weights` or `transport_weights` for examples.
+#' @param ... (optional) Further keyword arguments passed to the weight
+#' function. For example, passing \code{reg = 10} when using the
+#' \code{transport} method will use a regularization level fo 10 in the Sinkhorn
+#' optimal transport algorithm.
 #' @importFrom dplyr mutate ungroup
 #' @importFrom magrittr %>%
 #' @export
@@ -215,7 +228,7 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
     ungroup()
 }
 
-#' Product Weights between Model Pair
+#' Product Weights between a Model Pair
 #'
 #' An alignment based on product weights sets the weight between topics k and k'
 #' according to \eqn{\gamma_{k}^T\gamma_{k}^\prime}, where \eqn{\gamma_{k} \in
@@ -228,6 +241,9 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
 #' membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
 #' compare. The number of columns may be different, but the number of samples
 #' must be equal.
+#' @param ... (optional) Other keyword arguments. These are unused by the
+#' \code{product_weights} alignment strategy, but is included for consistency
+#' across weight functions.
 #' @return products A \code{data.frame} giving the product similarity of each
 #' pair of topics across the two input matrices.
 #'
@@ -242,7 +258,7 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
 #' @export
 product_weights <- function(gammas, ...) {
   products <- t(gammas[[1]]) %*% gammas[[2]]
-  dimnames(products) <- purrr::map(gammas, ~ colnames(.))
+  dimnames(products) <- map(gammas, ~ colnames(.))
   data.frame(products) %>%
     .lengthen_weights()
 }
@@ -261,6 +277,13 @@ product_weights <- function(gammas, ...) {
 #' membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
 #' compare. The number of columns may be different, but the number of samples
 #' must be equal.
+#' @param betas (required). A lsit of length two, containing the topic matrices
+#' (a \code{matrix} of dimension k-topics by d-dimensions).) The number of rows
+#' may be different, but the number of columns must remain fixed.
+#' @param reg (optional) How much regularization to use in the Sinkhorn optimal
+#' transport algorithm? Defaults to 0.1.
+#' @param ... (optional) Other keyword arguments. Not used here, but included
+#' for consistency with other weight functions.
 #' @return products A \code{data.frame} giving the product similarity of each
 #' pair of topics across the two input matrices.
 #'
@@ -279,21 +302,19 @@ product_weights <- function(gammas, ...) {
 #' @export
 transport_weights <- function(gammas, betas, reg = 0.1, ...) {
   betas_mat <- do.call(rbind, betas)
-  costs <- suppressMessages(philentropy::JSD(betas_mat))
+  costs <- suppressMessages(JSD(betas_mat))
   ix <- seq_len(nrow(betas[[1]]))
 
   a <- matrix(colSums(gammas[[1]]), ncol = 1)
   b <- matrix(colSums(gammas[[2]]), ncol = 1)
-  plan <- Barycenter::Sinkhorn(
-    a, b, costs[ix, -ix, drop = F], lambda = reg
-  )$Transportplan
+  plan <- Sinkhorn(a, b, costs[ix, -ix, drop = F], lambda = reg)$Transportplan
 
   if (any(is.na(plan))) {
     plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
     warning("OT diverged, considering increasing regularization.\n")
   }
 
-  dimnames(plan) <- purrr::map(gammas, ~ colnames(.))
+  dimnames(plan) <- map(gammas, ~ colnames(.))
   data.frame(plan) %>%
     .lengthen_weights()
 }
@@ -381,12 +402,14 @@ setClass("alignment",
 )
 
 #' Show Method for Alignment Class
+#' @param object An alignment object output from \code{align_topics}.
 #' @import methods
 #' @export
 setMethod("show", "alignment", print_alignment)
 
 setGeneric("weights", function(x) standardGeneric("weights"))
 #' Weights Accessor for Alignment Class
+#' @param x An alignment object output from \code{align_topics}.
 #' @import methods
 #' @export
 setMethod("weights", "alignment", function(x) x@weights)
@@ -394,6 +417,7 @@ setMethod("weights", "alignment", function(x) x@weights)
 setGeneric("n_models", function(x) standardGeneric("n_models"))
 
 #' Number of Models Method for Alignment Class
+#' @param x An alignment object output from \code{align_topics}.
 #' @import methods
 #' @export
 setMethod("n_models", "alignment", function(x) nlevels(x@weights$m))
@@ -401,12 +425,14 @@ setMethod("n_models", "alignment", function(x) nlevels(x@weights$m))
 
 setGeneric("n_topics", function(x) standardGeneric("n_topics"))
 #' Number of Topics Method for Alignment Class
+#' @param x An alignment object output from \code{align_topics}.
 #' @import methods
 #' @export
 setMethod("n_topics", "alignment", function(x) nrow(x@topics))
 
 setGeneric("models", function(x) standardGeneric("models"))
 #' Extract Models underlying Alignment
+#' @param x An alignment object output from \code{align_topics}.
 #' @import methods
 #' @export
 setMethod("models", "alignment", function(x) x@models)
@@ -414,6 +440,7 @@ setMethod("models", "alignment", function(x) x@models)
 
 setGeneric("topics", function(x) standardGeneric("topics"))
 #' Extract List of Topics and their Summaries
+#' @param x An alignment object output from \code{align_topics}.
 #' @import methods
 #' @export
 setMethod("topics", "alignment", function(x) x@topics)

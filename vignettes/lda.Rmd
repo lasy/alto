@@ -1,0 +1,120 @@
+---
+title: "Identifying True Topics"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Identifying True Topics}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  K: 3
+  N: 30
+  V: 50
+  id: 1
+  method: "product"
+  n_models: 5
+  out_dir: "lda"
+  save: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>") 
+set.seed(params$id)
+```
+
+This vignette applies topic alignment to data generated from a true LDA model.
+This corresponds to the first simulation in the manuscript accompanying this
+package. The arguments to this vignette (which can be modified in the original
+rmarkdown's YAML) are,
+
+* `K`: The true number of topics underlying the simulated data. In the
+manuscript, $K = 5$.
+* `N`: The number of samples (i.e., documents) to simulate. In the manuscript, this is set to 250.
+* `V`: The number of dimensions (i.e. vocabulary size) per sample. In the manuscript, this is set to 1000.
+* `id`: A descriptive ID to associate with any saved results.
+* `method`: The alignment strategy to pass to `align_topics`.
+* `n_models`: The total number of models to fit to the simulated data. In the
+manuscript, this is set to 10.
+* `out_dir`: If results are saved, where should they be saved to?
+* `save`: Should any results be saved?
+
+The packages used in this vignette are given below. Note that we also load
+simulation functions from an external github repository (not this package). This
+provides the `simulate_lda` function used to generate the data for this example.
+
+```{r}
+library(MCMCpack)
+library(alto)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(readr)
+library(stringr)
+source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
+my_theme()
+```
+
+The block below simulates data `x` according to an LDA models with parameters
+specified above. The topics are relatively sparse, with $\lambda_{\beta} = 0.1$
+and $\lambda_{\gamma} = 0.5$. Each sample has 10,000 counts.
+
+```{r}
+attach(params)
+lambdas <- list(beta = 0.1, gamma = .5, count = 1e4)
+betas <- rdirichlet(K, rep(lambdas$beta, V))
+gammas <- rdirichlet(N, rep(lambdas$gamma, K))
+x <- simulate_lda(betas, gammas, lambda = lambdas$count)
+```
+
+Next, we run the LDA models and compute the alignment.
+
+```{r}
+lda_params <- map(1:n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:n_models)
+alignment <- x %>%
+  run_lda_models(lda_params, reset = TRUE) %>%
+  align_topics(method = params$method)
+```
+
+We can plot the flow diagram and compare the height-weight words across topics.
+
+```{r}
+plot(alignment)
+plot_beta(alignment, c(2, 4))
+```
+
+We can plot measures of topic quality across $m$. The introduction of a low
+quality topic at $K = 4$ is consistent with the fact that there are only 3 true
+topics in this data.
+
+```{r}
+ggplot(topics(alignment), aes(m, robustness)) +
+  geom_point(alpha = 0.5)
+
+ggplot(topics(alignment), aes(m, refinement)) +
+  geom_point(alpha = 0.5)
+```
+
+We can also compute the number of key topics associated with the alignment.
+
+```{r}
+key_topics <- compute_number_of_key_topics(alignment) %>%
+  mutate(id = params$id)
+```
+
+Finally, we save all the results (if wanted). The distinct IDs allow us to
+gather alignments from across many replicates, and these are what are shown in
+teh simulation section of the manuscript.
+
+```{r}
+id_vars <- params[c("out_dir", "method", "id", "N", "V", "K")]
+scores <- topics(alignment) %>%
+  mutate(id = params$id)
+
+if (params$save) {
+  dir.create(params$out_dir, recursive = TRUE)
+  write_csv(key_topics, save_str("key_topics", id_vars))
+  write_csv(scores, save_str("topics", id_vars))
+  exper <- list(x, betas, gammas, alignment)
+  save(exper, file = save_str("exper", id_vars, "rda"))
+}
+```

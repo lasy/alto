@@ -1,0 +1,67 @@
+---
+title: "Measuring Runtimes"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Measuring Runtimes}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  K: 5
+  V: 50
+  N: 30
+  n_models: 10
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+  )
+```
+
+This vignette measures the runtime of a few steps in the alignment workflow.
+Running this vignette with $V = 1000$, $N = 250$ gives the
+estimates reported in the accompanying manuscript.
+
+```{r}
+library(MCMCpack)
+library(alto)
+library(dplyr)
+library(purrr)
+library(stringr)
+library(tictoc)
+source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
+```
+
+For this simulation, we work with simulated LDA data, as in the "Identifying
+True Topics" vignette.
+
+```{r}
+attach(params)
+lambdas <- list(beta = 0.1, gamma = .5, count = 1e4)
+betas <- rdirichlet(K, rep(lambdas$beta, V))
+gammas <- rdirichlet(N, rep(lambdas$gamma, K))
+x <- simulate_lda(betas, gammas, lambda = lambdas$count)
+```
+
+We split model running and alignment, so we can measure the computation times
+separately. We use the `tictoc` library for this. In general, running the LDA
+models consumes the majority of the time in an alignment workflow, especially
+when the sample or vocabulary size is large.
+
+```{r}
+lda_params <- map(1:n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:n_models)
+
+tic()
+lda_models <- run_lda_models(x, lda_params, reset = TRUE)
+toc()
+
+tic()
+align_topics(lda_models, method = "product")
+toc()
+
+tic()
+align_topics(lda_models, method = "transport")
+toc()
+```

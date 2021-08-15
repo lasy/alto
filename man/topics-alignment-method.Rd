@@ -6,6 +6,9 @@
 \usage{
 \S4method{topics}{alignment}(x)
 }
+\arguments{
+\item{x}{An alignment object output from \code{align_topics}.}
+}
 \description{
 Extract List of Topics and their Summaries
 }

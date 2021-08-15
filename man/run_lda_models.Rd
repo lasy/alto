@@ -37,7 +37,11 @@ models are not stored. This option is especially useful for data exploration
 as it allows to save execution time if one wishes to add models to an
 existing model list. (see examples)}
 
-\item{reset}{(optional, default = \code{FALSE})}
+\item{reset}{(optional, default = \code{FALSE}). Should any cached models in
+the save directory be cleared?}
+
+\item{verbose}{(optional, default = \code{FALSE}) Print verbose output while
+running models?}
 }
 \value{
 a list of LDA models (see package \code{topicmodels}).

@@ -7,11 +7,11 @@
 compute_number_of_key_topics(aligned_topics, plot = FALSE)
 }
 \arguments{
+\item{aligned_topics}{(required) An \code{alignment} class with the alignment
+results.}
+
 \item{plot}{(optional, default = FALSE) whether to visualize the number of
 key topics.}
-
-\item{weights}{(required) \code{data.frame} with the alignment weights
-(the @weight field from an \code{alignment} object).}
 }
 \value{
 a \code{data.frame} with the number of key topic for each model. The
@@ -27,10 +27,9 @@ leaving it such that the linked topic received most of its weight from this
 parent edge.
 }
 \details{
-Given the weights from an \code{alignment} object, this function computes the
-number of key topics at each level in the alignment. The result is a
-\code{data.frame} mapping each level to a number from 1 to the number of
-current levels.
+Given an \code{alignment} object, this function computes the number of key
+topics at each level in the alignment. The result is a \code{data.frame}
+mapping each level to a number from 1 to the number of current levels.
 }
 \examples{
 library(purrr)

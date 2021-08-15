@@ -14,6 +14,9 @@ plot_beta(
 )
 }
 \arguments{
+\item{x}{(required) An alignment class object resulting from
+\code{align_topics}.}
+
 \item{models}{Which models to display in the heatmap? Defaults to
 \code{"all"}, meaning that all models are shown. If given \code{"last"}, only
 the last model in the models list will be plotted. If given a vector of
@@ -25,22 +28,32 @@ indices in the original model list will be visualized.}
 \code{TRUE}, this option specifies the minimum beta value (i.e. proportion in
 topic) for a feature to be displayed in the leaves.}
 
-\item{n_features}{(optional) alternative to \code{min_beta}. if
-\code{add_leaves} is \code{TRUE}, this option specifies the minimum beta
-value (i.e. proportion in topic) for a feature to be displayed in the leaves.}
+\item{n_features}{(optional) alternative to \code{min_beta}. The maximum
+number of words to display along rows of the plot.}
+
+\item{beta_aes}{Should word probabilities within a topic be encoded using
+circle size (\code{"size"}) or opacity (\code{"alpha"}) ? Defaults to
+\code{"size"}.}
+
+\item{color_by}{(optional) What should the color of topics and branches
+encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+'refinement', or 'topic'.}
+}
+\value{
+A ggplot2 object describing the word probabilities associated wtih
+each topic across models of interest.
 }
 \description{
 This function plots the \eqn{\beta_{kd}^{m}} topic parameters across models
 \eqn{m}, topics \eqn{k}, and dimensions \eqn{d}. It takes as input a raw
-alignment object and then returns a heatmap from the superheatmap package.
-The shade of each cell corresponds to the value \eqn{\beta_{kd}^m} for the
-model in panel \eqn{m}, topic in row \eqn{k}, and dimension in column
-\eqn{d}. The plot can be restricted to only a subset of models by using the
-\code{models} argument, which may be either a vector of model names or
-numeric indices into the list of models. The dimensions can be filtered by
-using the \code{n_features} or \code{min_beta} arguments -- by default, only
-dimensions with at least one topic satisfying \eqn{\beta_{kd}^m > 0.025} are
-displayed.
+alignment object and then returns a circle heatmap. The size of each circle
+corresponds to the value \eqn{\beta_{kd}^m} for the model in panel \eqn{m},
+topic in column \eqn{k}, and dimension in row \eqn{d}. The plot can be
+restricted to only a subset of models by using the \code{models} argument,
+which may be either a vector of model names or numeric indices into the list
+of models. The dimensions can be filtered by using the \code{n_features} or
+\code{min_beta} arguments -- by default, only dimensions with at least one
+topic satisfying \eqn{\beta_{kd}^m > 0.025} are displayed.
 }
 \examples{
 library(purrr)

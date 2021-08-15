@@ -1,19 +1,29 @@
 #' Visualize alignments between topics of distinct LDA models
 #'
-#' [Description]
+#' This function creates flow diagrams of alignment weight across collections of
+#' topics. It is the default plot method associated with alignment objects. The
+#' x-axis indexes models from those with few to those with many topics. Each
+#' rectangle matches a topic; its height is the weight associated wtih that
+#' topic from across all samples. The width of edges between topics corresponds
+#' ot the alignment weight between that pair of topics. By default, topics are
+#' shaded according to their branch membership. Other topic measures can be
+#' provided by modifying the `color_by` argument.
 #'
-#' @param aligned_topics (required)
-#' @param add_leaves (optional, default = TRUE) whether topic composition of
-#' last model should be displayed.
-#' @param reverse_x_axis (optional, default = TRUE) specifies whether
-#' the x-axis (models) should be reversed.
-#'
+#' @param x (required) An alignment class object resulting from
+#' \code{align_topics}.
+#' @param rect_gap (optional) A float describing how much vertical space to put
+#' between topics within the same model. The units correspond to topic masses.
+#' Defaults to 0.2.
+#' @param color_by (optional) What should the color of topics and branches
+#' encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+#' 'refinement', or 'topic'.
+#' @param model_name_repair_fun How should names be repaired before plotting?
 #' @seealso align_topics
-#' @return a \code{ggplot} object (?) .
+#' @return A \code{ggplot2} object describing the alignment weights across
+#' models.
 #' @export
 plot_alignment <- function(
   x,
-  reverse_x_axis = FALSE,
   rect_gap = 0.2,
   color_by = "branch",
   model_name_repair_fun = paste0
@@ -145,16 +155,17 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #'
 #' This function plots the \eqn{\beta_{kd}^{m}} topic parameters across models
 #' \eqn{m}, topics \eqn{k}, and dimensions \eqn{d}. It takes as input a raw
-#' alignment object and then returns a heatmap from the superheatmap package.
-#' The shade of each cell corresponds to the value \eqn{\beta_{kd}^m} for the
-#' model in panel \eqn{m}, topic in row \eqn{k}, and dimension in column
-#' \eqn{d}. The plot can be restricted to only a subset of models by using the
-#' \code{models} argument, which may be either a vector of model names or
-#' numeric indices into the list of models. The dimensions can be filtered by
-#' using the \code{n_features} or \code{min_beta} arguments -- by default, only
-#' dimensions with at least one topic satisfying \eqn{\beta_{kd}^m > 0.025} are
-#' displayed.
+#' alignment object and then returns a circle heatmap. The size of each circle
+#' corresponds to the value \eqn{\beta_{kd}^m} for the model in panel \eqn{m},
+#' topic in column \eqn{k}, and dimension in row \eqn{d}. The plot can be
+#' restricted to only a subset of models by using the \code{models} argument,
+#' which may be either a vector of model names or numeric indices into the list
+#' of models. The dimensions can be filtered by using the \code{n_features} or
+#' \code{min_beta} arguments -- by default, only dimensions with at least one
+#' topic satisfying \eqn{\beta_{kd}^m > 0.025} are displayed.
 #'
+#' @param x (required) An alignment class object resulting from
+#' \code{align_topics}.
 #' @param models Which models to display in the heatmap? Defaults to
 #' \code{"all"}, meaning that all models are shown. If given \code{"last"}, only
 #' the last model in the models list will be plotted. If given a vector of
@@ -164,9 +175,16 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' @param min_beta (optional, default = 0.025) if \code{add_leaves} is
 #' \code{TRUE}, this option specifies the minimum beta value (i.e. proportion in
 #' topic) for a feature to be displayed in the leaves.
-#' @param n_features (optional) alternative to \code{min_beta}. if
-#' \code{add_leaves} is \code{TRUE}, this option specifies the minimum beta
-#' value (i.e. proportion in topic) for a feature to be displayed in the leaves.
+#' @param n_features (optional) alternative to \code{min_beta}. The maximum
+#' number of words to display along rows of the plot.
+#' @param beta_aes Should word probabilities within a topic be encoded using
+#' circle size (\code{"size"}) or opacity (\code{"alpha"}) ? Defaults to
+#' \code{"size"}.
+#' @param color_by (optional) What should the color of topics and branches
+#' encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+#' 'refinement', or 'topic'.
+#' @return A ggplot2 object describing the word probabilities associated wtih
+#' each topic across models of interest.
 #'
 #' @examples
 #' library(purrr)
@@ -179,8 +197,7 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' plot_beta(alignment, models = "last")
 #'
 #' @importFrom magrittr %>%
-#' @importFrom dplyr select starts_with filter
-#' @importFrom superheat superheat
+#' @importFrom dplyr select filter
 #' @importFrom ggplot2 ggplot aes scale_color_identity geom_point geom_tile
 #' guides scale_fill_identity scale_size scale_alpha facet_grid labs theme_bw
 #' theme element_text
@@ -237,7 +254,6 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   }
 
   # filter betas to those that pass thresholds
-
   betas <-
     model_params %>%
     map_dfr(~ as.data.frame(exp(.$beta)), .id = "m") %>%
@@ -292,6 +308,9 @@ format_beta <-  function(p) {
 }
 
 #' Filter to words of interest
+#' @param betas A \code{data.frame} whose rows correpond to topics and whose
+#' columns are \code{m}, the model ID, and the words for which estimates are
+#' made.
 #' @param min_beta Words with less than this beta in all topics are ignored
 #' @param n_features Maximum number of features to show
 #' @importFrom dplyr select bind_cols
@@ -315,12 +334,21 @@ trim_betas <- function(betas, min_beta = -1, n_features = NULL) {
 }
 
 
+#' KL Divergence of Categoricals
+#' @param p1 The first probability in KL(p1 || p2)
+#' @param p2 The second probability in KL(p1 || p2)
+#' @return The KL divergence between pairs of discrete probability categorical
+#' vectors.
 #' Equation (3) from https://doi.org/10.1371/journal.pgen.1006599
 kl_div <- function(p1, p2) {
   p1 * log(p1 / p2) + (p2 - p1)
 }
 
 #' Pairwise KL divergences
+#'
+#' @param p A matrix whose rows correspond to discrete probability vectors.
+#' @return K A matrix whose \code{ij} entry is the KL divergence between rows
+#' \code{i} and \code{j} of \code{p}.
 kl_mat <- function(p) {
   K <- matrix(0, nrow = length(p), ncol = length(p))
   for (i in seq_along(p)) {
@@ -333,6 +361,9 @@ kl_mat <- function(p) {
 
 #' Discrepancy for ordering words in plot_betas
 #'
+#' @param p the probability vector on which to compute the discrepancy measure.
+#' @param lambda The degree of Laplace smoothing to apply to the topics. This
+#'  prevents the divergence from exploding. Defaults to 1e-7.
 #' This implements equation (4) from
 #' https://doi.org/10.1371/journal.pgen.1006599
 discrepancy <- function(p, lambda = 1e-7) {
@@ -342,6 +373,19 @@ discrepancy <- function(p, lambda = 1e-7) {
 }
 
 #' Plot Method for Alignment Class
+#' @param x (required) An alignment class object resulting from
+#' \code{align_topics}.
+#' @param rect_gap (optional) A float describing how much vertical space to put
+#' between topics within the same model. The units correspond to topic masses.
+#' Defaults to 0.2.
+#' @param color_by (optional) What should the color of topics and branches
+#' encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+#' 'refinement', or 'topic'.
+#' @param model_name_repair_fun How should names be repaired before plotting?
+#' @seealso align_topics
+#' @return A \code{ggplot2} object describing the alignment weights across
+#' models.
 #' @import methods
+#' @seealso plot_alignment
 #' @export
 setMethod("plot", c(x = "alignment", y = "missing"), plot_alignment)

@@ -6,7 +6,14 @@
 \usage{
 discrepancy(p, lambda = 1e-07)
 }
-\description{
+\arguments{
+\item{p}{the probability vector on which to compute the discrepancy measure.}
+
+\item{lambda}{The degree of Laplace smoothing to apply to the topics. This
+ prevents the divergence from exploding. Defaults to 1e-7.
 This implements equation (4) from
-https://doi.org/10.1371/journal.pgen.1006599
+https://doi.org/10.1371/journal.pgen.1006599}
+}
+\description{
+Discrepancy for ordering words in plot_betas
 }

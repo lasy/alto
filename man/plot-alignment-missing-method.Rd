@@ -4,14 +4,31 @@
 \alias{plot,alignment,missing-method}
 \title{Plot Method for Alignment Class}
 \usage{
-\S4method{plot}{alignment,missing}(
-  x,
-  reverse_x_axis = FALSE,
-  rect_gap = 0.2,
-  color_by = "branch",
-  model_name_repair_fun = paste0
-)
+\S4method{plot}{alignment,missing}(x, rect_gap = 0.2, color_by = "branch", model_name_repair_fun = paste0)
+}
+\arguments{
+\item{x}{(required) An alignment class object resulting from
+\code{align_topics}.}
+
+\item{rect_gap}{(optional) A float describing how much vertical space to put
+between topics within the same model. The units correspond to topic masses.
+Defaults to 0.2.}
+
+\item{color_by}{(optional) What should the color of topics and branches
+encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+'refinement', or 'topic'.}
+
+\item{model_name_repair_fun}{How should names be repaired before plotting?}
+}
+\value{
+A \code{ggplot2} object describing the alignment weights across
+models.
 }
 \description{
 Plot Method for Alignment Class
+}
+\seealso{
+align_topics
+
+plot_alignment
 }

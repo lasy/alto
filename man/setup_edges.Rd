@@ -2,7 +2,7 @@
 % Please edit documentation in R/align_topics.R
 \name{setup_edges}
 \alias{setup_edges}
-\title{Edgelists for Default Alignment}
+\title{Edgelists for Default Alignments}
 \usage{
 setup_edges(comparisons, model_names)
 }
@@ -14,5 +14,8 @@ compute.}
 list will refer to models by these names.}
 }
 \description{
-Edgelists for Default Alignment
+This is a helper function for setting up edges that can be used by
+align_graph. It implements two types of comparisons, 'consecutive' and 'all'.
+It returns a data frame specifying which topics to compare from across all
+models.
 }
