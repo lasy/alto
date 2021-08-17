@@ -53,21 +53,27 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/background-noise.html">Characterizing Topics with Background Noise</a>
-    </li>
+<li class="divider">
+    <li class="dropdown-header">Demos</li>
     <li>
       <a href="../articles/basic-alignment.html">Introduction to Alignment</a>
     </li>
     <li>
+      <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
+    </li>
+    <li class="divider">
+    <li class="dropdown-header">Simulations</li>
+    <li>
       <a href="../articles/lda.html">Identifying True Topics</a>
     </li>
     <li>
-      <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
+      <a href="../articles/background-noise.html">Characterizing Topics with Background Noise</a>
     </li>
     <li>
       <a href="../articles/strain-switching.html">Strain Switching</a>
     </li>
+    <li class="divider">
+    <li class="dropdown-header">Profiling</li>
     <li>
       <a href="../articles/timing.html">Measuring Runtimes</a>
     </li>
@@ -244,7 +250,10 @@
 <p>By <span class="math inline">\(K=18\)</span> topics are sparse and share little overlap between them (Fig d), which may reflect over-fitting.</p>
 <p>The <code>plot_beta</code> function also has a <code>color_by</code> option, which allows to visualize the coherence of topics.</p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, min_beta <span class="op">=</span> <span class="fl">0.005</span>, color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, 
+          models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, 
+          min_beta <span class="op">=</span> <span class="fl">0.005</span>, 
+          color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 </div>
   </div>

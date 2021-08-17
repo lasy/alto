@@ -100,21 +100,27 @@ then they will be given high transport alignment weight." />
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-    <li>
-      <a href="../articles/background-noise.html">Characterizing Topics with Background Noise</a>
-    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Demos</li>
     <li>
       <a href="../articles/basic-alignment.html">Introduction to Alignment</a>
     </li>
     <li>
+      <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
+    </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Simulations</li>
+    <li>
       <a href="../articles/lda.html">Identifying True Topics</a>
     </li>
     <li>
-      <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
+      <a href="../articles/background-noise.html">Characterizing Topics with Background Noise</a>
     </li>
     <li>
       <a href="../articles/strain-switching.html">Strain Switching</a>
     </li>
+    <li class="divider"></li>
+    <li class="dropdown-header">Profiling</li>
     <li>
       <a href="../articles/timing.html">Measuring Runtimes</a>
     </li>
@@ -195,23 +201,23 @@ pair of topics across the two input matrices.</p>
 <span class='va'>betas</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>lda_models</span><span class='op'>[[</span><span class='fl'>3</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>beta</span>, <span class='va'>lda_models</span><span class='op'>[[</span><span class='fl'>5</span><span class='op'>]</span><span class='op'>]</span><span class='op'>$</span><span class='va'>beta</span><span class='op'>)</span>
 <span class='fu'>transport_weights</span><span class='op'>(</span><span class='va'>gammas</span>, <span class='va'>betas</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 15 x 3</span>
-#&gt;    k     k_next      weight
-#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>        <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'> 1</span> 1     1      0.000<span style='text-decoration: underline;'>000</span>369
-#&gt; <span style='color: #BCBCBC;'> 2</span> 1     2      2.30       
-#&gt; <span style='color: #BCBCBC;'> 3</span> 1     3      0.514      
-#&gt; <span style='color: #BCBCBC;'> 4</span> 1     4      0.000<span style='text-decoration: underline;'>277</span>   
-#&gt; <span style='color: #BCBCBC;'> 5</span> 1     5      3.85       
-#&gt; <span style='color: #BCBCBC;'> 6</span> 2     1      3.52       
-#&gt; <span style='color: #BCBCBC;'> 7</span> 2     2      0.001<span style='text-decoration: underline;'>62</span>    
-#&gt; <span style='color: #BCBCBC;'> 8</span> 2     3      2.86       
-#&gt; <span style='color: #BCBCBC;'> 9</span> 2     4      0.282      
-#&gt; <span style='color: #BCBCBC;'>10</span> 2     5      0.002<span style='text-decoration: underline;'>97</span>    
-#&gt; <span style='color: #BCBCBC;'>11</span> 3     1      0.478      
-#&gt; <span style='color: #BCBCBC;'>12</span> 3     2      1.69       
-#&gt; <span style='color: #BCBCBC;'>13</span> 3     3      0.627      
-#&gt; <span style='color: #BCBCBC;'>14</span> 3     4      3.72       
-#&gt; <span style='color: #BCBCBC;'>15</span> 3     5      0.149      </div><div class='input'>
+#&gt;    k     k_next   weight
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>     <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span> 1     1      0.000<span style='text-decoration: underline;'>992</span>
+#&gt; <span style='color: #BCBCBC;'> 2</span> 1     2      2.13    
+#&gt; <span style='color: #BCBCBC;'> 3</span> 1     3      0.612   
+#&gt; <span style='color: #BCBCBC;'> 4</span> 1     4      0.692   
+#&gt; <span style='color: #BCBCBC;'> 5</span> 1     5      3.23    
+#&gt; <span style='color: #BCBCBC;'> 6</span> 2     1      3.28    
+#&gt; <span style='color: #BCBCBC;'> 7</span> 2     2      0.000<span style='text-decoration: underline;'>155</span>
+#&gt; <span style='color: #BCBCBC;'> 8</span> 2     3      3.34    
+#&gt; <span style='color: #BCBCBC;'> 9</span> 2     4      0.037<span style='text-decoration: underline;'>5</span>  
+#&gt; <span style='color: #BCBCBC;'>10</span> 2     5      0.013<span style='text-decoration: underline;'>7</span>  
+#&gt; <span style='color: #BCBCBC;'>11</span> 3     1      0.719   
+#&gt; <span style='color: #BCBCBC;'>12</span> 3     2      1.87    
+#&gt; <span style='color: #BCBCBC;'>13</span> 3     3      0.052<span style='text-decoration: underline;'>2</span>  
+#&gt; <span style='color: #BCBCBC;'>14</span> 3     4      3.27    
+#&gt; <span style='color: #BCBCBC;'>15</span> 3     5      0.757   </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

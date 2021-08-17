@@ -53,21 +53,27 @@
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
-<li>
-      <a href="../articles/background-noise.html">Characterizing Topics with Background Noise</a>
-    </li>
+<li class="divider">
+    <li class="dropdown-header">Demos</li>
     <li>
       <a href="../articles/basic-alignment.html">Introduction to Alignment</a>
     </li>
     <li>
+      <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
+    </li>
+    <li class="divider">
+    <li class="dropdown-header">Simulations</li>
+    <li>
       <a href="../articles/lda.html">Identifying True Topics</a>
     </li>
     <li>
-      <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
+      <a href="../articles/background-noise.html">Characterizing Topics with Background Noise</a>
     </li>
     <li>
       <a href="../articles/strain-switching.html">Strain Switching</a>
     </li>
+    <li class="divider">
+    <li class="dropdown-header">Profiling</li>
     <li>
       <a href="../articles/timing.html">Measuring Runtimes</a>
     </li>
@@ -174,16 +180,16 @@
 <span class="co">#&gt; # A tibble: 55 x 7</span>
 <span class="co">#&gt;    m         k  mass  prop branch coherence refinement</span>
 <span class="co">#&gt;    &lt;fct&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 1         1  50   1     1          0.444      1    </span>
-<span class="co">#&gt;  2 2         1  25.0 0.500 1          0.388      0.500</span>
-<span class="co">#&gt;  3 2         2  25.0 0.500 1          0.388      0.500</span>
-<span class="co">#&gt;  4 3         1  16.7 0.333 1          0.370      0.333</span>
-<span class="co">#&gt;  5 3         2  16.7 0.333 1          0.370      0.333</span>
-<span class="co">#&gt;  6 3         3  16.7 0.333 10         0.172      0.333</span>
-<span class="co">#&gt;  7 4         1  12.5 0.250 1          0.342      0.250</span>
-<span class="co">#&gt;  8 4         2  12.5 0.250 1          0.342      0.250</span>
-<span class="co">#&gt;  9 4         3  12.5 0.250 5          0.141      0.250</span>
-<span class="co">#&gt; 10 4         4  12.5 0.250 10         0.172      0.250</span>
+<span class="co">#&gt;  1 1         1  50   1     2          0.214      1    </span>
+<span class="co">#&gt;  2 2         1  25.0 0.500 2          0.214      0.500</span>
+<span class="co">#&gt;  3 2         2  25.0 0.500 10         0.179      0.500</span>
+<span class="co">#&gt;  4 3         1  16.7 0.333 2          0.196      0.333</span>
+<span class="co">#&gt;  5 3         2  16.7 0.333 8          0.157      0.333</span>
+<span class="co">#&gt;  6 3         3  16.7 0.333 10         0.179      0.333</span>
+<span class="co">#&gt;  7 4         1  12.5 0.250 2          0.177      0.250</span>
+<span class="co">#&gt;  8 4         2  12.5 0.250 9          0.141      0.250</span>
+<span class="co">#&gt;  9 4         3  12.5 0.250 8          0.157      0.250</span>
+<span class="co">#&gt; 10 4         4  12.5 0.250 10         0.168      0.250</span>
 <span class="co">#&gt; # … with 45 more rows</span></code></pre></div>
 <p>An alternative measure is the <code>key_topics</code> measure. This looks at how many topics have similar descendents across resolution levels, and it can be accessed using the <code>compute_number_of_key_topics</code> function,</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
@@ -193,14 +199,14 @@
 #&gt;    m     n_key_topics n_topics
 #&gt;    &lt;fct&gt;        &lt;int&gt;    &lt;int&gt;
 #&gt;  1 1                1        1
-#&gt;  2 2                1        2
-#&gt;  3 3                2        3
-#&gt;  4 4                3        4
-#&gt;  5 5                4        5
-#&gt;  6 6                5        6
-#&gt;  7 7                6        7
-#&gt;  8 8                6        8
-#&gt;  9 9                6        9
+#&gt;  2 2                2        2
+#&gt;  3 3                3        3
+#&gt;  4 4                4        4
+#&gt;  5 5                5        5
+#&gt;  6 6                6        6
+#&gt;  7 7                7        7
+#&gt;  8 8                8        8
+#&gt;  9 9                9        9
 #&gt; 10 10              10       10</code></pre>
 <div id="visualizations" class="section level3">
 <h3 class="hasAnchor">
