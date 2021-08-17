@@ -31,7 +31,7 @@ plot_alignment <- function(
 
   # inputs
   .check_input(x)
-  color_by <- match.arg(color_by, c("topic", "branch", "refinement", "robustness"))
+  color_by <- match.arg(color_by, c("topic", "branch", "refinement", "coherence"))
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
@@ -77,7 +77,7 @@ plot_alignment <- function(
     labs(x = "models", y = "")
 
   # replace choices below by a better color scheme...
-  if (color_by %in% c("refinement", "robustness")) {
+  if (color_by %in% c("refinement", "coherence")) {
     g <- g +
       scale_fill_gradient(
         color_by, low = "brown1", high = "cornflowerblue", limits = c(0, 1)
@@ -206,7 +206,7 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
                       beta_aes = "size", color_by = "branch") {
     beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
-    color_by <- match.arg(color_by, choices = c("topic", "branch", "refinement", "robustness"))
+    color_by <- match.arg(color_by, choices = c("topic", "branch", "refinement", "coherence"))
     beta <- plot_beta_layout(x, models, min_beta, n_features, color_by) %>%
       format_beta() %>%
       filter(b > min_beta)

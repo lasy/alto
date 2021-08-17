@@ -119,7 +119,7 @@ membership. We could alternatively color by refinement, robustness, or topic ID.
 
 ```{r}
 plot(result, color_by = "refinement")
-plot(result, color_by = "robustness")
+plot(result, color_by = "coherence")
 plot(result, color_by = "topic")
 ```
 

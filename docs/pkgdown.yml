@@ -1,11 +1,12 @@
-pandoc: '2.13'
+pandoc: 2.7.3
 pkgdown: 1.6.1
 pkgdown_sha: ~
 articles:
+  background-noise: background-noise.html
   basic-alignment: basic-alignment.html
+  lda: lda.html
   microbiome-demo: microbiome-demo.html
-  sim_equivalence: sim_equivalence.html
-  sim_gradient: sim_gradient.html
-  sim_lda: sim_lda.html
-last_built: 2021-07-21T23:22Z
+  strain-switching: strain-switching.html
+  timing: timing.html
+last_built: 2021-08-17T00:59Z
 

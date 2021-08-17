@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Product Weights between Model Pair — product_weights • alto</title>
+<title>Product Weights between a Model Pair — product_weights • alto</title>
 
 
 <!-- jquery -->
@@ -39,7 +39,7 @@
 
 
 
-<meta property="og:title" content="Product Weights between Model Pair — product_weights" />
+<meta property="og:title" content="Product Weights between a Model Pair — product_weights" />
 <meta property="og:description" content="An alignment based on product weights sets the weight between topics k and k'
 according to \(\gamma_{k}^T\gamma_{k}^\prime\), where \(\gamma_{k} \in
 \mathbb{R}^n_{+}\) provides the mixed membership assigned to topic \(k\)
@@ -100,19 +100,22 @@ matrices." />
   </a>
   <ul class="dropdown-menu" role="menu">
     <li>
-      <a href="../articles/basic-alignment.html">basic-alignment</a>
+      <a href="../articles/background-noise.html">Characterizing Topics with Background Noise</a>
     </li>
     <li>
-      <a href="../articles/microbiome-demo.html">microbiome-demo</a>
+      <a href="../articles/basic-alignment.html">Introduction to Alignment</a>
     </li>
     <li>
-      <a href="../articles/sim_equivalence.html">equivalence-simulation</a>
+      <a href="../articles/lda.html">Identifying True Topics</a>
     </li>
     <li>
-      <a href="../articles/sim_gradient.html">gradient-simulation</a>
+      <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
     </li>
     <li>
-      <a href="../articles/sim_lda.html">lda-simulation</a>
+      <a href="../articles/strain-switching.html">Strain Switching</a>
+    </li>
+    <li>
+      <a href="../articles/timing.html">Measuring Runtimes</a>
     </li>
   </ul>
 </li>
@@ -132,7 +135,7 @@ matrices." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Product Weights between Model Pair</h1>
+    <h1>Product Weights between a Model Pair</h1>
     
     <div class="hidden name"><code>product_weights.Rd</code></div>
     </div>
@@ -158,6 +161,12 @@ membership matrices (a <code>matrix</code> of dimension n-samples by k-topics) t
 compare. The number of columns may be different, but the number of samples
 must be equal.</p></td>
     </tr>
+    <tr>
+      <th>...</th>
+      <td><p>(optional) Other keyword arguments. These are unused by the
+<code>product_weights</code> alignment strategy, but is included for consistency
+across weight functions.</p></td>
+    </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
@@ -173,16 +182,16 @@ pair of topics across the two input matrices.</p>
 <span class='va'>g2</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/base/matrix.html'>matrix</a></span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/stats/Uniform.html'>runif</a></span><span class='op'>(</span><span class='fl'>20</span> <span class='op'>*</span> <span class='fl'>4</span><span class='op'>)</span>, <span class='fl'>20</span>, <span class='fl'>4</span><span class='op'>)</span>
 <span class='fu'>product_weights</span><span class='op'>(</span><span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='va'>g1</span>, <span class='va'>g2</span><span class='op'>)</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 8 x 3</span>
-#&gt;   k_LDA k_LDA_next weight
-#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
-#&gt; <span style='color: #BCBCBC;'>1</span> 1     1            4.67
-#&gt; <span style='color: #BCBCBC;'>2</span> 1     2            4.64
-#&gt; <span style='color: #BCBCBC;'>3</span> 1     3            4.66
-#&gt; <span style='color: #BCBCBC;'>4</span> 1     4            3.87
-#&gt; <span style='color: #BCBCBC;'>5</span> 2     1            4.21
-#&gt; <span style='color: #BCBCBC;'>6</span> 2     2            5.63
-#&gt; <span style='color: #BCBCBC;'>7</span> 2     3            5.30
-#&gt; <span style='color: #BCBCBC;'>8</span> 2     4            4.41</div><div class='input'>
+#&gt;   k     k_next weight
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;chr&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> 1     1        6.12
+#&gt; <span style='color: #BCBCBC;'>2</span> 1     2        5.01
+#&gt; <span style='color: #BCBCBC;'>3</span> 1     3        5.39
+#&gt; <span style='color: #BCBCBC;'>4</span> 1     4        6.08
+#&gt; <span style='color: #BCBCBC;'>5</span> 2     1        5.96
+#&gt; <span style='color: #BCBCBC;'>6</span> 2     2        4.45
+#&gt; <span style='color: #BCBCBC;'>7</span> 2     3        6.18
+#&gt; <span style='color: #BCBCBC;'>8</span> 2     4        5.53</div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

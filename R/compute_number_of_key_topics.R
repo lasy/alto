@@ -48,6 +48,12 @@ compute_number_of_key_topics <- function(aligned_topics, plot = FALSE) {
   n_key_topics
 }
 
+
+#' Plots the number of key topics
+#'
+#' This function plots the number of key topics *vs.* the number of
+#' topics in each model.
+#'
 #' @importFrom ggplot2 ggplot aes geom_line geom_point guides theme_minimal
 #'  scale_x_continuous scale_y_continuous labs
 #' @export

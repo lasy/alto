@@ -87,7 +87,7 @@ quality topic at $K = 4$ is consistent with the fact that there are only 3 true
 topics in this data.
 
 ```{r}
-ggplot(topics(alignment), aes(m, robustness)) +
+ggplot(topics(alignment), aes(m, coherence)) +
   geom_point(alpha = 0.5)
 
 ggplot(topics(alignment), aes(m, refinement)) +

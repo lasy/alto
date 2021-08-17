@@ -7,15 +7,12 @@ reference:
 - contents:
   - align_topics
 
-- title: "Visualization functions"
+- title: "Visualization and diagnostics functions"
 - contents:
   - plot_alignment
   - plot_beta
-  - superheat_defaults
-
-- title: "Diagnostic functions"
-- contents:
-  - starts_with("compute_")
+  - compute_number_of_key_topics
+  - plot_number_of_key_topics
 
 - title: "Alignment class and related functions"
 - contents:
@@ -24,9 +21,9 @@ reference:
   - plot,alignment,missing-method
   - models,alignment-method
   - weights,alignment-method
+  - topics,alignment-method
   - n_models,alignment-method
   - n_topics,alignment-method
-  - .n_topics
 
 - title: "Helper functions"
 - contents:
@@ -34,9 +31,27 @@ reference:
   - setup_edges
   - product_weights
   - transport_weights
-  - identify_branches
   - trim_betas
 
 - title: "Demo data"
 - contents:
   - vm_data
+
+
+
+articles:
+- title: Demos
+  navbar: Demos
+  contents:
+  - basic-alignment
+  - microbiome-demo
+- title: Simulations
+  navbar: Simulations
+  contents:
+  - lda
+  - background-noise
+  - strain-switching
+- title: Profiling
+  navbar: Profiling
+  contents:
+  - timing
