@@ -90,7 +90,7 @@
 
       
 
-      </header><script src="microbiome-demo_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="microbiome-demo_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Using <code>alto</code> on vaginal microbiome data</h1>
@@ -106,17 +106,17 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'alto'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     weights</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'dplyr'</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:base':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     intersect, setdiff, setequal, union</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span>
@@ -125,8 +125,8 @@
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org">stringr</a></span><span class="op">)</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'tidyr'</span>
-<span class="co">#&gt; The following object is masked from 'package:magrittr':</span>
+<span class="co">#&gt; Attachement du package : 'tidyr'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:magrittr':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     extract</span></code></pre></div>
 <p>This document showcases the <code>alto</code> package functions applied to vaginal microbiome data.</p>
@@ -181,7 +181,25 @@
     dir <span class="op">=</span> <span class="st">"microbiome_lda_models/"</span>,
     reset <span class="op">=</span> <span class="cn">FALSE</span>,
     verbose <span class="op">=</span> <span class="cn">TRUE</span>
-  <span class="op">)</span></code></pre></div>
+  <span class="op">)</span>
+<span class="co">#&gt; k1 </span>
+<span class="co">#&gt; k2 </span>
+<span class="co">#&gt; k3 </span>
+<span class="co">#&gt; k4 </span>
+<span class="co">#&gt; k5 </span>
+<span class="co">#&gt; k6 </span>
+<span class="co">#&gt; k7 </span>
+<span class="co">#&gt; k8 </span>
+<span class="co">#&gt; k9 </span>
+<span class="co">#&gt; k10 </span>
+<span class="co">#&gt; k11 </span>
+<span class="co">#&gt; k12 </span>
+<span class="co">#&gt; k13 </span>
+<span class="co">#&gt; k14 </span>
+<span class="co">#&gt; k15 </span>
+<span class="co">#&gt; k16 </span>
+<span class="co">#&gt; k17 </span>
+<span class="co">#&gt; k18</span></code></pre></div>
 <p>We can now align the topics from each consecutive models:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R">
@@ -212,12 +230,12 @@
 <p>The number of key topics is computed with the function <code>compute_number_of_key_topics</code>. The function <code>plot_number_of_key_topics</code> can then be used to visualize that number across models.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/compute_number_of_key_topics.html">compute_number_of_key_topics</a></span><span class="op">(</span><span class="va">aligned_topics_product</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">plot_number_of_key_topics</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="../reference/plot_number_of_key_topics.html">plot_number_of_key_topics</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Method: product"</span><span class="op">)</span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/key-number-of-topics-1.png" width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/compute_number_of_key_topics.html">compute_number_of_key_topics</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu">plot_number_of_key_topics</span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
+  <span class="fu"><a href="../reference/plot_number_of_key_topics.html">plot_number_of_key_topics</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
   <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Method: transport"</span><span class="op">)</span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/key-number-of-topics-2.png" width="700"></p>
 <p>The number of key topics shows a small plateau around K = 12 with both methods (product and transport). As in the simulations, the number of key topics are lower and the plateau is stronger when key topics are identified by the product than by the transport alignment. The fact that the plateau is small is likely indicative that the data generation process does not strictly follow the LDA model assumption.</p>

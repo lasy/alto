@@ -90,7 +90,7 @@
 
       
 
-      </header><script src="basic-alignment_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="basic-alignment_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Introduction to Alignment</h1>
@@ -116,8 +116,8 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'alto'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     weights</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
@@ -147,7 +147,7 @@
 <code class="sourceCode R"><span class="va">result</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span><span class="op">)</span>
 <span class="va">result</span>
 <span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
-<span class="co">#&gt; # A tibble: 6 x 8</span>
+<span class="co">#&gt; # A tibble: 6 × 8</span>
 <span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 1     2          1      1  0.500          25.0         1     0.500</span>
@@ -160,7 +160,7 @@
 <p>We can access the full weights (not just the first few rows), by using the <code>weights</code> method.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/stats/weights.html">weights</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1,320 x 8</span>
+<span class="co">#&gt; # A tibble: 1,320 × 8</span>
 <span class="co">#&gt;    m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
 <span class="co">#&gt;    &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 1     2          1      1  0.500          25.0         1     0.500</span>
@@ -177,36 +177,36 @@
 <p>The <code>align_topics</code> function also computes a few per-topic measures. These can be accessed using <code>topics</code>. For example, <code>mass</code> describes the total mass <span class="math inline">\(\sum_{i = 1}^{n}\gamma_{ik}^{m}\)</span> for topic <span class="math inline">\(k\)</span> in model <span class="math inline">\(m\)</span>. The <code>prop</code> column normalizes the <code>mass</code> column according to the total mass within that model. <code>branch</code> specifies which overall branch each topic belongs to (this corresponds to colors in the flow diagrams below). Coherence and refinement are complementary measures of topic quality. For details on their properties, please refer to the manuscript accompanying this package.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu">topics</span><span class="op">(</span><span class="va">result</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 55 x 7</span>
+<span class="co">#&gt; # A tibble: 55 × 7</span>
 <span class="co">#&gt;    m         k  mass  prop branch coherence refinement</span>
 <span class="co">#&gt;    &lt;fct&gt; &lt;int&gt; &lt;dbl&gt; &lt;dbl&gt; &lt;fct&gt;      &lt;dbl&gt;      &lt;dbl&gt;</span>
-<span class="co">#&gt;  1 1         1  50   1     2          0.214      1    </span>
-<span class="co">#&gt;  2 2         1  25.0 0.500 2          0.214      0.500</span>
-<span class="co">#&gt;  3 2         2  25.0 0.500 10         0.179      0.500</span>
-<span class="co">#&gt;  4 3         1  16.7 0.333 2          0.196      0.333</span>
-<span class="co">#&gt;  5 3         2  16.7 0.333 8          0.157      0.333</span>
-<span class="co">#&gt;  6 3         3  16.7 0.333 10         0.179      0.333</span>
-<span class="co">#&gt;  7 4         1  12.5 0.250 2          0.177      0.250</span>
-<span class="co">#&gt;  8 4         2  12.5 0.250 9          0.141      0.250</span>
-<span class="co">#&gt;  9 4         3  12.5 0.250 8          0.157      0.250</span>
-<span class="co">#&gt; 10 4         4  12.5 0.250 10         0.168      0.250</span>
+<span class="co">#&gt;  1 1         1  50   1     1          0.457      1    </span>
+<span class="co">#&gt;  2 2         1  25.0 0.500 1          0.457      0.500</span>
+<span class="co">#&gt;  3 2         2  25.0 0.500 9          0.179      0.500</span>
+<span class="co">#&gt;  4 3         1  16.7 0.333 1          0.402      0.333</span>
+<span class="co">#&gt;  5 3         2  16.7 0.333 1          0.402      0.333</span>
+<span class="co">#&gt;  6 3         3  16.7 0.333 9          0.179      0.333</span>
+<span class="co">#&gt;  7 4         1  12.5 0.250 1          0.383      0.250</span>
+<span class="co">#&gt;  8 4         2  12.5 0.250 4          0.141      0.250</span>
+<span class="co">#&gt;  9 4         3  12.5 0.250 1          0.383      0.250</span>
+<span class="co">#&gt; 10 4         4  12.5 0.250 9          0.168      0.250</span>
 <span class="co">#&gt; # … with 45 more rows</span></code></pre></div>
 <p>An alternative measure is the <code>key_topics</code> measure. This looks at how many topics have similar descendents across resolution levels, and it can be accessed using the <code>compute_number_of_key_topics</code> function,</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/compute_number_of_key_topics.html">compute_number_of_key_topics</a></span><span class="op">(</span><span class="va">result</span>, plot<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <p><img src="basic-alignment_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<pre><code>#&gt; # A tibble: 10 x 3
+<pre><code>#&gt; # A tibble: 10 × 3
 #&gt;    m     n_key_topics n_topics
 #&gt;    &lt;fct&gt;        &lt;int&gt;    &lt;int&gt;
 #&gt;  1 1                1        1
 #&gt;  2 2                2        2
-#&gt;  3 3                3        3
-#&gt;  4 4                4        4
-#&gt;  5 5                5        5
-#&gt;  6 6                6        6
-#&gt;  7 7                7        7
-#&gt;  8 8                8        8
-#&gt;  9 9                9        9
+#&gt;  3 3                2        3
+#&gt;  4 4                3        4
+#&gt;  5 5                3        5
+#&gt;  6 6                4        6
+#&gt;  7 7                5        7
+#&gt;  8 8                5        8
+#&gt;  9 9                6        9
 #&gt; 10 10              10       10</code></pre>
 <div id="visualizations" class="section level3">
 <h3 class="hasAnchor">
@@ -261,7 +261,7 @@
 <span class="va">gamma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="op">~</span> <span class="va">.</span><span class="op">$</span><span class="va">gamma</span><span class="op">)</span>
 <span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="op">~</span> <span class="va">.</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span>
 <span class="fu"><a href="../reference/align_graph.html">align_graph</a></span><span class="op">(</span><span class="va">edges</span>, <span class="va">gamma</span>, <span class="va">beta</span>, <span class="va">transport_weights</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 1,320 x 8</span>
+<span class="co">#&gt; # A tibble: 1,320 × 8</span>
 <span class="co">#&gt;    m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
 <span class="co">#&gt;    &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 1     2          1      1  0.500          25.0         1     0.500</span>
@@ -278,7 +278,7 @@
 <p>Finally, arbitrary weight methods can be passed to <code>align_graph</code>. The only requirement is that, given pairs of matrices of mixed-memberships and log-topics between two models, the function must return a data.frame of weights between all pairs of topics. The <code>transport_weights</code> function above is an example,</p>
 <div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="fu"><a href="../reference/transport_weights.html">transport_weights</a></span><span class="op">(</span><span class="va">gamma</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span>, <span class="va">beta</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">]</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 2 x 3</span>
+<span class="co">#&gt; # A tibble: 2 × 3</span>
 <span class="co">#&gt;   k     k_next weight</span>
 <span class="co">#&gt;   &lt;chr&gt; &lt;chr&gt;   &lt;dbl&gt;</span>
 <span class="co">#&gt; 1 1     1        25.0</span>
@@ -291,7 +291,7 @@
 <span class="op">}</span>
 
 <span class="fu"><a href="../reference/align_graph.html">align_graph</a></span><span class="op">(</span><span class="va">edges</span>, <span class="va">gamma</span>, <span class="va">beta</span>, weight_fun <span class="op">=</span> <span class="va">dummy_weights</span><span class="op">)</span>
-<span class="co">#&gt; # A tibble: 8,250 x 8</span>
+<span class="co">#&gt; # A tibble: 8,250 × 8</span>
 <span class="co">#&gt;    m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
 <span class="co">#&gt;    &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
 <span class="co">#&gt;  1 1     2          1      1      0             0       NaN       NaN</span>
