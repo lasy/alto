@@ -100,13 +100,23 @@
 <a href="#alto" class="anchor"></a>alto</h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p><code>alto</code> is an R package that</p>
+<p><code>alto</code> is an R package for aligning topics across a collection of LDA models. It provides functions to support the most common tasks in the analysis workflow,</p>
 <ul>
-<li><p>aligns topics from different LDA models,</p></li>
-<li><p>computes metrics for quantifying the goodness of alignment,</p></li>
-<li><p>and provides visualization functions to explore the alignment and robustness of topics across environments or LDA hyper-parameters.</p></li>
+<li>
+<code><a href="reference/run_lda_models.html">run_lda_models()</a></code> fits a collection of LDA models across resolution levels</li>
+<li>
+<code><a href="reference/align_topics.html">align_topics()</a></code> aligns topics across a collection of LDA models</li>
+<li>
+<code>topics()</code> computes metrics of alignment quality</li>
+<li>
+<code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> shows the flow of alignment weight across resolution levels</li>
+<li>
+<code><a href="reference/plot_beta.html">plot_beta()</a></code> shows the topics associated with each underlying model</li>
 </ul>
-<div id="installation" class="section level2">
+<p>Alignment can be used for (multiresolution) exploratory analysis. By highlighting topics that are robust across choices of K, it can also support evaluation of LDA models.</p>
+<figure><img src="https://uwmadison.box.com/shared/static/d3jmv5nh2crkf1d8ybxz1veykwxd8ecg.png" width="200"><figcaption>
+An example alignment between topic models. See the <code>microbiome_demo.Rmd</code> vignette to reproduce this figure.
+</figcaption></figure><div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <!-- You can install the released version of alto from [CRAN](https://CRAN.R-project.org) with: -->
@@ -118,6 +128,11 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="co"># install.packages("devtools")</span>
 <span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">"lasy/alto"</span><span class="op">)</span></code></pre></div>
+</div>
+<div id="help" class="section level2">
+<h2 class="hasAnchor">
+<a href="#help" class="anchor"></a>Help</h2>
+<p>We welcome questions and comments about the package either through <a href="https://github.com/lasy/alto/issues">github</a> or email.</p>
 </div>
 </div>
   </div>

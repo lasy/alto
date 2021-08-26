@@ -90,7 +90,7 @@
 
       
 
-      </header><script src="timing_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="timing_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Measuring Runtimes</h1>
@@ -106,10 +106,8 @@
 <p>This vignette measures the runtime of a few steps in the alignment workflow. Running this vignette with <span class="math inline">\(V = 1000\)</span>, <span class="math inline">\(N = 250\)</span> gives the estimates reported in the accompanying manuscript.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://CRAN.R-project.org/package=MCMCpack">MCMCpack</a></span><span class="op">)</span>
-<span class="co">#&gt; Loading required package: coda</span>
-<span class="co">#&gt; Loading required package: MASS</span>
-<span class="co">#&gt; Warning in .recacheSubclasses(def@className, def, env): undefined subclass</span>
-<span class="co">#&gt; "numericVector" of class "Mnumeric"; definition not updated</span>
+<span class="co">#&gt; Le chargement a nécessité le package : coda</span>
+<span class="co">#&gt; Le chargement a nécessité le package : MASS</span>
 <span class="co">#&gt; ##</span>
 <span class="co">#&gt; ## Markov Chain Monte Carlo Package (MCMCpack)</span>
 <span class="co">#&gt; ## Copyright (C) 2003-2021 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park</span>
@@ -119,20 +117,20 @@
 <span class="co">#&gt; ##</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'alto'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     weights</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following object is masked from 'package:MASS':</span>
+<span class="co">#&gt; Attachement du package : 'dplyr'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:MASS':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     select</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:base':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     intersect, setdiff, setequal, union</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
@@ -164,39 +162,39 @@
 <span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
 <span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 6.974 sec elapsed</span>
+<span class="co">#&gt; 5.423 sec elapsed</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"product"</span><span class="op">)</span>
 <span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
-<span class="co">#&gt; # A tibble: 6 x 8</span>
+<span class="co">#&gt; # A tibble: 6 × 8</span>
 <span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 K1    K2         1      1  0.395         11.9          1     0.395</span>
-<span class="co">#&gt; 2 K1    K2         1      2  0.605         18.1          1     0.605</span>
-<span class="co">#&gt; 3 K1    K3         1      1  0.392         11.8          1     0.392</span>
-<span class="co">#&gt; 4 K1    K3         1      2  0.302          9.05         1     0.302</span>
-<span class="co">#&gt; 5 K1    K3         1      3  0.307          9.20         1     0.307</span>
-<span class="co">#&gt; 6 K1    K4         1      1  0.209          6.26         1     0.209</span>
+<span class="co">#&gt; 1 K1    K2         1      1  0.585         17.6          1     0.585</span>
+<span class="co">#&gt; 2 K1    K2         1      2  0.415         12.4          1     0.415</span>
+<span class="co">#&gt; 3 K1    K3         1      1  0.425         12.7          1     0.425</span>
+<span class="co">#&gt; 4 K1    K3         1      2  0.293          8.78         1     0.293</span>
+<span class="co">#&gt; 5 K1    K3         1      3  0.283          8.48         1     0.283</span>
+<span class="co">#&gt; 6 K1    K4         1      1  0.293          8.80         1     0.293</span>
 <span class="co">#&gt; # … with 1314 more rows</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 4.532 sec elapsed</span>
+<span class="co">#&gt; 6.016 sec elapsed</span>
 
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
 <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span>
 <span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
-<span class="co">#&gt; # A tibble: 6 x 8</span>
+<span class="co">#&gt; # A tibble: 6 × 8</span>
 <span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
 <span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 K1    K2         1      1  0.395         11.9          1     0.395</span>
-<span class="co">#&gt; 2 K1    K2         1      2  0.605         18.1          1     0.605</span>
-<span class="co">#&gt; 3 K1    K3         1      1  0.392         11.8          1     0.392</span>
-<span class="co">#&gt; 4 K1    K3         1      2  0.307          9.20         1     0.307</span>
-<span class="co">#&gt; 5 K1    K3         1      3  0.302          9.05         1     0.302</span>
-<span class="co">#&gt; 6 K1    K4         1      1  0.209          6.26         1     0.209</span>
+<span class="co">#&gt; 1 K1    K2         1      1  0.585         17.6          1     0.585</span>
+<span class="co">#&gt; 2 K1    K2         1      2  0.415         12.4          1     0.415</span>
+<span class="co">#&gt; 3 K1    K3         1      1  0.425         12.7          1     0.425</span>
+<span class="co">#&gt; 4 K1    K3         1      2  0.293          8.78         1     0.293</span>
+<span class="co">#&gt; 5 K1    K3         1      3  0.283          8.48         1     0.283</span>
+<span class="co">#&gt; 6 K1    K4         1      1  0.284          8.51         1     0.284</span>
 <span class="co">#&gt; # … with 1314 more rows</span>
 <span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 3.991 sec elapsed</span></code></pre></div>
+<span class="co">#&gt; 4.535 sec elapsed</span></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

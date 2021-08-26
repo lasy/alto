@@ -90,7 +90,7 @@
 
       
 
-      </header><script src="strain-switching_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><script src="strain-switching_files/header-attrs-2.10/header-attrs.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Strain Switching</h1>
@@ -126,17 +126,17 @@
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'alto'</span>
+<span class="co">#&gt; L'objet suivant est masqué depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     weights</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
 <span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
+<span class="co">#&gt; Attachement du package : 'dplyr'</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:stats':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
+<span class="co">#&gt; Les objets suivants sont masqués depuis 'package:base':</span>
 <span class="co">#&gt; </span>
 <span class="co">#&gt;     intersect, setdiff, setequal, union</span>
 <span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
@@ -149,9 +149,7 @@
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/attach.html">attach</a></span><span class="op">(</span><span class="va">params</span><span class="op">)</span>
 <span class="va">lambdas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.1</span>, gamma <span class="op">=</span> <span class="fl">0.5</span>, count <span class="op">=</span> <span class="fl">1e4</span>, alpha <span class="op">=</span> <span class="fl">0.3</span><span class="op">)</span>
-<span class="va">sim_data</span> <span class="op">&lt;-</span> <span class="fu">equivalence_data</span><span class="op">(</span><span class="va">N</span>, <span class="va">V</span>, <span class="va">K</span>, <span class="va">lambdas</span>, <span class="va">S</span><span class="op">)</span>
-<span class="co">#&gt; Warning in .recacheSubclasses(def@className, def, env): undefined subclass</span>
-<span class="co">#&gt; "numericVector" of class "Mnumeric"; definition not updated</span></code></pre></div>
+<span class="va">sim_data</span> <span class="op">&lt;-</span> <span class="fu">equivalence_data</span><span class="op">(</span><span class="va">N</span>, <span class="va">V</span>, <span class="va">K</span>, <span class="va">lambdas</span>, <span class="va">S</span><span class="op">)</span></code></pre></div>
 <p>The block below runs a sequence of models and aligns their topics. This is identical to the parallel blocks in other simulations.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span class="va">lda_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n_models</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
