@@ -33,12 +33,6 @@
 #' coherence scores) are computed. These variables are included to the
 #' \code{topics} container of the returned \code{alignment}.
 #'
-#' See the reference XXX for details on the alignment diagnostics.
-#'
-#' @references
-#'
-#' XXX
-#'
 #'
 #' @seealso alignment
 #' @examples
