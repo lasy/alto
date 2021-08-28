@@ -21,7 +21,7 @@ highlighting topics that are robust across choices of K, it can also support
 evaluation of LDA models.
 
 <figure>
-  <img src="docs/articles/microbiome-demo_files/figure-html/alignment-viz-2.png" width="200"/>
+  <img src="docs/articles/microbiome-demo_files/figure-html/alignment-viz-2.png" width="450"/>
   <figcaption>An example alignment between topic models. See the vignette "Using alto on vaginal microbiome data" to reproduce this figure.</figcaption>
 </figure>
 
