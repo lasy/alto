@@ -12,7 +12,7 @@ membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
 compare. The number of columns may be different, but the number of samples
 must be equal.}
 
-\item{betas}{(required). A lsit of length two, containing the topic matrices
+\item{betas}{(required). A list of length two, containing the topic matrices
 (a \code{matrix} of dimension k-topics by d-dimensions).) The number of rows
 may be different, but the number of columns must remain fixed.}
 

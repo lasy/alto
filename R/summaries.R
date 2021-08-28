@@ -25,15 +25,6 @@ add_measure <- function(aligned_topics, fi=topic_coherence) {
 #'
 #' The coherence score of a topic reflects how similar this topic is
 #' to the other topics of the same branch (same key topic).
-#' It is computed as
-#'
-#' $$c(v_{k,m}) = \frac{1}{|M'|} \sum_{m' \in M'} \sum_{k' \in K'_{m'}}
-#' \min\left(\tilde{w}_{\text{in}}\left(v_{k,m}, v_{k',m'}\right),
-#' \tilde{w}_{\text{out}}\left(v_{k,m}, v_{k',m'}\right) \right)$$
-#'
-#' where where $M'$ is the set of models with
-#' topics belonging to the same branch as $v_{k,m}$ and
-#' $K'_{m'}$ is the set of topics of that branch in model $m'$.
 #'
 #' @importFrom dplyr filter select rowwise left_join select rename group_by
 #'  summarize
@@ -87,16 +78,6 @@ topic_coherence <- function(model, topic, aligned_topics) {
 #' A topic with a high refinement score is a topic for which
 #' all of the subsequent topics connected by some forward weight to
 #' this topic have high backward weights to that topic.
-#'
-#' It is computed as
-#'
-#' $$r\left(v\right) =
-#' \frac{1}{L-l}\sum_{l'=l+1}^L \sum_{v_{l'}^\prime \in V_{l'}}
-#'  \tilde{w}_{\text{out}}\left(v, v_{l'}^\prime\right)
-#'  \tilde{w}_{\text{in}}\left(v, v_{l'}^\prime\right)$$
-#'
-#' where $\tilde{w}_{\text{in}}$ and $\tilde{w}_{\text{out}}$
-#' are the normalized weights (backward and forward weights respectively).
 #'
 #'
 #' @importFrom tibble tibble

@@ -17,11 +17,22 @@
 #' \code{product}.
 #' @param ... (optional) Further keyword arguments passed to the weight
 #' function. For example, passing \code{reg = 10} when using the
-#' \code{transport} method will use a regularization level fo 10 in the Sinkhorn
+#' \code{transport} method will use a regularization level to 10 in the Sinkhorn
 #' optimal transport algorithm.
 #' @return An object of class \code{alignment} providing the weights between
 #' every pair of topics of each model pairs in the input edgelist
 #' (\code{comparisons}).
+#'
+#' @details
+#'
+#' After topics are aligned, they are re-ordered such that topics connected
+#' by high weights are ranked similarly within their respective models.
+#'
+#' Topic paths (sets of topics connected by high weights across
+#' models) are then identified and alignment diagnostics (topic refinement and
+#' coherence scores) are computed. These variables are included to the
+#' \code{topics} container of the returned \code{alignment}.
+#'
 #'
 #' @seealso alignment
 #' @examples
@@ -38,8 +49,6 @@
 #' alignment <- align_topics(lda_models, method = "transport")
 #' plot(alignment)
 #' plot_beta(alignment)
-#'
-#' align_topics(lda_models, comparisons = "all")
 #'
 #' topics(alignment)
 #' weights(alignment)
@@ -277,7 +286,7 @@ product_weights <- function(gammas, ...) {
 #' membership matrices (a \code{matrix} of dimension n-samples by k-topics) to
 #' compare. The number of columns may be different, but the number of samples
 #' must be equal.
-#' @param betas (required). A lsit of length two, containing the topic matrices
+#' @param betas (required). A list of length two, containing the topic matrices
 #' (a \code{matrix} of dimension k-topics by d-dimensions).) The number of rows
 #' may be different, but the number of columns must remain fixed.
 #' @param reg (optional) How much regularization to use in the Sinkhorn optimal
@@ -286,6 +295,7 @@ product_weights <- function(gammas, ...) {
 #' for consistency with other weight functions.
 #' @return products A \code{data.frame} giving the product similarity of each
 #' pair of topics across the two input matrices.
+#'
 #'
 #' @examples
 #' library(purrr)

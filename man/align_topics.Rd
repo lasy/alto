@@ -35,6 +35,17 @@ list, corresponding to the mixed memberships (\code{$gamma}) and topics
 and its weights can be extracted using the `weights` accessor function. See
 the documentation for class \code{alignment} for further details.
 }
+\details{
+After topics are aligned, they are re-ordered such that topics connected
+by high weights are ranked similarly within their respective models.
+
+Finally, topic paths (sets of topics connected by high weights across
+models) are identified and alignment diagnostics (topic refinement and
+coherence scores) are computed. These variables are included to the
+\code{topics} container of the returned \code{alignment}.
+
+See the reference XXX for details on the alignment diagnostis.
+}
 \examples{
 library(purrr)
 data <- rmultinom(10, 20, rep(0.1, 20))
@@ -55,6 +66,9 @@ align_topics(lda_models, comparisons = "all")
 topics(alignment)
 weights(alignment)
 models(alignment)
+}
+\references{
+XXX
 }
 \seealso{
 alignment
