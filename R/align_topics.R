@@ -103,7 +103,6 @@ topics_list <-  function(models) {
     mutate(m = m %>% factor(., levels = names(models)))
 }
 
-
 order_topics <- function(aligned_topics) {
 
   perms <- consecutive_weights(aligned_topics) %>%
@@ -376,7 +375,7 @@ print_alignment <- function(object) {
   ))
 
   print(head(object@weights))
-  cat(sprintf("# … with %s more rows", nrow(object@weights) - 6))
+  cat(sprintf("# ... with %s more rows", nrow(object@weights) - 6))
 }
 
 #' Alignment Class Definition

@@ -6,6 +6,16 @@
 \usage{
 topic_coherence(model, topic, aligned_topics)
 }
+\arguments{
+\item{model}{The index of the model containing the topic whose coherence we
+want}
+
+\item{topic}{The index of the topic whose coherence we want, within the
+current model}
+
+\item{aligned_topics}{An alignment object on which the coherence scores
+should be computed.}
+}
 \description{
 The coherence score of a topic reflects how similar this topic is
 to the other topics of the same branch (same key topic).

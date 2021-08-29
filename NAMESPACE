@@ -3,6 +3,7 @@
 export(align_graph)
 export(align_topics)
 export(compute_number_of_key_topics)
+export(compute_strain_switching_scores_of_model)
 export(plot_alignment)
 export(plot_beta)
 export(plot_number_of_key_topics)

@@ -26,6 +26,13 @@ add_measure <- function(aligned_topics, fi=topic_coherence) {
 #' The coherence score of a topic reflects how similar this topic is
 #' to the other topics of the same branch (same key topic).
 #'
+#' @param model The index of the model containing the topic whose coherence we
+#'   want
+#' @param topic The index of the topic whose coherence we want, within the
+#'   current model
+#' @param aligned_topics An alignment object on which the coherence scores
+#'   should be computed.
+#'
 #' @importFrom dplyr filter select rowwise left_join select rename group_by
 #'  summarize
 #' @importFrom magrittr %>%
@@ -79,6 +86,12 @@ topic_coherence <- function(model, topic, aligned_topics) {
 #' all of the subsequent topics connected by some forward weight to
 #' this topic have high backward weights to that topic.
 #'
+#' @param model The index of the model containing the topic whose coherence we
+#'   want
+#' @param topic The index of the topic whose coherence we want, within the
+#'   current model
+#' @param aligned_topics An alignment object on which the coherence scores
+#'   should be computed.
 #'
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter mutate group_by summarize

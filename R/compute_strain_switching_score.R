@@ -44,6 +44,7 @@
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr filter select as_tibble
 #' @importFrom magrittr %>% set_colnames
+#' @export
 compute_strain_switching_scores_of_model <-
   function(alignment, model, n_ancestry_levels) {
     topic_pairs <-
@@ -99,7 +100,7 @@ compute_sss_topic_pair <-
       unlist()
 
     i <- which(models == prev_model)
-    prev_model <- models[max(2, j - n_ancestry_levels, i-1)]
+    prev_model <- models[max(2, j - n_ancestry_levels, i - 1)]
 
     alignment@weights %>%
       filter(
