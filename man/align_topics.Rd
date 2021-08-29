@@ -19,7 +19,7 @@ or optimal transport between gamma-beta pairs, respectively. Defaults to
 
 \item{...}{(optional) Further keyword arguments passed to the weight
 function. For example, passing \code{reg = 10} when using the
-\code{transport} method will use a regularization level fo 10 in the Sinkhorn
+\code{transport} method will use a regularization level to 10 in the Sinkhorn
 optimal transport algorithm.}
 }
 \value{
@@ -39,12 +39,10 @@ the documentation for class \code{alignment} for further details.
 After topics are aligned, they are re-ordered such that topics connected
 by high weights are ranked similarly within their respective models.
 
-Finally, topic paths (sets of topics connected by high weights across
-models) are identified and alignment diagnostics (topic refinement and
+Topic paths (sets of topics connected by high weights across
+models) are then identified and alignment diagnostics (topic refinement and
 coherence scores) are computed. These variables are included to the
 \code{topics} container of the returned \code{alignment}.
-
-See the reference XXX for details on the alignment diagnostis.
 }
 \examples{
 library(purrr)
@@ -61,14 +59,9 @@ alignment <- align_topics(lda_models, method = "transport")
 plot(alignment)
 plot_beta(alignment)
 
-align_topics(lda_models, comparisons = "all")
-
 topics(alignment)
 weights(alignment)
 models(alignment)
-}
-\references{
-XXX
 }
 \seealso{
 alignment

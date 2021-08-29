@@ -43,7 +43,7 @@
 #'
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr filter select as_tibble
-#' @importFrom magrittr % set_colnames
+#' @importFrom magrittr %>% set_colnames
 compute_strain_switching_scores_of_model <-
   function(alignment, model, n_ancestry_levels) {
     topic_pairs <-
@@ -54,12 +54,12 @@ compute_strain_switching_scores_of_model <-
           unlist(),
         m = 2) %>%
       t() %>%
-      magrittr::set_colnames(c("k1","k2")) %>%
+      magrittr::set_colnames(c("k1", "k2")) %>%
       as_tibble()
     sss <-
       purrr::map_dfr(
         .x = 1:nrow(topic_pairs),
-        .f = function(i){
+        .f = function(i) {
           compute_sss_topic_pair(
             alignment = alignment,
             model = model,
@@ -79,11 +79,10 @@ compute_sss_topic_pair <-
 
     models <- levels(alignment@topics$m)
     j <- which(models == model)
-    # prev_models <- models[max(1,(j-n_ancestry_levels)):(j-1)]
 
     branches <-
       alignment@topics %>%
-      filter(m %in% model, k %in% c(k1,k2)) %>%
+      filter(m %in% model, k %in% c(k1, k2)) %>%
       select(branch) %>%
       unlist()
 
@@ -100,21 +99,21 @@ compute_sss_topic_pair <-
       unlist()
 
     i <- which(models == prev_model)
-    prev_model <- models[max(2, j-n_ancestry_levels, i-1)]
+    prev_model <- models[max(2, j - n_ancestry_levels, i-1)]
 
     alignment@weights %>%
       filter(
         m %in% prev_model,
         m_next == model,
-        k_next %in% c(k1,k2)) %>%
+        k_next %in% c(k1, k2)) %>%
       left_join(
-        ., alignment@topics %>% select(m, k, refinement), by = c("m","k")) %>%
+        ., alignment@topics %>% select(m, k, refinement), by = c("m", "k")) %>%
       left_join(
         .,
         alignment@topics %>%
           select(m, k, coherence) %>%
           rename(m_next = m, k_next = k),
-        by = c("m_next","k_next")) %>%
+        by = c("m_next", "k_next")) %>%
       group_by(m, k, refinement) %>%
       summarize(sss = prod(bw_weight), #  * coherence
                 .groups = "drop")  %>%
@@ -125,4 +124,3 @@ compute_sss_topic_pair <-
       mutate(k1 = k1, k2 = k2, m = model) %>%
       select(m, k1, k2, parent_m, parent_k, sss)
   }
-

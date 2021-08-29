@@ -96,13 +96,13 @@ run_lda_models <-
 
     # 2. RUNNING and SAVING MODELS
     existing_lda_files <- list.files(dir)
-    required_lda_files <- paste0(names(param_lists),".Rdata")
+    required_lda_files <- paste0(names(param_lists), ".Rdata")
     if (reset |  !all(required_lda_files %in% existing_lda_files)) {
       done <-
         map(
           .x = names(param_lists),
           .f = function(m) {
-            if(verbose) cat(m,"\n")
+            if (verbose) cat(m, "\n")
             param_list <- param_lists[[m]]
             if (param_list$k == 1) {
               lda_model <- list(

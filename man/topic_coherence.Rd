@@ -9,14 +9,4 @@ topic_coherence(model, topic, aligned_topics)
 \description{
 The coherence score of a topic reflects how similar this topic is
 to the other topics of the same branch (same key topic).
-It is computed as
-}
-\details{
-$$c(v_{k,m}) = \frac{1}{|M'|} \sum_{m' \in M'} \sum_{k' \in K'_{m'}}
-\min\left(\tilde{w}_{\text{in}}\left(v_{k,m}, v_{k',m'}\right),
-\tilde{w}_{\text{out}}\left(v_{k,m}, v_{k',m'}\right) \right)$$
-
-where where $M'$ is the set of models with
-topics belonging to the same branch as $v_{k,m}$ and
-$K'_{m'}$ is the set of topics of that branch in model $m'$.
 }

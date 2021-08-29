@@ -13,14 +13,3 @@ A topic with a high refinement score is a topic for which
 all of the subsequent topics connected by some forward weight to
 this topic have high backward weights to that topic.
 }
-\details{
-It is computed as
-
-$$r\left(v\right) =
-\frac{1}{L-l}\sum_{l'=l+1}^L \sum_{v_{l'}^\prime \in V_{l'}}
- \tilde{w}_{\text{out}}\left(v, v_{l'}^\prime\right)
- \tilde{w}_{\text{in}}\left(v, v_{l'}^\prime\right)$$
-
-where $\tilde{w}_{\text{in}}$ and $\tilde{w}_{\text{out}}$
-are the normalized weights (backward and forward weights respectively).
-}

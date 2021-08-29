@@ -1,6 +1,7 @@
 #' Vaginal microbiome data from "Replication and refinement of a vaginal microbial signature of preterm birth in two racially distinct cohorts of US women" by Calahan et al., 2017, PNAS.
 #'
-#' A dataset containing the 16S rRNA sequencing counts from longitudinal samples of pregnant subjects throughout their pregnancy.
+#' A dataset containing the 16S rRNA sequencing counts from longitudinal samples
+#' of pregnant subjects throughout their pregnancy.
 #'
 #' @format A list of three data frames
 #' \describe{

@@ -19,6 +19,7 @@ A list of three data frames
 vm_data
 }
 \description{
-A dataset containing the 16S rRNA sequencing counts from longitudinal samples of pregnant subjects throughout their pregnancy.
+A dataset containing the 16S rRNA sequencing counts from longitudinal samples
+of pregnant subjects throughout their pregnancy.
 }
 \keyword{datasets}
