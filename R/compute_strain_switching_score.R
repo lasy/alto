@@ -35,7 +35,7 @@
 #' alignment <- align_topics(lda_models, method = "transport")
 #' plot(alignment)
 #'
-#' compute_strain_switching_score_of_model(
+#' compute_strain_switching_scores_of_model(
 #'    alignment,
 #'    model = 5,
 #'    n_ancestry_levels = 2
