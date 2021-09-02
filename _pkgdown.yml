@@ -11,8 +11,8 @@ reference:
 - contents:
   - plot_alignment
   - plot_beta
-  - compute_number_of_key_topics
-  - plot_number_of_key_topics
+  - compute_number_of_paths
+  - plot_number_of_paths
 
 - title: "Alignment class and related functions"
 - contents:

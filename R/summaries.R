@@ -24,7 +24,7 @@ add_measure <- function(aligned_topics, fi=topic_coherence) {
 #' Computes the coherence score of a topic
 #'
 #' The coherence score of a topic reflects how similar this topic is
-#' to the other topics of the same branch (same key topic).
+#' to the other topics of the same path.
 #'
 #' @param model The index of the model containing the topic whose coherence we
 #'   want
@@ -39,24 +39,24 @@ add_measure <- function(aligned_topics, fi=topic_coherence) {
 #' @importFrom tibble tibble
 topic_coherence <- function(model, topic, aligned_topics) {
   all_topics <- topics(aligned_topics)
-  topic_branch <- all_topics %>%
+  topic_path <- all_topics %>%
     filter(m == model, k == topic) %>%
-    pull(branch)
+    pull(path)
 
   topic_peers <- weights(aligned_topics) %>%
     left_join(
       all_topics %>%
-        select(m, k, branch),
+        select(m, k, path),
       by = c("m", "k")) %>%
     left_join(
       all_topics %>%
-        select(m, k, branch) %>%
-        rename(m_next = m, k_next = k, branch_next = branch),
+        select(m, k, path) %>%
+        rename(m_next = m, k_next = k, path_next = path),
       by = c("m_next", "k_next")
     ) %>%
     filter(
       ((m == model) & (k == topic)) | ((m_next == model) & (k_next == topic)),
-      branch == branch_next
+      path == path_next
     )
 
   if (nrow(topic_peers) > 0) {

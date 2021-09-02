@@ -95,7 +95,7 @@ topics have similar descendents across resolution levels, and it can be accessed
 using the `compute_number_of_key_topics` function,
 
 ```{r}
-compute_number_of_key_topics(result, plot=TRUE)
+compute_number_of_paths(result, plot=TRUE)
 ```
 
 
@@ -132,7 +132,7 @@ For clarity, circles with $\beta_{kd}^{m} < \text{min_beta}$ are not shown.
 
 ```{r}
 plot_beta(result)
-plot_beta(result, min_beta = 0.05)
+plot_beta(result, threshold = 0.05)
 ```
 
 Alternatively, we can filter the number of dimensions shown using the

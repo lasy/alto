@@ -125,11 +125,11 @@ plot(aligned_topics_transport)
 The number of key topics is computed with the function `compute_number_of_key_topics`. The function `plot_number_of_key_topics` can then be used to visualize that number across models.
 
 ```{r key-number-of-topics}
-compute_number_of_key_topics(aligned_topics_product) %>% 
-  plot_number_of_key_topics() + 
+compute_number_of_paths(aligned_topics_product) %>% 
+  plot_number_of_paths() + 
   ggtitle("Method: product")
-compute_number_of_key_topics(aligned_topics_transport) %>% 
-  plot_number_of_key_topics() + 
+compute_number_of_paths(aligned_topics_transport) %>% 
+  plot_number_of_paths() + 
   ggtitle("Method: transport")
 ```
 
@@ -160,8 +160,8 @@ Interestingly, by $K=7$, the identified topics correspond to the four Lactobacil
 The function `plot_beta` allows to visualize the betas for a selection (or all) models.
 
 ```{r beta-plot}
-plot_beta(aligned_topics_product, models = c("k3", "k7","k12","k18"), min_beta = 0.005)
-plot_beta(aligned_topics_transport, models = c("k3", "k7","k12","k18"), min_beta = 0.005)
+plot_beta(aligned_topics_product, models = c("k3", "k7","k12","k18"), threshold = 0.005)
+plot_beta(aligned_topics_transport, models = c("k3", "k7","k12","k18"), threshold = 0.005)
 ```
 
 By $K=18$ topics are sparse and share little overlap between them (Fig \ref{fig:microbiome_figure}d), which may reflect over-fitting.
@@ -171,7 +171,7 @@ The `plot_beta` function also has a `color_by` option, which allows to visualize
 ```{r}
 plot_beta(aligned_topics_transport, 
           models = c("k3", "k7","k12","k18"), 
-          min_beta = 0.005, 
+          threshold = 0.005, 
           color_by = "coherence")
 ```
 
@@ -213,28 +213,28 @@ make_figure <- function(aligned_topics_product,
                         aligned_topics_transport){
   
   
-  n_key_topics_combined <- 
+  n_paths_combined <- 
     bind_rows(
-      compute_number_of_key_topics(aligned_topics_product) %>% 
+      compute_number_of_paths(aligned_topics_product) %>% 
         mutate(method = "product"),
-      compute_number_of_key_topics(aligned_topics_transport) %>% 
+      compute_number_of_paths(aligned_topics_transport) %>% 
         mutate(method = "transport")
     )
   
   
   g_key_topics <- 
-    ggplot(n_key_topics_combined, 
+    ggplot(n_paths_combined, 
            aes(x = n_topics,
-               y = n_key_topics,
+               y = n_paths,
                col = method)) +
     geom_abline(slope = 1, intercept = 0, col = "gray90", size = 2) +
     geom_line() +
     geom_point(size = 1) +
     theme_minimal() +
     xlab("# of topics in model") +
-    ylab("# of key topics") +
-    scale_x_continuous(breaks = 1:max(n_key_topics_combined$n_topics), minor_breaks = NULL) +
-    scale_y_continuous(breaks = 1:max(n_key_topics_combined$n_topics), minor_breaks = NULL) +
+    ylab("# of paths") +
+    scale_x_continuous(breaks = 1:max(n_paths_combined$n_topics), minor_breaks = NULL) +
+    scale_y_continuous(breaks = 1:max(n_paths_combined$n_topics), minor_breaks = NULL) +
     theme(legend.position = "top")
   
   
@@ -256,9 +256,12 @@ make_figure <- function(aligned_topics_product,
     theme_minimal() 
   
   
-  g_beta_transport =  plot_beta(aligned_topics_transport, models = c("k3", "k7","k12",last(aligned_topics_transport@topics$m %>% levels())), min_beta = 0.003)
-  
-  
+  g_beta_transport <- 
+    plot_beta(
+      aligned_topics_transport, 
+      models = c("k3", "k7","k12",last(aligned_topics_transport@topics$m %>% levels())), 
+      threshold = 0.003
+    )
   
   figure = 
     ggpubr::ggarrange(
@@ -276,8 +279,6 @@ make_figure <- function(aligned_topics_product,
     )
   
   figure
-  
-  
 }
 
 aligned_topics_product_18 <- align_topics(lda_models[1:18], method = "product")

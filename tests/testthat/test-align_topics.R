@@ -27,9 +27,10 @@ betas <- rdirichlet(K, rep(lambdas$beta, V))
 gammas <- rdirichlet(N, rep(lambdas$gamma, K))
 x <- simulate_lda(betas, gammas, lambda = lambdas$count)
 lda_params <- map(1:n_models, ~ list(k = .))
-names(lda_params) <- str_c("K", 1:n_models)
-alignment <- x %>%
-  run_lda_models(lda_params, reset = TRUE) %>%
+names(lda_params) <- paste0("K", 1:n_models)
+alignment <-
+  x %>%
+  run_lda_models(., lda_params, reset = TRUE) %>%
   align_topics(method = "transport")
 
 test_that(
@@ -38,12 +39,15 @@ test_that(
   for (i in seq_len(n_models - 1)) {
     S <- cor(t(exp(lda_models[[i]]$beta)), t(exp(lda_models[[i + 1]]$beta)))
     max_s <- which(S == max(S), arr.ind = TRUE)
-    weight <- weights(alignment) %>%
+    weight <-
+      weights(alignment) %>%
       filter(
         m == names(lda_models)[i],
+        m_next == names(lda_models)[i+1],
         k == max_s[1],
         k_next == max_s[2]
       )
+    if (S[max_s] < 0.8) next
     expect_gt(weight$fw_weight[1], 0.5)
   }
 })
@@ -54,10 +58,13 @@ test_that(
   for (i in seq_len(n_models - 1)) {
     if (i == 1) next
 
-    ks <- weights(alignment) %>%
-      filter(m == names(lda_models)[i]) %>%
+    ks <-
+      weights(alignment) %>%
+      filter(m == names(lda_models)[i],
+             m_next == names(lda_models)[i+1]) %>%
       slice_max(fw_weight)
     topics_cor <- cor(lda_models[[i]]$gamma, lda_models[[i + 1]]$gamma)
+    if (ks$fw_weight < 0.8) next
     expect_gt(topics_cor[ks$k[1], ks$k_next[1]], 0.8)
   }
 })

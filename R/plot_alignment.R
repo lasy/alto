@@ -3,10 +3,10 @@
 #' This function creates flow diagrams of alignment weight across collections of
 #' topics. It is the default plot method associated with alignment objects. The
 #' x-axis indexes models from those with few to those with many topics. Each
-#' rectangle matches a topic; its height is the weight associated wtih that
+#' rectangle matches a topic; its height is the weight associated with that
 #' topic from across all samples. The width of edges between topics corresponds
-#' ot the alignment weight between that pair of topics. By default, topics are
-#' shaded according to their branch membership. Other topic measures can be
+#' of the alignment weight between that pair of topics. By default, topics are
+#' shaded according to their path. Other topic measures can be
 #' provided by modifying the `color_by` argument.
 #'
 #' @param x (required) An alignment class object resulting from
@@ -14,8 +14,8 @@
 #' @param rect_gap (optional) A float describing how much vertical space to put
 #' between topics within the same model. The units correspond to topic masses.
 #' Defaults to 0.2.
-#' @param color_by (optional) What should the color of topics and branches
-#' encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+#' @param color_by (optional) What should the color of topics and weights
+#' encode? Defaults to 'path'. Other possible arguments are 'coherence',
 #' 'refinement', or 'topic'.
 #' @param model_name_repair_fun How should names be repaired before plotting?
 #' @seealso align_topics
@@ -25,13 +25,13 @@
 plot_alignment <- function(
   x,
   rect_gap = 0.2,
-  color_by = "branch",
+  color_by = "path",
   model_name_repair_fun = paste0
 ) {
 
   # inputs
   .check_input(x)
-  color_by <- match.arg(color_by, c("topic", "branch", "refinement", "coherence"))
+  color_by <- match.arg(color_by, c("topic", "path", "refinement", "coherence"))
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
@@ -84,8 +84,8 @@ plot_alignment <- function(
       )
   } else {
     g <- g +
-    scale_fill_discrete(limits = levels(rect$topic_col)) +
-    guides(fill = "none")
+      scale_fill_discrete(limits = levels(rect$topic_col)) +
+      guides(fill = "none")
   }
 
   g
@@ -172,18 +172,21 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' characters, it will plot only models whose names in the original models list
 #' match. Similarly, if given a list of integers, only the models lying at those
 #' indices in the original model list will be visualized.
-#' @param min_beta (optional, default = 0.025) if \code{add_leaves} is
-#' \code{TRUE}, this option specifies the minimum beta value (i.e. proportion in
-#' topic) for a feature to be displayed in the leaves.
-#' @param n_features (optional) alternative to \code{min_beta}. The maximum
-#' number of words to display along rows of the plot.
+#' @param filter_by (optional, default = \code{"beta"}) a character specifying
+#' if the data (beta matrices) should be filtered by the average \code{"beta"}
+#' across topics or by the \code{"distinctiveness"} of the features.
+#' @param threshold (optional, default = 0.001)
+#' Words (features) with less than this average beta or
+#' distinctiveness across all topics are ignored
+#' @param n_features (optional) alternative to \code{threshold}. The maximum
+#' number of words (features) to display along rows of the plot.
 #' @param beta_aes Should word probabilities within a topic be encoded using
 #' circle size (\code{"size"}) or opacity (\code{"alpha"}) ? Defaults to
 #' \code{"size"}.
-#' @param color_by (optional) What should the color of topics and branches
-#' encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+#' @param color_by (optional) What should the color of topics and weights
+#' encode? Defaults to 'path'. Other possible arguments are 'coherence',
 #' 'refinement', or 'topic'.
-#' @return A ggplot2 object describing the word probabilities associated wtih
+#' @return A ggplot2 object describing the word probabilities associated with
 #' each topic across models of interest.
 #'
 #' @examples
@@ -203,46 +206,53 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' theme element_text
 #' @importFrom grid unit
 #' @export
-plot_beta <- function(x, models = "all", min_beta = 0.001, n_features = NULL,
-                      beta_aes = "size", color_by = "branch") {
-    beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
-    color_by <- match.arg(color_by, choices = c("topic", "branch", "refinement", "coherence"))
-    beta <- plot_beta_layout(x, models, min_beta, n_features, color_by) %>%
-      format_beta() %>%
-      filter(b > min_beta)
+plot_beta <- function(x, models = "all",
+                      filter_by = "beta",
+                      threshold = 0.001, n_features = NULL,
+                      beta_aes = "size", color_by = "path") {
 
-    g <- ggplot(beta, aes(x = factor(k, levels = 1:100), y = w, col = col)) +
-      guides(col = "none", size = "none")
+  filter_by <- match.arg(filter_by, choices = c("beta", "distinctiveness"))
+  beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
+  color_by <- match.arg(color_by, choices = c("topic", "path", "refinement", "coherence"))
 
-    if (beta_aes == "size") {
-      g <- g +
-        geom_point(aes(size = b)) +
-        scale_color_identity() +
-        scale_size(range = c(0, 5), limits = c(0, 1))
-    } else {
-      g <- g +
-        geom_tile(aes(alpha = b)) +
-        scale_fill_identity() +
-        scale_alpha(range = c(0, 1), limits = c(0, 1))
-    }
+  beta <-
+    plot_beta_layout(x, models, filter_by, threshold, n_features, color_by) %>%
+    format_beta()
 
-    g +
-      facet_grid(. ~ m, scales = "free", space = "free") +
-      labs(x = "", y = "") +
-      theme_bw() +
-      theme(
-        panel.spacing.x = unit(0, "pt"),
-        strip.text.y = element_text(angle = 0, hjust = 0, color = "black")
-      )
+  g <- ggplot(beta, aes(x = factor(k, levels = 1:100), y = w, col = col)) +
+    guides(col = "none", size = "none")
+
+  if (beta_aes == "size") {
+    g <- g +
+      geom_point(aes(size = b)) +
+      scale_color_identity() +
+      scale_size(range = c(0, 5), limits = c(0, 1))
+  } else {
+    g <- g +
+      geom_tile(aes(alpha = b)) +
+      scale_fill_identity() +
+      scale_alpha(range = c(0, 1), limits = c(0, 1))
   }
+
+  g +
+    facet_grid(. ~ m, scales = "free", space = "free") +
+    labs(x = "", y = "") +
+    theme_bw() +
+    theme(
+      panel.spacing.x = unit(0, "pt"),
+      strip.text.y = element_text(angle = 0, hjust = 0, color = "black")
+    )
+}
 
 
 #' @importFrom purrr map map_dfr
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select row_number mutate n left_join
 #' @importFrom scales hue_pal
-plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
-                             color_by = "branch") {
+plot_beta_layout <- function(x, subset = "all",
+                             filter_by = "beta",
+                             threshold = 0, n_features = NULL,
+                             color_by = "path") {
   # subset to only the models of interest
   model_params <- models(x)
   if (length(subset) == 1 && subset == "last") {
@@ -257,7 +267,7 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
   betas <-
     model_params %>%
     map_dfr(~ as.data.frame(exp(.$beta)), .id = "m") %>%
-    trim_betas(min_beta, n_features) %>%
+    trim_betas(filter_by, threshold, n_features) %>%
     mutate(m = factor(m, levels = rev(names(model_params))))
 
   # associate topics with the variable to shade in by
@@ -266,7 +276,7 @@ plot_beta_layout <- function(x, subset = "all", min_beta = 0, n_features = NULL,
     mutate(topic = factor(k)) %>%
     rename(topic_col = !!color_by)
 
-  if (color_by %in% c("topic", "branch")) {
+  if (color_by %in% c("topic", "path")) {
     topic_weights <- topic_weights %>%
       mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
   } else {
@@ -308,28 +318,44 @@ format_beta <-  function(p) {
 }
 
 #' Filter to words of interest
-#' @param betas A \code{data.frame} whose rows correpond to topics and whose
+#' @param betas A \code{data.frame} whose rows correspond to topics and whose
 #' columns are \code{m}, the model ID, and the words for which estimates are
 #' made.
-#' @param min_beta Words with less than this beta in all topics are ignored
+#' @param filter_by a character specifying if the data (\code{betas}) should
+#' be filtered by the average \code{"beta"} across topics or
+#' by the \code{"distinctiveness"} of the features.
+#' @param threshold Words (features) with less than this average beta or
+#' distinctiveness across all topics are ignored
 #' @param n_features Maximum number of features to show
 #' @importFrom dplyr select bind_cols
-trim_betas <- function(betas, min_beta = -1, n_features = NULL) {
-  if (min_beta == 0 & is.null(n_features)) {
+trim_betas <- function(betas, filter_by, threshold = 0, n_features = NULL) {
+  if (threshold == 0 & is.null(n_features)) {
     return(betas)
   }
 
   beta_tilde <- select(betas, -m)
-  beta_tilde <- beta_tilde[, colMeans(beta_tilde) > min_beta]
+  filter_by <- match.arg(filter_by, choices = c("beta", "distinctiveness"))
+
+  if (filter_by == "beta") {
+    filtering_quantity <- colMeans(beta_tilde)
+  }else{
+    filtering_quantity <- apply(beta_tilde, 2, discrepancy)
+  }
+
+  if (!is.null(n_features)){
+    ix <- order(filtering_quantity, decreasing = TRUE)
+    ix <- ix[seq_len(min(n_features,ncol(beta_tilde)))]
+  }else{
+    ix <- which(filtering_quantity > threshold)
+  }
+
+  beta_tilde <- beta_tilde[, ix]
   if (ncol(beta_tilde) == 0) {
-    warning("min_beta removed all columns. Try a smaller min_beta?
+    warning("threshold removed all columns. Try a smaller threshold?
              Returning without filtering.\n")
     beta_tilde <- select(betas, -m)
   }
 
-  discrepancies <- apply(beta_tilde, 2, discrepancy)
-  ix <- order(discrepancies, decreasing = TRUE)
-  beta_tilde <- beta_tilde[, ix[seq_len(min(n_features, ncol(beta_tilde)))]]
   bind_cols(m = betas$m, beta_tilde)
 }
 
@@ -378,8 +404,8 @@ discrepancy <- function(p, lambda = 1e-7) {
 #' @param rect_gap (optional) A float describing how much vertical space to put
 #' between topics within the same model. The units correspond to topic masses.
 #' Defaults to 0.2.
-#' @param color_by (optional) What should the color of topics and branches
-#' encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+#' @param color_by (optional) What should the color of topics and paths
+#' encode? Defaults to 'path'. Other possible arguments are 'coherence',
 #' 'refinement', or 'topic'.
 #' @param model_name_repair_fun How should names be repaired before plotting?
 #' @seealso align_topics

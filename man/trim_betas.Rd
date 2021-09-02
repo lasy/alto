@@ -4,14 +4,19 @@
 \alias{trim_betas}
 \title{Filter to words of interest}
 \usage{
-trim_betas(betas, min_beta = -1, n_features = NULL)
+trim_betas(betas, filter_by, threshold = 0, n_features = NULL)
 }
 \arguments{
-\item{betas}{A \code{data.frame} whose rows correpond to topics and whose
+\item{betas}{A \code{data.frame} whose rows correspond to topics and whose
 columns are \code{m}, the model ID, and the words for which estimates are
 made.}
 
-\item{min_beta}{Words with less than this beta in all topics are ignored}
+\item{filter_by}{a character specifying if the data (\code{betas}) should
+be filtered by the average \code{"beta"} across topics or
+by the \code{"distinctiveness"} of the features.}
+
+\item{threshold}{Words (features) with less than this average beta or
+distinctiveness across all topics are ignored}
 
 \item{n_features}{Maximum number of features to show}
 }

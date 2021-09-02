@@ -80,10 +80,10 @@ align_topics <- function(
 
   aligned_topics <-  new("alignment", topics = topics, weights = weights, models = models)
 
-  # 4. re-order the topics, identify the branches and compute summary diagnostics
+  # 4. re-order the topics, identify the paths and compute summary diagnostics
   aligned_topics %>%
     order_topics() %>%
-    add_branches() %>%
+    add_paths() %>%
     add_summaries()
 }
 

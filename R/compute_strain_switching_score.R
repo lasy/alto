@@ -81,17 +81,17 @@ compute_sss_topic_pair <-
     models <- levels(alignment@topics$m)
     j <- which(models == model)
 
-    branches <-
+    paths <-
       alignment@topics %>%
       filter(m %in% model, k %in% c(k1, k2)) %>%
-      select(branch) %>%
+      select(path) %>%
       unlist()
 
     prev_model <-
       alignment@topics %>%
-      filter(branch %in% branches) %>%
-      arrange(branch, m) %>%
-      group_by(branch) %>%
+      filter(path %in% paths) %>%
+      arrange(path, m) %>%
+      group_by(path) %>%
       slice_head() %>%
       ungroup() %>%
       arrange(m) %>%

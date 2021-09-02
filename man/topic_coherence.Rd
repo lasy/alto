@@ -18,5 +18,5 @@ should be computed.}
 }
 \description{
 The coherence score of a topic reflects how similar this topic is
-to the other topics of the same branch (same key topic).
+to the other topics of the same path.
 }

@@ -43,10 +43,10 @@
 <meta property="og:description" content="This function creates flow diagrams of alignment weight across collections of
 topics. It is the default plot method associated with alignment objects. The
 x-axis indexes models from those with few to those with many topics. Each
-rectangle matches a topic; its height is the weight associated wtih that
+rectangle matches a topic; its height is the weight associated with that
 topic from across all samples. The width of edges between topics corresponds
-ot the alignment weight between that pair of topics. By default, topics are
-shaded according to their branch membership. Other topic measures can be
+of the alignment weight between that pair of topics. By default, topics are
+shaded according to their path. Other topic measures can be
 provided by modifying the `color_by` argument." />
 
 
@@ -152,17 +152,17 @@ provided by modifying the `color_by` argument." />
     <p>This function creates flow diagrams of alignment weight across collections of
 topics. It is the default plot method associated with alignment objects. The
 x-axis indexes models from those with few to those with many topics. Each
-rectangle matches a topic; its height is the weight associated wtih that
+rectangle matches a topic; its height is the weight associated with that
 topic from across all samples. The width of edges between topics corresponds
-ot the alignment weight between that pair of topics. By default, topics are
-shaded according to their branch membership. Other topic measures can be
+of the alignment weight between that pair of topics. By default, topics are
+shaded according to their path. Other topic measures can be
 provided by modifying the `color_by` argument.</p>
     </div>
 
     <pre class="usage"><span class='fu'>plot_alignment</span><span class='op'>(</span>
   <span class='va'>x</span>,
   rect_gap <span class='op'>=</span> <span class='fl'>0.2</span>,
-  color_by <span class='op'>=</span> <span class='st'>"branch"</span>,
+  color_by <span class='op'>=</span> <span class='st'>"path"</span>,
   model_name_repair_fun <span class='op'>=</span> <span class='va'>paste0</span>
 <span class='op'>)</span></pre>
 
@@ -182,8 +182,8 @@ Defaults to 0.2.</p></td>
     </tr>
     <tr>
       <th>color_by</th>
-      <td><p>(optional) What should the color of topics and branches
-encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+      <td><p>(optional) What should the color of topics and weights
+encode? Defaults to 'path'. Other possible arguments are 'coherence',
 'refinement', or 'topic'.</p></td>
     </tr>
     <tr>

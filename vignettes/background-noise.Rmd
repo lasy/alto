@@ -82,7 +82,7 @@ alignment.
 ```{r}
 scores <- topics(alignment)  %>%
   mutate(id = params$id)
-key_topics <- compute_number_of_key_topics(alignment)
+key_topics <- compute_number_of_paths(alignment)
 ```
 
 By saving these data into different directories, we can gather results across a

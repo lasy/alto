@@ -7,10 +7,11 @@
 plot_beta(
   x,
   models = "all",
-  min_beta = 0.001,
+  filter_by = "beta",
+  threshold = 0.001,
   n_features = NULL,
   beta_aes = "size",
-  color_by = "branch"
+  color_by = "path"
 )
 }
 \arguments{
@@ -24,23 +25,27 @@ characters, it will plot only models whose names in the original models list
 match. Similarly, if given a list of integers, only the models lying at those
 indices in the original model list will be visualized.}
 
-\item{min_beta}{(optional, default = 0.025) if \code{add_leaves} is
-\code{TRUE}, this option specifies the minimum beta value (i.e. proportion in
-topic) for a feature to be displayed in the leaves.}
+\item{filter_by}{(optional, default = \code{"beta"}) a character specifying
+if the data (beta matrices) should be filtered by the average \code{"beta"}
+across topics or by the \code{"distinctiveness"} of the features.}
 
-\item{n_features}{(optional) alternative to \code{min_beta}. The maximum
-number of words to display along rows of the plot.}
+\item{threshold}{(optional, default = 0.001)
+Words (features) with less than this average beta or
+distinctiveness across all topics are ignored}
+
+\item{n_features}{(optional) alternative to \code{threshold}. The maximum
+number of words (features) to display along rows of the plot.}
 
 \item{beta_aes}{Should word probabilities within a topic be encoded using
 circle size (\code{"size"}) or opacity (\code{"alpha"}) ? Defaults to
 \code{"size"}.}
 
-\item{color_by}{(optional) What should the color of topics and branches
-encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+\item{color_by}{(optional) What should the color of topics and weights
+encode? Defaults to 'path'. Other possible arguments are 'coherence',
 'refinement', or 'topic'.}
 }
 \value{
-A ggplot2 object describing the word probabilities associated wtih
+A ggplot2 object describing the word probabilities associated with
 each topic across models of interest.
 }
 \description{

@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot Topics Heatmap — plot_beta • alto</title>
+<title>*DRAFT* Computes strain switching scores for topic pairs — compute_strain_switching_scores_of_model • alto</title>
 
 
 <!-- jquery -->
@@ -39,17 +39,10 @@
 
 
 
-<meta property="og:title" content="Plot Topics Heatmap — plot_beta" />
-<meta property="og:description" content="This function plots the \(\beta_{kd}^{m}\) topic parameters across models
-\(m\), topics \(k\), and dimensions \(d\). It takes as input a raw
-alignment object and then returns a circle heatmap. The size of each circle
-corresponds to the value \(\beta_{kd}^m\) for the model in panel \(m\),
-topic in column \(k\), and dimension in row \(d\). The plot can be
-restricted to only a subset of models by using the models argument,
-which may be either a vector of model names or numeric indices into the list
-of models. The dimensions can be filtered by using the n_features or
-min_beta arguments -- by default, only dimensions with at least one
-topic satisfying \(\beta_{kd}^m &amp;gt; 0.025\) are displayed." />
+<meta property="og:title" content="*DRAFT* Computes strain switching scores for topic pairs — compute_strain_switching_scores_of_model" />
+<meta property="og:description" content="This function takes an alignment and a model identifier and returns
+a data.frame with the strain switching scores for each pair
+of topics in that model." />
 
 
 
@@ -145,97 +138,84 @@ topic satisfying \(\beta_{kd}^m &amp;gt; 0.025\) are displayed." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot Topics Heatmap</h1>
+    <h1>*DRAFT* Computes strain switching scores for topic pairs</h1>
     
-    <div class="hidden name"><code>plot_beta.Rd</code></div>
+    <div class="hidden name"><code>compute_strain_switching_scores_of_model.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>This function plots the \(\beta_{kd}^{m}\) topic parameters across models
-\(m\), topics \(k\), and dimensions \(d\). It takes as input a raw
-alignment object and then returns a circle heatmap. The size of each circle
-corresponds to the value \(\beta_{kd}^m\) for the model in panel \(m\),
-topic in column \(k\), and dimension in row \(d\). The plot can be
-restricted to only a subset of models by using the <code>models</code> argument,
-which may be either a vector of model names or numeric indices into the list
-of models. The dimensions can be filtered by using the <code>n_features</code> or
-<code>min_beta</code> arguments -- by default, only dimensions with at least one
-topic satisfying \(\beta_{kd}^m &gt; 0.025\) are displayed.</p>
+    <p>This function takes an alignment and a model identifier and returns
+a <code>data.frame</code> with the strain switching scores for each pair
+of topics in that model.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>plot_beta</span><span class='op'>(</span>
-  <span class='va'>x</span>,
-  models <span class='op'>=</span> <span class='st'>"all"</span>,
-  filter_by <span class='op'>=</span> <span class='st'>"beta"</span>,
-  threshold <span class='op'>=</span> <span class='fl'>0.001</span>,
-  n_features <span class='op'>=</span> <span class='cn'>NULL</span>,
-  beta_aes <span class='op'>=</span> <span class='st'>"size"</span>,
-  color_by <span class='op'>=</span> <span class='st'>"path"</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>compute_strain_switching_scores_of_model</span><span class='op'>(</span><span class='va'>alignment</span>, <span class='va'>model</span>, <span class='va'>n_ancestry_levels</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>(required) An alignment class object resulting from
-<code>align_topics</code>.</p></td>
+      <th>alignment</th>
+      <td><p>(required) an <code>alignment</code> object</p></td>
     </tr>
     <tr>
-      <th>models</th>
-      <td><p>Which models to display in the heatmap? Defaults to
-<code>"all"</code>, meaning that all models are shown. If given <code>"last"</code>, only
-the last model in the models list will be plotted. If given a vector of
-characters, it will plot only models whose names in the original models list
-match. Similarly, if given a list of integers, only the models lying at those
-indices in the original model list will be visualized.</p></td>
+      <th>model</th>
+      <td><p>(required) a <code>character</code> or <code>integer</code> specifying
+the model for which strain switching scores should be computed.</p></td>
     </tr>
     <tr>
-      <th>filter_by</th>
-      <td><p>(optional, default = <code>"beta"</code>) a character specifying
-if the data (beta matrices) should be filtered by the average <code>"beta"</code>
-across topics or by the <code>"distinctiveness"</code> of the features.</p></td>
-    </tr>
-    <tr>
-      <th>threshold</th>
-      <td><p>(optional, default = 0.001)
-Words (features) with less than this average beta or
-distinctiveness across all topics are ignored</p></td>
-    </tr>
-    <tr>
-      <th>n_features</th>
-      <td><p>(optional) alternative to <code>threshold</code>. The maximum
-number of words (features) to display along rows of the plot.</p></td>
-    </tr>
-    <tr>
-      <th>beta_aes</th>
-      <td><p>Should word probabilities within a topic be encoded using
-circle size (<code>"size"</code>) or opacity (<code>"alpha"</code>) ? Defaults to
-<code>"size"</code>.</p></td>
-    </tr>
-    <tr>
-      <th>color_by</th>
-      <td><p>(optional) What should the color of topics and weights
-encode? Defaults to 'path'. Other possible arguments are 'coherence',
-'refinement', or 'topic'.</p></td>
+      <th>n_ancestry_levels</th>
+      <td><p>(required) an <code>integer</code> specifying the
+maximum number of levels between the target <code>model</code> and the model
+hosting the parent topic.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A ggplot2 object describing the word probabilities associated with
-each topic across models of interest.</p>
+    <p>A <code>data.frame</code> providing the strain switching scores
+for each pair of topic in the target <code>model</code>.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>The strain switching score for a given pair of topic (k1, k2) in model K
+is currently computed as follow:
+- the path of each topic is identified
+- the models K1 and K2 at which each path first appears are identified
+- the parent model K' is selected as the "latest" model between K1, K2
+and Kmin, where Kmin is the model that is <code>n_ancestry_level</code> ahead
+of K
+- for each topic k' in K', the strain switching score for the triplet
+(k', k1, k2) is computed as r(k')  w_in(k',k1)  w_in(k', k2)
+- the topic k' which maximizes that score for the pair (k1, k2) is returned
+together with the score and K'.</p>
 
     <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
     <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://purrr.tidyverse.org'>purrr</a></span><span class='op'>)</span>
 <span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Multinom.html'>rmultinom</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>20</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>
 <span class='va'>lda_params</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span><span class='op'>(</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='va'>.</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
 <span class='va'>lda_models</span> <span class='op'>&lt;-</span> <span class='fu'><a href='run_lda_models.html'>run_lda_models</a></span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>lda_params</span><span class='op'>)</span>
-</div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'><span class='va'>alignment</span> <span class='op'>&lt;-</span> <span class='fu'><a href='align_topics.html'>align_topics</a></span><span class='op'>(</span><span class='va'>lda_models</span><span class='op'>)</span>
-<span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
-</div><div class='img'><img src='plot_beta-1.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>alignment</span>, models <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>3</span>, <span class='fl'>4</span><span class='op'>)</span><span class='op'>)</span>
-</div><div class='img'><img src='plot_beta-2.png' alt='' width='700' height='433' /></div><div class='input'><span class='fu'>plot_beta</span><span class='op'>(</span><span class='va'>alignment</span>, models <span class='op'>=</span> <span class='st'>"last"</span><span class='op'>)</span>
-</div><div class='img'><img src='plot_beta-3.png' alt='' width='700' height='433' /></div><div class='input'>
+</div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'>
+<span class='va'>alignment</span> <span class='op'>&lt;-</span> <span class='fu'><a href='align_topics.html'>align_topics</a></span><span class='op'>(</span><span class='va'>lda_models</span>, method <span class='op'>=</span> <span class='st'>"transport"</span><span class='op'>)</span>
+<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>alignment</span><span class='op'>)</span>
+</div><div class='img'><img src='compute_strain_switching_scores_of_model-1.png' alt='' width='700' height='433' /></div><div class='input'>
+<span class='fu'>compute_strain_switching_scores_of_model</span><span class='op'>(</span>
+   <span class='va'>alignment</span>,
+   model <span class='op'>=</span> <span class='fl'>5</span>,
+   n_ancestry_levels <span class='op'>=</span> <span class='fl'>2</span>
+<span class='op'>)</span>
+</div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 10 x 6</span>
+#&gt;        m    k1    k2 parent_m parent_k    sss
+#&gt;    <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span> <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>       <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>  <span style='color: #949494; font-style: italic;'>&lt;dbl&gt;</span>
+#&gt; <span style='color: #BCBCBC;'> 1</span>     5     1     2 3               1 0.065<span style='text-decoration: underline;'>3</span>
+#&gt; <span style='color: #BCBCBC;'> 2</span>     5     1     3 4               1 0.039<span style='text-decoration: underline;'>7</span>
+#&gt; <span style='color: #BCBCBC;'> 3</span>     5     1     4 3               1 0.060<span style='text-decoration: underline;'>6</span>
+#&gt; <span style='color: #BCBCBC;'> 4</span>     5     1     5 3               1 0.069<span style='text-decoration: underline;'>5</span>
+#&gt; <span style='color: #BCBCBC;'> 5</span>     5     2     3 4               2 0.054<span style='text-decoration: underline;'>7</span>
+#&gt; <span style='color: #BCBCBC;'> 6</span>     5     2     4 3               2 0.087<span style='text-decoration: underline;'>3</span>
+#&gt; <span style='color: #BCBCBC;'> 7</span>     5     2     5 3               3 0.041<span style='text-decoration: underline;'>7</span>
+#&gt; <span style='color: #BCBCBC;'> 8</span>     5     3     4 4               3 0.057<span style='text-decoration: underline;'>3</span>
+#&gt; <span style='color: #BCBCBC;'> 9</span>     5     3     5 4               4 0.035<span style='text-decoration: underline;'>1</span>
+#&gt; <span style='color: #BCBCBC;'>10</span>     5     4     5 3               3 0.104 </div><div class='input'>
 </div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">

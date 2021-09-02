@@ -145,20 +145,27 @@
     <p>Filter to words of interest</p>
     </div>
 
-    <pre class="usage"><span class='fu'>trim_betas</span><span class='op'>(</span><span class='va'>betas</span>, min_beta <span class='op'>=</span> <span class='op'>-</span><span class='fl'>1</span>, n_features <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>trim_betas</span><span class='op'>(</span><span class='va'>betas</span>, <span class='va'>filter_by</span>, threshold <span class='op'>=</span> <span class='fl'>0</span>, n_features <span class='op'>=</span> <span class='cn'>NULL</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
       <th>betas</th>
-      <td><p>A <code>data.frame</code> whose rows correpond to topics and whose
+      <td><p>A <code>data.frame</code> whose rows correspond to topics and whose
 columns are <code>m</code>, the model ID, and the words for which estimates are
 made.</p></td>
     </tr>
     <tr>
-      <th>min_beta</th>
-      <td><p>Words with less than this beta in all topics are ignored</p></td>
+      <th>filter_by</th>
+      <td><p>a character specifying if the data (<code>betas</code>) should
+be filtered by the average <code>"beta"</code> across topics or
+by the <code>"distinctiveness"</code> of the features.</p></td>
+    </tr>
+    <tr>
+      <th>threshold</th>
+      <td><p>Words (features) with less than this average beta or
+distinctiveness across all topics are ignored</p></td>
     </tr>
     <tr>
       <th>n_features</th>

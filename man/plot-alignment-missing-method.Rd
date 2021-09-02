@@ -4,7 +4,7 @@
 \alias{plot,alignment,missing-method}
 \title{Plot Method for Alignment Class}
 \usage{
-\S4method{plot}{alignment,missing}(x, rect_gap = 0.2, color_by = "branch", model_name_repair_fun = paste0)
+\S4method{plot}{alignment,missing}(x, rect_gap = 0.2, color_by = "path", model_name_repair_fun = paste0)
 }
 \arguments{
 \item{x}{(required) An alignment class object resulting from
@@ -14,8 +14,8 @@
 between topics within the same model. The units correspond to topic masses.
 Defaults to 0.2.}
 
-\item{color_by}{(optional) What should the color of topics and branches
-encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+\item{color_by}{(optional) What should the color of topics and paths
+encode? Defaults to 'path'. Other possible arguments are 'coherence',
 'refinement', or 'topic'.}
 
 \item{model_name_repair_fun}{How should names be repaired before plotting?}

@@ -7,7 +7,7 @@
 plot_alignment(
   x,
   rect_gap = 0.2,
-  color_by = "branch",
+  color_by = "path",
   model_name_repair_fun = paste0
 )
 }
@@ -19,8 +19,8 @@ plot_alignment(
 between topics within the same model. The units correspond to topic masses.
 Defaults to 0.2.}
 
-\item{color_by}{(optional) What should the color of topics and branches
-encode? Defaults to 'branch'. Other possible arguments are 'coherence',
+\item{color_by}{(optional) What should the color of topics and weights
+encode? Defaults to 'path'. Other possible arguments are 'coherence',
 'refinement', or 'topic'.}
 
 \item{model_name_repair_fun}{How should names be repaired before plotting?}
@@ -33,10 +33,10 @@ models.
 This function creates flow diagrams of alignment weight across collections of
 topics. It is the default plot method associated with alignment objects. The
 x-axis indexes models from those with few to those with many topics. Each
-rectangle matches a topic; its height is the weight associated wtih that
+rectangle matches a topic; its height is the weight associated with that
 topic from across all samples. The width of edges between topics corresponds
-ot the alignment weight between that pair of topics. By default, topics are
-shaded according to their branch membership. Other topic measures can be
+of the alignment weight between that pair of topics. By default, topics are
+shaded according to their path. Other topic measures can be
 provided by modifying the `color_by` argument.
 }
 \seealso{

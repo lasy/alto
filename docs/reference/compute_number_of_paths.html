@@ -6,7 +6,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Plot Method for Alignment Class — plot,alignment,missing-method • alto</title>
+<title>Computes the number of paths — compute_number_of_paths • alto</title>
 
 
 <!-- jquery -->
@@ -39,8 +39,11 @@
 
 
 
-<meta property="og:title" content="Plot Method for Alignment Class — plot,alignment,missing-method" />
-<meta property="og:description" content="Plot Method for Alignment Class" />
+<meta property="og:title" content="Computes the number of paths — compute_number_of_paths" />
+<meta property="og:description" content="This function computes the number of topics recursively in a backwards
+fashion. At the final level of the alignment, the path of each topic is the
+topic index. At intermediate levels, paths are built following the edges
+with the highest weights from children topics to parent topics." />
 
 
 
@@ -136,53 +139,65 @@
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Plot Method for Alignment Class</h1>
+    <h1>Computes the number of paths</h1>
     
-    <div class="hidden name"><code>plot-alignment-missing-method.Rd</code></div>
+    <div class="hidden name"><code>compute_number_of_paths.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Plot Method for Alignment Class</p>
+    <p>This function computes the number of topics recursively in a backwards
+fashion. At the final level of the alignment, the path of each topic is the
+topic index. At intermediate levels, paths are built following the edges
+with the highest weights from children topics to parent topics.</p>
     </div>
 
-    <pre class="usage"><span class='co'># S4 method for alignment,missing</span>
-<span class='fu'><a href='https://rdrr.io/r/graphics/plot.default.html'>plot</a></span><span class='op'>(</span><span class='va'>x</span>, rect_gap <span class='op'>=</span> <span class='fl'>0.2</span>, color_by <span class='op'>=</span> <span class='st'>"path"</span>, model_name_repair_fun <span class='op'>=</span> <span class='va'>paste0</span><span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>compute_number_of_paths</span><span class='op'>(</span><span class='va'>aligned_topics</span>, plot <span class='op'>=</span> <span class='cn'>FALSE</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>x</th>
-      <td><p>(required) An alignment class object resulting from
-<code>align_topics</code>.</p></td>
+      <th>aligned_topics</th>
+      <td><p>(required) An <code>alignment</code> class with the
+alignment results.</p></td>
     </tr>
     <tr>
-      <th>rect_gap</th>
-      <td><p>(optional) A float describing how much vertical space to put
-between topics within the same model. The units correspond to topic masses.
-Defaults to 0.2.</p></td>
-    </tr>
-    <tr>
-      <th>color_by</th>
-      <td><p>(optional) What should the color of topics and paths
-encode? Defaults to 'path'. Other possible arguments are 'coherence',
-'refinement', or 'topic'.</p></td>
-    </tr>
-    <tr>
-      <th>model_name_repair_fun</th>
-      <td><p>How should names be repaired before plotting?</p></td>
+      <th>plot</th>
+      <td><p>(optional, default = FALSE) whether to visualize the number of
+paths.</p></td>
     </tr>
     </table>
 
     <h2 class="hasAnchor" id="value"><a class="anchor" href="#value"></a>Value</h2>
 
-    <p>A <code>ggplot2</code> object describing the alignment weights across
-models.</p>
+    <p>a <code>data.frame</code> with the number of paths for each model. The
+<code>n_topics</code> column shows the total possible number of topics available
+for that model while <code>n_paths</code> gives the number of paths in that model.</p>
+    <h2 class="hasAnchor" id="details"><a class="anchor" href="#details"></a>Details</h2>
+
+    <p>Given an <code>alignment</code> object, this function computes the number of
+paths at each level in the alignment. The result is a <code>data.frame</code>
+mapping each level to a number from 1 to the number of current levels.</p>
     <h2 class="hasAnchor" id="see-also"><a class="anchor" href="#see-also"></a>See also</h2>
 
-    <div class='dont-index'><p>align_topics</p>
-<p>plot_alignment</p></div>
+    <div class='dont-index'><p>align_topics</p></div>
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'><a href='https://rdrr.io/r/base/library.html'>library</a></span><span class='op'>(</span><span class='va'><a href='http://purrr.tidyverse.org'>purrr</a></span><span class='op'>)</span>
+<span class='va'>data</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/Multinom.html'>rmultinom</a></span><span class='op'>(</span><span class='fl'>10</span>, <span class='fl'>20</span>, <span class='fu'><a href='https://rdrr.io/r/base/rep.html'>rep</a></span><span class='op'>(</span><span class='fl'>0.1</span>, <span class='fl'>20</span><span class='op'>)</span><span class='op'>)</span>
+<span class='va'>lda_params</span> <span class='op'>&lt;-</span> <span class='fu'><a href='https://rdrr.io/r/stats/setNames.html'>setNames</a></span><span class='op'>(</span><span class='fu'><a href='https://purrr.tidyverse.org/reference/map.html'>map</a></span><span class='op'>(</span><span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span>, <span class='op'>~</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span>k <span class='op'>=</span> <span class='va'>.</span><span class='op'>)</span><span class='op'>)</span>, <span class='fl'>1</span><span class='op'>:</span><span class='fl'>5</span><span class='op'>)</span>
+<span class='va'>lda_models</span> <span class='op'>&lt;-</span> <span class='fu'><a href='run_lda_models.html'>run_lda_models</a></span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>lda_params</span><span class='op'>)</span>
+</div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'><span class='va'>alignment</span> <span class='op'>&lt;-</span> <span class='fu'><a href='align_topics.html'>align_topics</a></span><span class='op'>(</span><span class='va'>lda_models</span><span class='op'>)</span>
+<span class='fu'>compute_number_of_paths</span><span class='op'>(</span><span class='va'>alignment</span>, plot <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
+</div><div class='img'><img src='compute_number_of_paths-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 3</span>
+#&gt;   m     n_paths n_topics
+#&gt;   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>
+#&gt; <span style='color: #BCBCBC;'>1</span> 1           1        1
+#&gt; <span style='color: #BCBCBC;'>2</span> 2           2        2
+#&gt; <span style='color: #BCBCBC;'>3</span> 3           3        3
+#&gt; <span style='color: #BCBCBC;'>4</span> 4           3        4
+#&gt; <span style='color: #BCBCBC;'>5</span> 5           5        5</div><div class='input'>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
