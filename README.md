@@ -7,22 +7,33 @@
 
 <!-- badges: end -->
 
-[`alto`](https://lasy.github.io/alto/) is an R package for aligning topics across a collection of LDA models. It
-provides functions to support the most common tasks in the analysis workflow,
+[`alto`](https://lasy.github.io/alto/index.html) for aligning topics
+across a collection of LDA models. It provides functions to support the
+most common tasks in the analysis workflow,
 
-  - `run_lda_models()` fits a collection of LDA models across resolution levels
+  - `run_lda_models()` fits a collection of LDA models across resolution
+    levels
   - `align_topics()` aligns topics across a collection of LDA models
-  - `topics()` computes metrics of alignment quality
+  - `topics()` provides metrics of alignment quality
   - `plot()` shows the flow of alignment weight across resolution levels
   - `plot_beta()` shows the topics associated with each underlying model
 
 Alignment can be used for (multiresolution) exploratory analysis. By
-highlighting topics that are robust across choices of K, it can also support
-evaluation of LDA models.
+highlighting topics that are robust across choices of K, it can also
+support evaluation of LDA models.
 
 <figure>
-  <img src="docs/articles/microbiome-demo_files/figure-html/alignment-viz-2.png" width="450"/>
-  <figcaption>An example alignment between topic models. See the vignette "Using alto on vaginal microbiome data" to reproduce this figure.</figcaption>
+
+<img src="man/figures/README-alignment-viz-2.png" width="75%"/>
+
+<figcaption>
+
+The figure above shows an example alignment between topic models. See
+the vignette “Using `alto` on vaginal microbiome data” to reproduce this
+figure.
+
+</figcaption>
+
 </figure>
 
 ## Installation

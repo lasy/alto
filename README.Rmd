@@ -8,7 +8,7 @@ output: github_document
 knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>",
-  fig.path = "man/figures/README-",
+  fig.path = "man/figures/",
   out.width = "100%"
 )
 ```
@@ -18,13 +18,21 @@ knitr::opts_chunk$set(
 <!-- badges: start -->
 <!-- badges: end -->
 
-`alto` is an R package that 
+[`alto`](https://lasy.github.io/alto/index.html) for aligning topics across a collection of LDA models. It provides functions to support the most common tasks in the analysis workflow,
 
-- aligns topics from different LDA models,
+* `run_lda_models()` fits a collection of LDA models across resolution levels
+* `align_topics()` aligns topics across a collection of LDA models
+* `topics()` provides metrics of alignment quality
+* `plot()` shows the flow of alignment weight across resolution levels
+* `plot_beta()` shows the topics associated with each underlying model
 
-- computes metrics for quantifying the goodness of alignment, 
+Alignment can be used for (multiresolution) exploratory analysis. 
+By highlighting topics that are robust across choices of K, it can also support evaluation of LDA models.
 
-- and provides visualization functions to explore the alignment and robustness of topics across environments or LDA hyper-parameters.
+<figure>
+  <img src="man/figures/README-alignment-viz-2.png" width="75%"/>
+  <figcaption>The figure above shows an example alignment between topic models. See the vignette "Using `alto` on vaginal microbiome data" to reproduce this figure.</figcaption>
+</figure>
 
 
 ## Installation
@@ -44,3 +52,7 @@ You can install the development version from [GitHub](https://github.com/) with:
 devtools::install_github("lasy/alto")
 ```
 
+## Help
+
+We welcome questions and comments about the package either through
+[github](https://github.com/lasy/alto/issues) or email.

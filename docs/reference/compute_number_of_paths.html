@@ -189,13 +189,13 @@ mapping each level to a number from 1 to the number of current levels.</p>
 <span class='va'>lda_models</span> <span class='op'>&lt;-</span> <span class='fu'><a href='run_lda_models.html'>run_lda_models</a></span><span class='op'>(</span><span class='va'>data</span>, <span class='va'>lda_params</span><span class='op'>)</span>
 </div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='output co'>#&gt; <span class='message'>Using default value 'VEM' for 'method' LDA parameter.</span></div><div class='input'><span class='va'>alignment</span> <span class='op'>&lt;-</span> <span class='fu'><a href='align_topics.html'>align_topics</a></span><span class='op'>(</span><span class='va'>lda_models</span><span class='op'>)</span>
 <span class='fu'>compute_number_of_paths</span><span class='op'>(</span><span class='va'>alignment</span>, plot <span class='op'>=</span> <span class='cn'>TRUE</span><span class='op'>)</span>
-</div><div class='img'><img src='compute_number_of_paths-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 x 3</span>
+</div><div class='img'><img src='compute_number_of_paths-1.png' alt='' width='700' height='433' /></div><div class='output co'>#&gt; <span style='color: #949494;'># A tibble: 5 × 3</span>
 #&gt;   m     n_paths n_topics
 #&gt;   <span style='color: #949494; font-style: italic;'>&lt;fct&gt;</span>   <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>    <span style='color: #949494; font-style: italic;'>&lt;int&gt;</span>
 #&gt; <span style='color: #BCBCBC;'>1</span> 1           1        1
 #&gt; <span style='color: #BCBCBC;'>2</span> 2           2        2
 #&gt; <span style='color: #BCBCBC;'>3</span> 3           3        3
-#&gt; <span style='color: #BCBCBC;'>4</span> 4           3        4
+#&gt; <span style='color: #BCBCBC;'>4</span> 4           4        4
 #&gt; <span style='color: #BCBCBC;'>5</span> 5           5        5</div><div class='input'>
 </div></pre>
   </div>

@@ -100,22 +100,22 @@
 <a href="#alto" class="anchor"></a>alto</h1></div>
 <!-- badges: start -->
 <!-- badges: end -->
-<p><code>alto</code> is an R package for aligning topics across a collection of LDA models. It provides functions to support the most common tasks in the analysis workflow,</p>
+<p><a href="https://lasy.github.io/alto/index.html"><code>alto</code></a> for aligning topics across a collection of LDA models. It provides functions to support the most common tasks in the analysis workflow,</p>
 <ul>
 <li>
 <code><a href="reference/run_lda_models.html">run_lda_models()</a></code> fits a collection of LDA models across resolution levels</li>
 <li>
 <code><a href="reference/align_topics.html">align_topics()</a></code> aligns topics across a collection of LDA models</li>
 <li>
-<code>topics()</code> computes metrics of alignment quality</li>
+<code>topics()</code> provides metrics of alignment quality</li>
 <li>
 <code><a href="https://rdrr.io/r/graphics/plot.default.html">plot()</a></code> shows the flow of alignment weight across resolution levels</li>
 <li>
 <code><a href="reference/plot_beta.html">plot_beta()</a></code> shows the topics associated with each underlying model</li>
 </ul>
 <p>Alignment can be used for (multiresolution) exploratory analysis. By highlighting topics that are robust across choices of K, it can also support evaluation of LDA models.</p>
-<figure><img src="docs/articles/microbiome-demo_files/figure-html/alignment-viz-2.png" width="450"><figcaption>
-An example alignment between topic models. See the vignette “Using alto on vaginal microbiome data” to reproduce this figure.
+<figure><p><img src="reference/figures/README-alignment-viz-2.png" width="75%"></p>
+<figcaption><p>The figure above shows an example alignment between topic models. See the vignette “Using <code>alto</code> on vaginal microbiome data” to reproduce this figure.</p>
 </figcaption></figure><div id="installation" class="section level2">
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
