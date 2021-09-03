@@ -219,6 +219,13 @@ plot_beta <- function(x, models = "all",
     plot_beta_layout(x, models, filter_by, threshold, n_features, color_by) %>%
     format_beta()
 
+  # we further trim beta to improve the visualization
+  # by removing the betas that are 1 order of magnitude lower
+  # than what would be obtained by distributing the betas within the selected words
+  beta <-
+    beta %>%
+    filter(b > max(threshold, 1/length(unique(beta$w))/10))
+
   g <- ggplot(beta, aes(x = factor(k, levels = 1:100), y = w, col = col)) +
     guides(col = "none", size = "none")
 
