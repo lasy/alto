@@ -7,7 +7,7 @@
 
 <!-- badges: end -->
 
-`alto` is an R package for aligning topics across a collection of LDA models. It
+[`alto`](https://lasy.github.io/alto/) is an R package for aligning topics across a collection of LDA models. It
 provides functions to support the most common tasks in the analysis workflow,
 
   - `run_lda_models()` fits a collection of LDA models across resolution levels
