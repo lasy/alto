@@ -109,7 +109,7 @@ run_lda_models <-
                 list(
                   gamma =
                     matrix(1, nrow = nrow(data), ncol = 1) %>%
-                    magrittr::set_rownmaes(rownames(data)),
+                    magrittr::set_rownames(rownames(data)),
                   beta =
                     log(matrix(colSums(data) / sum(data), nrow = 1)) %>%
                     magrittr::set_colnames(colnames(data))
