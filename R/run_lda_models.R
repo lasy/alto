@@ -102,32 +102,35 @@ run_lda_models <-
         map(
           .x = names(param_lists),
           .f = function(m) {
-            if (verbose) cat(m, "\n")
-            param_list <- param_lists[[m]]
-            if (param_list$k == 1) {
-              lda_model <-
-                list(
-                  gamma =
-                    matrix(1, nrow = nrow(data), ncol = 1) %>%
-                    magrittr::set_rownames(rownames(data)),
-                  beta =
-                    log(matrix(colSums(data) / sum(data), nrow = 1)) %>%
-                    magrittr::set_colnames(colnames(data))
+            model_file_name <- paste0(dir, m, ".Rdata")
+            if (reset | !file.exists(model_file_name)) {
+              if (verbose) cat("fitting model",m, "\n")
+              param_list <- param_lists[[m]]
+              if (param_list$k == 1) {
+                lda_model <-
+                  list(
+                    gamma =
+                      matrix(1, nrow = nrow(data), ncol = 1) %>%
+                      magrittr::set_rownames(rownames(data)),
+                    beta =
+                      log(matrix(colSums(data) / sum(data), nrow = 1)) %>%
+                      magrittr::set_colnames(colnames(data))
+                  )
+              } else {
+                tm <- LDA(
+                  x = data,
+                  k = param_list$k,
+                  method = param_list$method,
+                  control = param_list$control
                 )
-            } else {
-              tm <- LDA(
-                x = data,
-                k = param_list$k,
-                method = param_list$method,
-                control = param_list$control
-              )
-              lda_model <-
-                list(
-                  gamma = tm@gamma %>% magrittr::set_rownames(rownames(data)),
-                  beta = tm@beta %>% magrittr::set_colnames(colnames(data))
-                )
+                lda_model <-
+                  list(
+                    gamma = tm@gamma %>% magrittr::set_rownames(rownames(data)),
+                    beta = tm@beta %>% magrittr::set_colnames(colnames(data))
+                  )
+              }
+              save(lda_model, file = model_file_name)
             }
-            save(lda_model, file = paste0(dir, m, ".Rdata"))
           }
         )
     }
