@@ -105,28 +105,34 @@ run_lda_models <-
             if (verbose) cat(m, "\n")
             param_list <- param_lists[[m]]
             if (param_list$k == 1) {
-              lda_model <- list(
-                gamma = matrix(1, nrow = nrow(data), ncol = 1),
-                beta = log(matrix(colSums(data) / sum(data), nrow = 1)) %>% set_colnames(colnames(data))
-              )
+              lda_model <-
+                list(
+                  gamma =
+                    matrix(1, nrow = nrow(data), ncol = 1) %>%
+                    magrittr::set_rownmaes(rownames(data)),
+                  beta =
+                    log(matrix(colSums(data) / sum(data), nrow = 1)) %>%
+                    magrittr::set_colnames(colnames(data))
+                )
             } else {
               tm <- LDA(
-                      x = data,
-                      k = param_list$k,
-                      method = param_list$method,
-                      control = param_list$control
-                    )
+                x = data,
+                k = param_list$k,
+                method = param_list$method,
+                control = param_list$control
+              )
               lda_model <-
-                list(gamma = tm@gamma,
-                     beta = tm@beta %>% set_colnames(colnames(data)))
+                list(
+                  gamma = tm@gamma %>% magrittr::set_rownames(rownames(data)),
+                  beta = tm@beta %>% magrittr::set_colnames(colnames(data))
+                )
             }
-
             save(lda_model, file = paste0(dir, m, ".Rdata"))
           }
         )
     }
 
-    # 3. retrive models
+    # 3. retrieve models
     lda_models <-
       purrr::map(
         .x = names(param_lists),
@@ -153,6 +159,8 @@ run_lda_models <-
     stop("'data' must have at least two rows\n")
   if (ncol(data) < 2)
     stop("'data' must have at least two columns\n")
+  if(rownames(data) %>% is.null())
+    rownames(data) = 1:nrow(data)
   data
 }
 
@@ -178,17 +186,17 @@ run_lda_models <-
 .check_params <- function(lda_varying_params_lists, lda_fixed_params_list) {
   defaults <- list(k = 5, method = "VEM", "control" = NULL)
   map(
-     .x = lda_varying_params_lists,
-     .f = function(hyper) {
-        params_list <- modifyList(lda_fixed_params_list, hyper)
-        if (is.null(params_list$k)) {
-          message("No value was provided for 'k'. Using default value of '5'.")
-        }
-        if (is.null(params_list$method)) {
-          message("Using default value 'VEM' for 'method' LDA parameter.")
-        }
+    .x = lda_varying_params_lists,
+    .f = function(hyper) {
+      params_list <- modifyList(lda_fixed_params_list, hyper)
+      if (is.null(params_list$k)) {
+        message("No value was provided for 'k'. Using default value of '5'.")
+      }
+      if (is.null(params_list$method)) {
+        message("Using default value 'VEM' for 'method' LDA parameter.")
+      }
 
-        modifyList(defaults, params_list)
+      modifyList(defaults, params_list)
     }
   )
 }
