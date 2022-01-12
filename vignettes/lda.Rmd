@@ -11,8 +11,9 @@ params:
   V: 50
   id: 1
   method: "product"
-  n_models: 5
+  n_models: 10
   out_dir: "lda"
+  perplexity: FALSE
   save: FALSE
 ---
 
@@ -71,7 +72,7 @@ Next, we run the LDA models and compute the alignment.
 lda_params <- map(1:n_models, ~ list(k = .))
 names(lda_params) <- str_c("K", 1:n_models)
 alignment <- x %>%
-  run_lda_models(lda_params, reset = TRUE) %>%
+  run_lda_models(lda_params, reset = TRUE, dir = "./fits/lda_") %>%
   align_topics(method = params$method)
 ```
 
@@ -117,5 +118,19 @@ if (params$save) {
   write_csv(scores, save_str("topics", id_vars))
   exper <- list(x, betas, gammas, alignment)
   save(exper, file = save_str("exper", id_vars, "rda"))
+}
+```
+
+```{r}
+if (params$perplexity && !is.null(params$out_dir)) {
+  x_new <- simulate_lda(betas, gammas, lambda = lambdas$count)
+  perplexities <- vector(length = params$K - 1)
+  for (k in seq(2, params$n_models)) {
+    load(str_c("fits/lda_K", k, ".Rdata"))
+    perplexities[k - 1] <- topicmodels::perplexity(tm, x_new)
+  }
+
+  data.frame(K = 2:params$n_models, perplexity = perplexities) %>%
+    write_csv(save_str("perplexity", id_vars))
 }
 ```
