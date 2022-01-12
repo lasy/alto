@@ -137,7 +137,7 @@ if (params$save) {
 ```
 
 ```{r}
-if (params$perplexity && !is.null(params$out_dir)) {
+if (params$perplexity && params$save) {
   x_new <- equivalence_data(N, V, K, lambdas, S)$x
   perplexities <- vector(length = params$K - 1)
   for (k in seq(2, params$n_models)) {

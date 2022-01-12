@@ -101,7 +101,7 @@ if (params$save) {
 ```
 
 ```{r}
-if (params$perplexity && !is.null(params$out_dir)) {
+if (params$perplexity && params$save) {
   x_new <- simulate_gradient(N, K, V, lambdas, alpha = params$alpha)$x
   perplexities <- vector(length = params$K - 1)
   for (k in seq(2, params$n_models)) {
