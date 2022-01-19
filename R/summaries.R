@@ -110,6 +110,6 @@ topic_refinement <- function(model, topic, aligned_topics) {
   } else {
     ans <- tibble(m = model, k = topic, refinement = 1)
   }
-
+  ans = ans %>% mutate(refinement_normed = refinement - 1 / k)
   ans
 }
