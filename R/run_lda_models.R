@@ -116,6 +116,7 @@ run_lda_models <-
                       log(matrix(colSums(data) / sum(data), nrow = 1)) %>%
                       magrittr::set_colnames(colnames(data))
                   )
+                  tm <- list()
               } else {
                 tm <- LDA(
                   x = data,
