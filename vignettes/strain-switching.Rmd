@@ -6,12 +6,12 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
-  K: 3
-  N: 30
-  S: 10
-  V: 50
+  K: 5
+  N: 250
+  S: 230
+  V: 1000
   method: "product"
-  n_models: 5
+  n_models: 10
   out_dir: "equivalence"
   perplexity: FALSE
   rep: 1

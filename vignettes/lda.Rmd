@@ -6,9 +6,9 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 params:
-  K: 3
-  N: 30
-  V: 50
+  K: 5
+  N: 250
+  V: 1000
   id: 1
   method: "product"
   n_models: 10
