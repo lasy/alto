@@ -129,7 +129,7 @@ run_lda_models <-
                     beta = tm@beta %>% magrittr::set_colnames(colnames(data))
                   )
               }
-              save(lda_model, file = model_file_name)
+              save(lda_model, tm, file = model_file_name)
             }
           }
         )
