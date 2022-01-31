@@ -31,7 +31,7 @@ plot_alignment <- function(
 
   # inputs
   .check_input(x)
-  color_by <- match.arg(color_by, c("topic", "path", "refinement", "coherence", "refinement_normed"))
+  color_by <- match.arg(color_by, c("topic", "path", "refinement", "coherence"))
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
@@ -80,10 +80,8 @@ plot_alignment <- function(
   if (color_by %in% c("refinement", "coherence")) {
     g <- g +
       scale_fill_gradient(
-        color_by, low = "brown1", high = "cornflowerblue", limits = c(0, 1)
+        color_by, low = "brown1", high = "cornflowerblue"
       )
-  } else if(color_by == "refinement_normed") {
-      g <- g + scale_fill_gradient(color_by, low = "brown1", high = "cornflowerblue")
   } else {
     g <- g +
       scale_fill_discrete(limits = levels(rect$topic_col)) +
