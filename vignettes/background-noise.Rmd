@@ -63,7 +63,10 @@ hyperparameter of the Dirichlet distribution used in the background noise.
 ```{r}
 attach(params)
 lambdas <- list(beta = 0.1, gamma = 0.5, nu = 0.5, count = 1e4)
-sim_data <- simulate_gradient(N, K, V, lambdas, alpha = params$alpha)
+sim_data_ <- simulate_gradient(2 * N, K, V, lambdas, alpha = params$alpha)
+sim_data <- sim_data_
+sim_data$x <- sim_data$x[1:N, ]
+sim_data$gamma <- sim_data$gamma[1:N, ]
 ```
 
 Next, we run a sequence of LDA models and compute an alignment. This code is

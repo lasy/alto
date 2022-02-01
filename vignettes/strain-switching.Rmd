@@ -13,9 +13,9 @@ params:
   method: "product"
   n_models: 5
   out_dir: "equivalence"
-  perplexity: FALSE
+  perplexity: TRUE
   rep: 1
-  save: FALSE
+  save: TRUE
 ---
 
 This vignette illustrates the use of alignment on a toy strain switching
@@ -44,11 +44,7 @@ by the external R script linked below.
 
 ```{r}
 library(alto)
-library(dplyr)
-library(purrr)
-library(readr)
-library(stringr)
-library(tibble)
+library(tidyverse)
 source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
 my_theme()
 ```
@@ -61,7 +57,10 @@ $S$ of switched species.
 ```{r}
 attach(params)
 lambdas <- list(beta = 0.1, gamma = 0.5, count = 1e4, alpha = 0.3)
-sim_data <- equivalence_data(N, V, K, lambdas, S)
+sim_data_ <- equivalence_data(2 * N, V, K, lambdas, S) # train and test
+sim_data <- sim_data_
+sim_data$x <- sim_data_$x[1:N, ]
+sim_data$gammas <- sim_data_$gammas[1:N, ]
 ```
 
 The block below runs a sequence of models and aligns their topics. This is
@@ -138,7 +137,7 @@ if (params$save) {
 
 ```{r}
 if (params$perplexity && params$save) {
-  x_new <- equivalence_data(N, V, K, lambdas, S)$x
+  x_new <- sim_data_$x[(N + 1):(2 * N), ]
   perplexities <- matrix(nrow = params$n_models - 1, ncol = 2, dimnames = list(NULL, c("train", "test")))
   for (k in seq(2, params$n_models)) {
     load(str_c("fits/switching_K", k, ".Rdata"))
