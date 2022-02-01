@@ -139,13 +139,15 @@ if (params$save) {
 ```{r}
 if (params$perplexity && params$save) {
   x_new <- equivalence_data(N, V, K, lambdas, S)$x
-  perplexities <- vector(length = params$K - 1)
+  perplexities <- matrix(nrow = params$n_models - 1, ncol = 2, dimnames = list(NULL, c("train", "test")))
   for (k in seq(2, params$n_models)) {
     load(str_c("fits/switching_K", k, ".Rdata"))
-    perplexities[k - 1] <- topicmodels::perplexity(tm, x_new)
+    perplexities[k - 1, 1] <- topicmodels::perplexity(tm, sim_data$x)
+    perplexities[k - 1, 2] <- topicmodels::perplexity(tm, x_new)
   }
 
-  data.frame(K = 2:params$n_models, perplexity = perplexities) %>%
+  cbind(K = seq(2, params$n_models), perplexities) %>%
+    as_tibble() %>%
     write_csv(save_str("perplexity", id_vars))
 }
 ```
