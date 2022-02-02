@@ -47,10 +47,7 @@ LDA model is sourced from the link below.
 
 ```{r}
 library(alto)
-library(dplyr)
-library(purrr)
-library(readr)
-library(stringr)
+library(tidyverse)
 source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
 my_theme()
 ```
@@ -105,12 +102,11 @@ if (params$save) {
 
 ```{r}
 if (params$perplexity && params$save) {
-  x_new <- simulate_gradient(N, K, V, lambdas, alpha = params$alpha)$x
   perplexities <- matrix(nrow = params$n_models - 1, ncol = 2, dimnames = list(NULL, c("train", "test")))
   for (k in seq(2, params$n_models)) {
     load(str_c("fits/background_K", k, ".Rdata"))
     perplexities[k - 1, 1] <- topicmodels::perplexity(tm, sim_data$x)
-    perplexities[k - 1, 2] <- topicmodels::perplexity(tm, x_new)
+    perplexities[k - 1, 2] <- topicmodels::perplexity(tm, sim_data_$x[(N + 1):(2 * N), ])
   }
 
   cbind(K = seq(2, params$n_models), perplexities) %>%
