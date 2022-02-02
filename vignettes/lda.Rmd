@@ -2,10 +2,10 @@
 title: "Identifying True Topics"
 output: rmarkdown::html_vignette
 vignette: >
-  %\VignetteIndexEntry{Identifying True Topics}
+%\VignetteIndexEntry{Identifying True Topics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-params:
+  params:
   K: 3
   N: 30
   V: 50
@@ -15,6 +15,7 @@ params:
   out_dir: "lda"
   perplexity: FALSE
   save: FALSE
+  print_plot: TRUE
 ---
 
 ```{r setup, include=FALSE}
@@ -75,8 +76,10 @@ alignment <- x %>%
 We can plot the flow diagram and compare the height-weight words across topics.
 
 ```{r}
+
 plot(alignment)
 plot_beta(alignment, c(2, 4))
+
 ```
 
 We can plot measures of topic quality across $m$. The introduction of a low
@@ -84,6 +87,7 @@ quality topic at $K = 4$ is consistent with the fact that there are only 3 true
 topics in this data.
 
 ```{r}
+
 ggplot(topics(alignment), aes(m, coherence)) +
   geom_point(alpha = 0.5)
 
@@ -101,7 +105,7 @@ key_topics <-
 
 Finally, we save all the results (if wanted). The distinct IDs allow us to
 gather alignments from across many replicates, and these are what are shown in
-teh simulation section of the manuscript.
+the simulation section of the manuscript.
 
 ```{r}
 id_vars <- params[c("out_dir", "method", "id", "N", "V", "K")]
