@@ -70,7 +70,7 @@ identical to the parallel blocks in other simulations.
 lda_params <- map(1:n_models, ~ list(k = .))
 names(lda_params) <- str_c("K", 1:n_models)
 alignment <- sim_data$x %>%
-  run_lda_models(lda_params, reset = TRUE, dir = "fits/switching_") %>%
+  run_lda_models(lda_params, reset = TRUE, dir = "fits/switching_", seed = params$rep) %>%
   align_topics(method = params$method)
 ```
 
