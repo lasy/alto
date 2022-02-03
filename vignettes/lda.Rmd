@@ -66,8 +66,8 @@ x <- simulate_lda(betas, gammas, lambda = lambdas$count)
 Next, we run the LDA models and compute the alignment.
 
 ```{r}
-lda_params <- map(1:n_models, ~ list(k = .))
-names(lda_params) <- str_c("K", 1:n_models)
+lda_params <- map(1:params$n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:params$n_models)
 alignment <- x %>%
   run_lda_models(lda_params, reset = TRUE, dir = "./fits/lda_", seed = params$id) %>%
   align_topics(method = params$method)
