@@ -88,19 +88,19 @@ align_topics <- function(
 }
 
 #' @importFrom magrittr %>%
-#' @importFrom purrr map_dfr
+#' @importFrom purrr imap_dfr
 #' @importFrom dplyr tibble mutate
 topics_list <-  function(models) {
-  map_dfr(
-    .x = names(models),
-    .f = function(model) {
-      tibble(m = model,
-             k = 1:nrow(models[[model]]$beta),
-             mass = colSums(models[[model]]$gamma)) %>%
-        mutate(prop = mass / sum(mass))
+  imap_dfr(models, ~ {
+    k_labels <- rownames(.x$beta)
+    if (is.null(k_labels)) {
+      k_labels <- as.character(1:nrow(.x$beta))
     }
-  ) %>%
-    mutate(m = m %>% factor(., levels = names(models)))
+
+    tibble(m = .y, k = 1:nrow(.x$beta), k_label = k_labels, mass = colSums(.x$gamma)) %>%
+      mutate(prop = mass / sum(mass))
+  }) %>%
+    mutate(m = factor(m, levels = names(models)))
 }
 
 order_topics <- function(aligned_topics) {
