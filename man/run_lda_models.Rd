@@ -10,7 +10,8 @@ run_lda_models(
   lda_fixed_params_list = list(),
   dir = NULL,
   reset = FALSE,
-  verbose = FALSE
+  verbose = FALSE,
+  seed = 1
 )
 }
 \arguments{
@@ -42,6 +43,10 @@ the save directory be cleared?}
 
 \item{verbose}{(optional, default = \code{FALSE}) Print verbose output while
 running models?}
+
+\item{seed}{(optional, default = \code{1}) Seed to use in
+\code{topicmodels::LDAControl}. Necessary because LDA's VEM routine uses an
+external (non-R) random number generator.}
 }
 \value{
 a list of LDA models (see package \code{topicmodels}).

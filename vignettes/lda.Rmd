@@ -2,10 +2,10 @@
 title: "Identifying True Topics"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Identifying True Topics}
+  %\VignetteIndexEntry{Identifying True Topics}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  params:
+params:
   K: 3
   N: 30
   V: 50
@@ -69,17 +69,15 @@ Next, we run the LDA models and compute the alignment.
 lda_params <- map(1:n_models, ~ list(k = .))
 names(lda_params) <- str_c("K", 1:n_models)
 alignment <- x %>%
-  run_lda_models(lda_params, reset = TRUE, dir = "./fits/lda_") %>%
+  run_lda_models(lda_params, reset = TRUE, dir = "./fits/lda_", seed = params$id) %>%
   align_topics(method = params$method)
 ```
 
 We can plot the flow diagram and compare the height-weight words across topics.
 
 ```{r}
-
 plot(alignment)
 plot_beta(alignment, c(2, 4))
-
 ```
 
 We can plot measures of topic quality across $m$. The introduction of a low
@@ -87,7 +85,6 @@ quality topic at $K = 4$ is consistent with the fact that there are only 3 true
 topics in this data.
 
 ```{r}
-
 ggplot(topics(alignment), aes(m, coherence)) +
   geom_point(alpha = 0.5)
 

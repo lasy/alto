@@ -28,7 +28,9 @@
 #' the save directory be cleared?
 #' @param verbose (optional, default = \code{FALSE}) Print verbose output while
 #' running models?
-#'
+#' @param seed (optional, default = \code{1}) Seed to use in
+#' \code{topicmodels::LDAControl}. Necessary because LDA's VEM routine uses an
+#' external (non-R) random number generator.
 #' @return a list of LDA models (see package \code{topicmodels}).
 #' ? or a \code{lda_models} object which would be a list of
 #' 1. a list of model;
@@ -69,7 +71,8 @@ run_lda_models <-
     lda_fixed_params_list = list(),
     dir = NULL,
     reset = FALSE,
-    verbose = FALSE
+    verbose = FALSE,
+    seed = 1
   ) {
 
     # 1. CHECKS
@@ -80,7 +83,8 @@ run_lda_models <-
       .check_params(
         lda_varying_params_lists = lda_varying_params_lists,
         lda_fixed_params_list = lda_fixed_params_list
-      )
+      ) %>%
+      .set_lda_seed(seed)
 
     delete_dir <- FALSE
     if (is.null(dir)) {
@@ -203,4 +207,22 @@ run_lda_models <-
       modifyList(defaults, params_list)
     }
   )
+}
+
+#' Set LDAControl seed
+#'
+#' The LDA model has its own internal seed (it does not use the global R seed).
+#' This helper can be used to control that internal seed within
+#' `run_lda_models()`.
+#' @importFrom purrr map2
+.set_lda_seed <- function(params_list, seed) {
+  stopifnot(is.integer(seed))
+  map2(params_list, seq_along(params_list), ~ {
+    if (is.null(.x$control)) {
+      .x$control <- list(seed = .y + seed)
+    } else {
+      .x$control$seed <- .y + seed
+    }
+    .x
+  })
 }
