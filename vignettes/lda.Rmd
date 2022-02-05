@@ -66,11 +66,11 @@ x <- simulate_lda(betas, gammas, lambda = lambdas$count)
 Next, we run the LDA models and compute the alignment.
 
 ```{r}
-lda_params <- map(1:params$n_models, ~ list(k = .))
-names(lda_params) <- str_c("K", 1:params$n_models)
+lda_params <- map(1:n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:n_models)
 alignment <- x %>%
-  run_lda_models(lda_params, reset = TRUE, dir = "./fits/lda_", seed = params$id) %>%
-  align_topics(method = params$method)
+  run_lda_models(lda_params, reset = TRUE, dir = "./fits/lda_", seed = as.integer(id)) %>%
+  align_topics(method = method)
 ```
 
 We can plot the flow diagram and compare the height-weight words across topics.
@@ -97,7 +97,7 @@ We can also compute the number of key topics associated with the alignment.
 ```{r}
 key_topics <- 
   compute_number_of_paths(alignment) %>%
-  mutate(id = params$id)
+  mutate(id = id)
 ```
 
 Finally, we save all the results (if wanted). The distinct IDs allow us to
@@ -107,10 +107,10 @@ the simulation section of the manuscript.
 ```{r}
 id_vars <- params[c("out_dir", "method", "id", "N", "V", "K")]
 scores <- topics(alignment) %>%
-  mutate(id = params$id)
+  mutate(id = id)
 
-if (params$save) {
-  dir.create(params$out_dir, recursive = TRUE)
+if (save) {
+  dir.create(out_dir, recursive = TRUE)
   write_csv(key_topics, save_str("key_topics", id_vars))
   write_csv(scores, save_str("topics", id_vars))
   exper <- list(x, betas, gammas, alignment)
@@ -119,16 +119,16 @@ if (params$save) {
 ```
 
 ```{r}
-if (params$perplexity & params$save) {
+if (perplexity & save) {
   x_new <- simulate_lda(betas, gammas, lambda = lambdas$count)
-  perplexities <- matrix(nrow = params$n_models - 1, ncol = 2, dimnames = list(NULL, c("train", "test")))
-  for (k in seq(2, params$n_models)) {
+  perplexities <- matrix(nrow = n_models - 1, ncol = 2, dimnames = list(NULL, c("train", "test")))
+  for (k in seq(2, n_models)) {
     load(str_c("fits/lda_K", k, ".Rdata"))
     perplexities[k - 1, 1] <- topicmodels::perplexity(tm, x)
     perplexities[k - 1, 2] <- topicmodels::perplexity(tm, x_new)
   }
 
-  cbind(K = seq(2, params$n_models), perplexities) %>%
+  cbind(K = seq(2, n_models), perplexities) %>%
     as_tibble() %>%
     write_csv(save_str("perplexity", id_vars))
 }
