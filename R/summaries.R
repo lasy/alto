@@ -1,25 +1,27 @@
 
 #' @importFrom magrittr %>%
-add_summaries <-  function(aligned_topics) {
-  aligned_topics = aligned_topics %>%
+#' @importFrom dplyr mutate ungroup
+add_summaries <- function(aligned_topics) {
+  aligned_topics <- aligned_topics %>%
       add_measure(topic_coherence) %>%
       add_measure(topic_refinement)
-  aligned_topics@topics = aligned_topics@topics %>%
+  aligned_topics@topics <- aligned_topics@topics %>%
       group_by(m) %>%
       mutate(refinement = refinement * length(unique(k))) %>%
-      ungroup
-  aligned_topics@topics = remove_summaries(aligned_topics@topics)
-  return(aligned_topics)
+      ungroup() %>%
+      remove_summaries()
+
+  aligned_topics
 }
 
 #' Removes the coherence and refinement scores from the last set of models
+#' @importFrom dplyr mutate across if_else
 remove_summaries <- function(topics) {
-    topic_sizes = topics %>% group_by(m) %>% summarise(n_topics = length(unique(k)))
-    max_i = topic_sizes %>% pull(n_topics) %>% which.max
-    max_m = (topic_sizes %>% pull(m))[max_i]
-    m_idx = which(topics$m == max_m)
-    topics[m_idx, c("refinement", "coherence")] = NA
-    return(topics)
+  topics %>%
+    mutate(across(
+      coherence:refinement,
+      ~ if_else(m == last(levels(m)), NA_real_, .)
+    ))
 }
 
 #' @importFrom purrr map_dfr

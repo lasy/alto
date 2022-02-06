@@ -72,7 +72,6 @@ alignment <- x %>%
   run_lda_models(lda_params, reset = TRUE, dir = "./fits/lda_", seed = as.integer(id)) %>%
   align_topics(method = method)
 ```
-
 We can plot the flow diagram and compare the height-weight words across topics.
 
 ```{r}
@@ -95,8 +94,7 @@ ggplot(topics(alignment), aes(m, refinement)) +
 We can also compute the number of key topics associated with the alignment.
 
 ```{r}
-key_topics <- 
-  compute_number_of_paths(alignment) %>%
+key_topics <- compute_number_of_paths(alignment) %>%
   mutate(id = id)
 ```
 
