@@ -80,7 +80,7 @@ plot_alignment <- function(
   if (color_by %in% c("refinement", "coherence")) {
     g <- g +
       scale_fill_gradient(
-        color_by, low = "brown1", high = "cornflowerblue", limits = c(0, 1)
+        color_by, low = "brown1", high = "cornflowerblue"
       )
   } else {
     g <- g +

@@ -1,0 +1,130 @@
+---
+title: "Many Alignments"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Comparing many alignments}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+params:
+  K: 5
+  N: 30
+  V: 50
+  n_sims: 20
+  id: 1
+  method: "product"
+  n_models: 10
+  out_dir: "lda"
+  save: FALSE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(collapse = TRUE, comment = "#>", cache=TRUE)
+set.seed(params$id)
+```
+
+In this vignette, we simulate from two true LDA models, one with five topics and one null model with a single topic.
+We repeat the simulations 20 times each, generate alignments for each of the simulated data sets, and visualize the alignment.
+
+The packages used in this vignette are given below.
+
+```{r}
+library(MCMCpack)
+library(alto)
+library(dplyr)
+library(ggplot2)
+library(purrr)
+library(readr)
+library(stringr)
+library(colorspace)
+library(gridExtra)
+library(cowplot)
+source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
+my_theme()
+```
+
+The block below simulates data `x` according to an LDA models with parameters
+specified above. The topics are relatively sparse, with $\lambda_{\beta} = 0.1$
+and $\lambda_{\gamma} = 0.5$. Each sample has 10,000 counts.
+
+```{r}
+attach(params)
+lambdas <- list(beta = 0.1, gamma = .5, count = 1e4)
+betas_non_null <- rdirichlet(K, rep(lambdas$beta, V))
+betas_null <- rdirichlet(N, rep(1, V))
+gammas_non_null <- rdirichlet(N, rep(lambdas$gamma, K))
+gammas_null <- diag(rep(1, N))
+counts_non_null <- replicate(n = n_sims, simulate_lda(betas_non_null, gammas_non_null, lambda = lambdas$count), simplify = FALSE)
+counts_null <- replicate(n = n_sims, simulate_lda(betas_null, gammas_null, lambda = lambdas$count), simplify = FALSE)
+```
+
+Next, we run the LDA models and compute the alignment.
+
+```{r}
+lda_params <- map(1:n_models, ~ list(k = .))
+names(lda_params) <- str_c("K", 1:n_models)
+alignments_non_null <- lapply(counts_non_null, function(x)
+    x %>%
+    run_lda_models(lda_params, reset = TRUE) %>%
+    align_topics(method = params$method)
+    )
+alignments_null <- lapply(counts_null, function(x)
+    x %>%
+    run_lda_models(lda_params, reset = TRUE) %>%
+    align_topics(method = params$method)
+    )
+```
+
+```{r, fig.width = 10, fig.height = 10}
+plots_non_null = lapply(alignments_non_null, plot)
+multiplot(plotlist = plots_non_null, cols = 4)
+plots_null = lapply(alignments_null, plot)
+multiplot(plotlist = plots_null, cols = 4)
+```
+
+
+
+```{r, fig.width = 10, fig.height = 10}
+layout_matrix = matrix(1:20, ncol = 4)
+layout_matrix = cbind(layout_matrix, 21)
+attach(params)
+max_coherence = .6
+plots_non_null = lapply(alignments_non_null, function(a) {
+    plot(a, color_by = "coherence") +
+        scale_fill_continuous(name = "Coherence", limits = c(0, max_coherence), low = "brown1", high = "cornflowerblue") +
+        theme(legend.position = "none")
+})
+plots_null = lapply(alignments_null, function(a) {
+    plot(a, color_by = "coherence") +
+        scale_fill_continuous(name = "Coherence", limits = c(0, max_coherence), low = "brown1", high = "cornflowerblue") +
+        theme(legend.position = "none")
+})
+
+l = get_legend(qplot(x = 1, y = 1, fill = c(0, max_coherence)) + scale_fill_continuous(name = "Coherence", limits = c(0, max_coherence), low = "brown1", high = "cornflowerblue") + theme(legend.position = "right"))
+plots_null[[n_sims + 1]] = l
+plots_non_null[[n_sims + 1]] = l
+grid.arrange(grobs = plots_non_null, layout_matrix = layout_matrix)
+grid.arrange(grobs = plots_null, layout_matrix = layout_matrix)
+```
+
+
+```{r, fig.width = 10, fig.height = 10}
+attach(params)
+max_refinement = 3.7 
+plots_non_null = lapply(alignments_non_null, function(a) {
+    plot(a, color_by = "refinement") +
+        scale_fill_continuous_divergingx(name = "Refinement", mid = 1, palette = "Roma", p1 = .005, p3 = .005, limits = c(0, max_refinement)) +
+        theme(legend.position = "none")
+})
+
+plots_null = lapply(alignments_null, function(a) {
+    plot(a, color_by = "refinement") +
+        scale_fill_continuous_divergingx(name = "Refinement", mid = 1, palette = "Roma", p1 = .005, p3 = .005, limits = c(0, max_refinement)) +
+        theme(legend.position = "none")
+})
+l_null = get_legend(plots_null[[1]] + theme(legend.position = "right"))
+l_non_null = get_legend(plots_non_null[[1]] + theme(legend.position = "right"))
+plots_null[[n_sims + 1]] = l_null
+plots_non_null[[n_sims + 1]] = l_non_null
+grid.arrange(grobs = plots_non_null, layout_matrix = layout_matrix)
+grid.arrange(grobs = plots_null, layout_matrix = layout_matrix)
+```
