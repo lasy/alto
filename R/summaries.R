@@ -14,12 +14,12 @@ add_summaries <- function(aligned_topics) {
   aligned_topics
 }
 
-#' Removes the coherence and refinement scores from the last set of models
+#' Removes the refinement scores from the last set of models
 #' @importFrom dplyr mutate across if_else
 remove_summaries <- function(topics) {
   topics %>%
     mutate(across(
-      coherence:refinement,
+      refinement, # coherence:
       ~ if_else(m == last(levels(m)), NA_real_, .)
     ))
 }
