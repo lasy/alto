@@ -31,7 +31,7 @@ plot_alignment <- function(
 
   # inputs
   .check_input(x)
-  color_by <- match.arg(color_by, c("topic", "path", "refinement", "coherence"))
+  color_by <- match.arg(color_by, c("topic", "topic_label", "path", "refinement", "coherence"))
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
@@ -98,6 +98,7 @@ plot_alignment <- function(
   df %>%
     mutate(topic = factor(k)) %>%
     left_join(topics(x), by = c("m", "k")) %>%
+    mutate(topic_label = k_label) %>%
     rename(topic_col = !!color_by)
 }
 

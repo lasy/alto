@@ -100,12 +100,16 @@ topics_list <-  function(models) {
     tibble(m = .y, k = 1:nrow(.x$beta), k_label = k_labels, mass = colSums(.x$gamma)) %>%
       mutate(prop = mass / sum(mass))
   }) %>%
-    mutate(m = factor(m, levels = names(models)))
+    mutate(
+      m = factor(m, levels = names(models)),
+      k_label = factor(k_label, levels = unique(k_label))
+    )
 }
 
 order_topics <- function(aligned_topics) {
 
-  perms <- consecutive_weights(aligned_topics) %>%
+  perms <-
+    consecutive_weights(aligned_topics) %>%
     mutate(k_init = k_next) %>%
     forward_ordering() %>%
     backward_ordering() %>%
@@ -129,9 +133,9 @@ consecutive_weights <- function(aligned_topics) {
     factor(., levels = names(aligned_topics@models))
 
   tibble(
-      m = model_names %>% head(-1),
-      m_next = model_names %>% tail(-1)
-    ) %>%
+    m = model_names %>% head(-1),
+    m_next = model_names %>% tail(-1)
+  ) %>%
     left_join(aligned_topics@weights, by = c("m", "m_next"))
 }
 
