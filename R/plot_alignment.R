@@ -17,7 +17,9 @@
 #' @param color_by (optional) What should the color of topics and weights
 #' encode? Defaults to 'path'. Other possible arguments are 'coherence',
 #' 'refinement', or 'topic'.
-#' @param model_name_repair_fun How should names be repaired before plotting?
+#' @param model_name_repair_fun (optional) How should names be repaired before plotting?
+#' @param label_topics (optional) A \code{logical} specifying if topics should
+#' be labeled with the \code{"color_by"} information.
 #' @seealso align_topics
 #' @return A \code{ggplot2} object describing the alignment weights across
 #' models.
@@ -26,7 +28,8 @@ plot_alignment <- function(
   x,
   rect_gap = 0.2,
   color_by = "path",
-  model_name_repair_fun = paste0
+  model_name_repair_fun = paste0,
+  label_topics = FALSE
 ) {
 
   # inputs
@@ -35,13 +38,16 @@ plot_alignment <- function(
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
-  .plot_from_layout(x, layouts, rect_gap, color_by, model_name_repair_fun = model_name_repair_fun)
+  .plot_from_layout(
+    x, layouts, rect_gap, color_by,
+    model_name_repair_fun = model_name_repair_fun, label_topics = label_topics
+  )
 }
 
-#' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect
+#' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect geom_text
 #' theme guides scale_fill_gradient scale_fill_discrete element_blank labs
 #' @importFrom dplyr mutate left_join
-.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0) {
+.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0, label_topics = FALSE) {
 
   rect <- .add_topic_col(layouts$rect, aligned_topics, color_by)
   ribbon <- .add_topic_col(layouts$ribbon, aligned_topics, color_by)
@@ -82,10 +88,27 @@ plot_alignment <- function(
       scale_fill_gradient(
         color_by, low = "brown1", high = "cornflowerblue"
       )
+    rect <-
+      rect %>%
+      mutate(topic_col = topic_col %>% round(., 2))
   } else {
     g <- g +
       scale_fill_discrete(limits = levels(rect$topic_col)) +
       guides(fill = "none")
+  }
+
+  if (label_topics) {
+    g <-
+      g +
+      geom_text(
+        data = rect,
+        aes(
+          label = topic_col,
+          x = m_num,
+          y = (ymax + ymin)/2
+        ),
+        col = "black"
+      )
   }
 
   g
