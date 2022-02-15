@@ -4,7 +4,17 @@
 \alias{plot,alignment,missing-method}
 \title{Plot Method for Alignment Class}
 \usage{
-\S4method{plot}{alignment,missing}(x, rect_gap = 0.2, color_by = "path", model_name_repair_fun = paste0)
+\S4method{plot}{alignment,missing}(
+  x,
+  rect_gap = 0.2,
+  color_by = "path",
+  model_name_repair_fun = paste0,
+  label_topics = FALSE,
+  add_leaves = FALSE,
+  leaves_text_size = 10,
+  n_features_in_leaves = 3,
+  min_feature_prop = 0.1
+)
 }
 \arguments{
 \item{x}{(required) An alignment class object resulting from

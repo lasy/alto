@@ -11,7 +11,7 @@ run_lda_models(
   dir = NULL,
   reset = FALSE,
   verbose = FALSE,
-  seed = 1
+  seed = 1L
 )
 }
 \arguments{

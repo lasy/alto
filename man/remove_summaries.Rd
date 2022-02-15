@@ -2,10 +2,10 @@
 % Please edit documentation in R/summaries.R
 \name{remove_summaries}
 \alias{remove_summaries}
-\title{Removes the coherence and refinement scores from the last set of models}
+\title{Removes the refinement scores from the last set of models}
 \usage{
 remove_summaries(topics)
 }
 \description{
-Removes the coherence and refinement scores from the last set of models
+Removes the refinement scores from the last set of models
 }
