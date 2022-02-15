@@ -100,7 +100,7 @@ We can now align the topics from each consecutive models:
 aligned_topics_product <- 
   align_topics(
     models = lda_models,
-    method = "product") # transport product
+    method = "product") 
 
 aligned_topics_transport <- 
   align_topics(

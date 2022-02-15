@@ -18,8 +18,19 @@
 #' encode? Defaults to 'path'. Other possible arguments are 'coherence',
 #' 'refinement', or 'topic'.
 #' @param model_name_repair_fun (optional) How should names be repaired before plotting?
-#' @param label_topics (optional) A \code{logical} specifying if topics should
-#' be labeled with the \code{"color_by"} information.
+#' @param label_topics (optional, default = \code{FALSE}) A \code{logical}
+#' specifying if topics should be labeled with the \code{"color_by"} information.
+#' @param add_leaves (optional, default = \code{FALSE}) A \code{logical}
+#' specifying if the topic composition of leave-topics should be printed.
+#' @param leaves_text_size (optional, default = \code{10}) specifies the font
+#' size of leaves annotations in \code{pt} if \code{add_leaves} is \code{TRUE}.
+#' @param n_features_in_leaves (optional, default = 3) specifies the maximum
+#' number of features that should be included in the leaves annotations
+#' if \code{add_leaves} is \code{TRUE}.
+#' @param min_feature_prop (optional, default = 0.1) specifies the minimum
+#' proportion of a feature in a topic for that feature to be included in
+#' the leaves annotations if \code{add_leaves} is \code{TRUE}.
+#' @param
 #' @seealso align_topics
 #' @return A \code{ggplot2} object describing the alignment weights across
 #' models.
@@ -29,7 +40,11 @@ plot_alignment <- function(
   rect_gap = 0.2,
   color_by = "path",
   model_name_repair_fun = paste0,
-  label_topics = FALSE
+  label_topics = FALSE,
+  add_leaves = FALSE,
+  leaves_text_size = 10,
+  n_features_in_leaves = 3,
+  min_feature_prop = 0.1
 ) {
 
   # inputs
@@ -38,16 +53,22 @@ plot_alignment <- function(
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
+  if (add_leaves) {
+    leaves <- .get_leaves_layout(x, layouts$rect, n_features_in_leaves, min_feature_prop)
+  } else {
+    leaves <- data.frame()
+  }
   .plot_from_layout(
     x, layouts, rect_gap, color_by,
-    model_name_repair_fun = model_name_repair_fun, label_topics = label_topics
+    model_name_repair_fun = model_name_repair_fun, label_topics = label_topics,
+    leaves = leaves, leaves_text_size = leaves_text_size
   )
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect geom_text
 #' theme guides scale_fill_gradient scale_fill_discrete element_blank labs
 #' @importFrom dplyr mutate left_join
-.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0, label_topics = FALSE) {
+.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0, label_topics = FALSE, leaves = data.frame(), leaves_text_size = 10) {
 
   rect <- .add_topic_col(layouts$rect, aligned_topics, color_by)
   ribbon <- .add_topic_col(layouts$ribbon, aligned_topics, color_by)
@@ -108,6 +129,37 @@ plot_alignment <- function(
           y = (ymax + ymin)/2
         ),
         col = "black"
+      )
+  }
+
+  if (nrow(leaves) > 0) {
+    if (color_by != "coherence") {
+      leaves <- .add_topic_col(leaves, aligned_topics, color_by = color_by)
+    } else {
+      leaves <- leaves %>% mutate(topic_col = NA_real_)
+    }
+
+    g <-
+      g +
+      geom_segment(
+        data = leaves,
+        aes(x = x_start, xend = x_end,
+            y = y_start, yend = y_end,
+            col = topic_col),
+        linetype = 2
+      ) +
+      geom_text(
+        data = leaves,
+        aes(x = x_end, y = y_end,
+            label = leave_label,
+            col = topic_col),
+        hjust = 0, nudge_x = 0.2,
+        size = leaves_text_size/.pt,
+        lineheight = 2.5/.pt
+      ) +
+      guides(col = "none") +
+      expand_limits(
+        x = max(leaves$x_end + leaves_text_size * leaves$max_w_length/120)
       )
   }
 
@@ -174,6 +226,61 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 .check_input <- function(aligned_topics) {
   stopifnot(class(aligned_topics) == "alignment")
 }
+
+#' @importFrom magrittr %>%
+#' @importFrom dplyr group_by arrange mutate filter slice_head summarize
+#' @importFrom tidyr pivot_longer
+#' @importFrom stringr str_length
+.get_leaves_layout <- function(x, rects, n_features_in_leaves = 3, min_feature_prop = NULL){
+
+  betas_last_m <-
+    x@models[[n_models(x)]]$beta %>%
+    exp() %>%
+    as.data.frame() %>%
+    mutate(k = row_number()) %>%
+    pivot_longer(
+      cols = -k,
+      names_to = "feature",
+      values_to = "p"
+    )
+
+  if (is.null(min_feature_prop))
+    min_feature_prop = 1/length(unique(betas_last_m$feature))
+
+  betas_last_m <-
+    betas_last_m %>%
+    filter(p >= min_feature_prop) %>%
+    group_by(k) %>%
+    arrange(k, -p) %>%
+    slice_head(n = n_features_in_leaves)
+
+  leaves <-
+    betas_last_m %>%
+    group_by(k) %>%
+    summarize(
+      max_w_length = max(str_length(feature)),
+      leave_label =
+        str_c("[",round(p, 2) %>% format(., nsmall = 2),"] ", feature) %>%
+        str_c(., collapse = "\n"),
+      .groups = "drop"
+    ) %>%
+    left_join(., rects %>% filter(m == last(levels(m))), by = "k") %>%
+    mutate(
+      m = names(x@models) %>% last(),
+      x_start = m_num + 0.2,
+      x_end = m_num + 1.2,
+      gap  = 1/(n()+1),
+      equal_prop = 1/n(),
+      y_start = (ymax + ymin)/2,
+      y_end = cumsum(equal_prop + gap)-equal_prop/2
+
+    ) %>%
+    select(m, k, leave_label, x_start, x_end, y_start, y_end, max_w_length)
+  leaves
+
+
+}
+
 
 #' Plot Topics Heatmap
 #'
