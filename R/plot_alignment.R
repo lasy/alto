@@ -428,6 +428,7 @@ plot_beta_layout <- function(x, subset = "all",
 #' @importFrom dplyr select group_by mutate ungroup left_join arrange filter
 #'  slice_head slice_min
 #' @importFrom tidyr pivot_longer
+#' @importFrom magrittr %>%
 format_beta <-  function(p) {
   beta <- p$betas %>%
     group_by(m) %>%
