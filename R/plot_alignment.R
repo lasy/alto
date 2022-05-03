@@ -44,7 +44,8 @@ plot_alignment <- function(
   add_leaves = FALSE,
   leaves_text_size = 10,
   n_features_in_leaves = 3,
-  min_feature_prop = 0.1
+  min_feature_prop = 0.1,
+  top_n_edges = NULL
 ) {
 
   # inputs
@@ -61,17 +62,29 @@ plot_alignment <- function(
   .plot_from_layout(
     x, layouts, rect_gap, color_by,
     model_name_repair_fun = model_name_repair_fun, label_topics = label_topics,
-    leaves = leaves, leaves_text_size = leaves_text_size
+    leaves = leaves, leaves_text_size = leaves_text_size,
+    top_n_edges = top_n_edges
   )
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect geom_text
 #' theme guides scale_fill_gradient scale_fill_discrete element_blank labs
 #' @importFrom dplyr mutate left_join
-.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0, label_topics = FALSE, leaves = data.frame(), leaves_text_size = 10) {
+.plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0, label_topics = FALSE, leaves = data.frame(), leaves_text_size = 10, top_n_edges = NULL) {
 
   rect <- .add_topic_col(layouts$rect, aligned_topics, color_by)
   ribbon <- .add_topic_col(layouts$ribbon, aligned_topics, color_by)
+
+  if (!is.null(top_n_edges)) {
+    top_n_edges <- top_n_edges %>% round()
+    ribbon <-
+      ribbon %>%
+      arrange(m, k, -weight) %>%
+      group_by(m, k) %>%
+      slice_head(n = 2*top_n_edges)
+      # mutate(topic_col = ifelse(row_number() <= 2*top_n_edges, topic_col, NA) %>%
+      #          factor(., levels = unique(sort(topic_col))))
+  }
 
   ms <- unique(rect$m_num)
   g <-
@@ -114,7 +127,7 @@ plot_alignment <- function(
       mutate(topic_col = topic_col %>% round(., 2))
   } else {
     g <- g +
-      scale_fill_discrete(limits = levels(rect$topic_col)) +
+      scale_fill_discrete(limits = levels(rect$topic_col), na.value = "transparent") +
       guides(fill = "none")
   }
 
