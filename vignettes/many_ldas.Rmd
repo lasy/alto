@@ -7,11 +7,10 @@ vignette: >
   %\VignetteEncoding{UTF-8}
 params:
   K: 5
-  N: 30
-  V: 50
-  n_sims: 20
+  N: 250
+  V: 1000
   id: 1
-  method: "product"
+  method: "transport"
   n_models: 10
   out_dir: "lda"
   save: FALSE
@@ -48,6 +47,7 @@ and $\lambda_{\gamma} = 0.5$. Each sample has 10,000 counts.
 
 ```{r}
 attach(params)
+n_sims <- 10
 lambdas <- list(beta = 0.1, gamma = .5, count = 1e4)
 betas_non_null <- rdirichlet(K, rep(lambdas$beta, V))
 betas_null <- rdirichlet(N, rep(1, V))
@@ -74,20 +74,19 @@ alignments_null <- lapply(counts_null, function(x)
     )
 ```
 
-```{r, fig.width = 10, fig.height = 10}
+```{r, fig.width = 10, fig.height = 8.3}
 plots_non_null = lapply(alignments_non_null, plot)
-#multiplot(plotlist = plots_non_null, cols = 4)
 plots_null = lapply(alignments_null, plot)
-#multiplot(plotlist = plots_null, cols = 4)
+plots = c(plots_non_null, plots_null)
+grid.arrange(grobs = plots, cols = 4, layout_matrix = matrix(1:20, nrow = 5, byrow = FALSE))
 ```
 
 
 
 ```{r, fig.width = 10, fig.height = 10}
 layout_matrix = matrix(1:20, ncol = 4)
-layout_matrix = cbind(layout_matrix, 21)
-attach(params)
-max_coherence = .6
+layout_matrix = rbind(layout_matrix, 21)
+max_coherence = 1
 plots_non_null = lapply(alignments_non_null, function(a) {
     plot(a, color_by = "coherence") +
         scale_fill_continuous(name = "Coherence", limits = c(0, max_coherence), low = "brown1", high = "cornflowerblue") +
@@ -98,18 +97,15 @@ plots_null = lapply(alignments_null, function(a) {
         scale_fill_continuous(name = "Coherence", limits = c(0, max_coherence), low = "brown1", high = "cornflowerblue") +
         theme(legend.position = "none")
 })
-
-l = get_legend(qplot(x = 1, y = 1, fill = c(0, max_coherence)) + scale_fill_continuous(name = "Coherence", limits = c(0, max_coherence), low = "brown1", high = "cornflowerblue") + theme(legend.position = "right"))
-plots_null[[n_sims + 1]] = l
-plots_non_null[[n_sims + 1]] = l
-grid.arrange(grobs = plots_non_null, layout_matrix = layout_matrix)
-grid.arrange(grobs = plots_null, layout_matrix = layout_matrix)
+plots = c(plots_non_null, plots_null)
+l = get_legend(qplot(x = 1, y = 1, fill = c(0, max_coherence)) + scale_fill_continuous(name = "Coherence", limits = c(0, max_coherence), low = "brown1", high = "cornflowerblue") + theme(legend.position = "bottom"))
+plots[[21]] = l
+grid.arrange(grobs = plots, layout_matrix = layout_matrix)
 ```
 
 
 ```{r, fig.width = 10, fig.height = 10}
-attach(params)
-max_refinement = 3.7 
+max_refinement = 9
 plots_non_null = lapply(alignments_non_null, function(a) {
     plot(a, color_by = "refinement") +
         scale_fill_continuous_divergingx(name = "Refinement", mid = 1, palette = "Roma", p1 = .005, p3 = .005, limits = c(0, max_refinement)) +
@@ -121,10 +117,8 @@ plots_null = lapply(alignments_null, function(a) {
         scale_fill_continuous_divergingx(name = "Refinement", mid = 1, palette = "Roma", p1 = .005, p3 = .005, limits = c(0, max_refinement)) +
         theme(legend.position = "none")
 })
-l_null = get_legend(plots_null[[1]] + theme(legend.position = "right"))
-l_non_null = get_legend(plots_non_null[[1]] + theme(legend.position = "right"))
-plots_null[[n_sims + 1]] = l_null
-plots_non_null[[n_sims + 1]] = l_non_null
-grid.arrange(grobs = plots_non_null, layout_matrix = layout_matrix)
-grid.arrange(grobs = plots_null, layout_matrix = layout_matrix)
+plots = c(plots_non_null, plots_null)
+l = get_legend(plots[[1]] + theme(legend.position = "bottom"))
+plots[[21]] = l
+grid.arrange(grobs = plots, layout_matrix = layout_matrix)
 ```
