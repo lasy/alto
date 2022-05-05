@@ -35,7 +35,10 @@ Suggests:
     MCMCpack,
     readr,
     tictoc,
-    testthat (>= 3.0.0)
+    testthat (>= 3.0.0),
+    gridExtra,
+    cowplot,
+    colorspace
 VignetteBuilder: knitr
 Depends:
     R (>= 3.6)
