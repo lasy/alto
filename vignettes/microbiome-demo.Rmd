@@ -2,19 +2,19 @@
 title: "Using `alto` on vaginal microbiome data"
 output: rmarkdown::html_vignette
 vignette: >
-%\VignetteIndexEntry{Using `alto` on vaginal microbiome data}
+  %\VignetteIndexEntry{Using `alto` on vaginal microbiome data}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
-  ---
+---
   
-  ```{r, include = FALSE}
+```{r, include = FALSE}
   knitr::opts_chunk$set(
   collapse = TRUE,
   comment = "#>"
   )
-  ```
+```
   
-  ```{r setup}
+```{r setup}
   library(alto)
   library(dplyr)
   library(magrittr)
@@ -22,7 +22,7 @@ vignette: >
   library(tibble)
   library(stringr)
   library(tidyr)
-  ```
+```
   
   
   This document showcases the `alto` package functions applied to vaginal microbiome data.
@@ -35,15 +35,15 @@ vignette: >
   
   For convenience, the data file (i.e. the tables contained in the `processed.rda` file) has been attached to the `alto` package as `vm_data`. For details, type `?vm_data`.
   
-  ```{r show-names-of-provided-data}
+```{r show-names-of-provided-data}
   
   names(vm_data)
   
-  ```
+```
   
   First, we do some pre-processing of the data. Specifically, we change the `colnames` to replace ASV DNA sequences by human-friendly names built from the taxonomy table.
   
-  ```{r human-friendly-ASV-names}
+```{r human-friendly-ASV-names}
   
 # we create the human-friendly ASV names
 # by concatenating Genus and Species and an identifying number

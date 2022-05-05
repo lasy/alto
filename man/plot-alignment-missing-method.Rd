@@ -13,7 +13,8 @@
   add_leaves = FALSE,
   leaves_text_size = 10,
   n_features_in_leaves = 3,
-  min_feature_prop = 0.1
+  min_feature_prop = 0.1,
+  top_n_edges = NULL
 )
 }
 \arguments{

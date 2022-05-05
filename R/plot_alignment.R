@@ -30,6 +30,10 @@
 #' @param min_feature_prop (optional, default = 0.1) specifies the minimum
 #' proportion of a feature in a topic for that feature to be included in
 #' the leaves annotations if \code{add_leaves} is \code{TRUE}.
+#' @param top_n_edges (optional, \code{integer}, default = \code{NULL}) specifies
+#'  the number of edges that should be drawn between the topics of subsequent models.
+#'  The \code{top_n_edges} with the highest weights are drawn. If \code{NULL}
+#'  (default), all edges are drawn.
 #' @param
 #' @seealso align_topics
 #' @return A \code{ggplot2} object describing the alignment weights across
@@ -51,6 +55,7 @@ plot_alignment <- function(
   # inputs
   .check_input(x)
   color_by <- match.arg(color_by, c("topic", "topic_label", "path", "refinement", "coherence"))
+  stopifnot(is.null(top_n_edges) || ((top_n_edges > 0) & (round(top_n_edges) == top_n_edges)))
 
   # layout and viz
   layouts <- .compute_layout(x, rect_gap)
@@ -82,8 +87,6 @@ plot_alignment <- function(
       arrange(m, k, -weight) %>%
       group_by(m, k) %>%
       slice_head(n = 2*top_n_edges)
-      # mutate(topic_col = ifelse(row_number() <= 2*top_n_edges, topic_col, NA) %>%
-      #          factor(., levels = unique(sort(topic_col))))
   }
 
   ms <- unique(rect$m_num)

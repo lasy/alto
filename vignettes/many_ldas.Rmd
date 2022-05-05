@@ -76,9 +76,9 @@ alignments_null <- lapply(counts_null, function(x)
 
 ```{r, fig.width = 10, fig.height = 10}
 plots_non_null = lapply(alignments_non_null, plot)
-multiplot(plotlist = plots_non_null, cols = 4)
+#multiplot(plotlist = plots_non_null, cols = 4)
 plots_null = lapply(alignments_null, plot)
-multiplot(plotlist = plots_null, cols = 4)
+#multiplot(plotlist = plots_null, cols = 4)
 ```
 
 

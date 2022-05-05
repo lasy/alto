@@ -13,7 +13,8 @@ plot_alignment(
   add_leaves = FALSE,
   leaves_text_size = 10,
   n_features_in_leaves = 3,
-  min_feature_prop = 0.1
+  min_feature_prop = 0.1,
+  top_n_edges = NULL
 )
 }
 \arguments{
@@ -46,6 +47,11 @@ if \code{add_leaves} is \code{TRUE}.}
 \item{min_feature_prop}{(optional, default = 0.1) specifies the minimum
 proportion of a feature in a topic for that feature to be included in
 the leaves annotations if \code{add_leaves} is \code{TRUE}.}
+
+\item{top_n_edges}{(optional, \code{integer}, default = \code{NULL}) specifies
+the number of edges that should be drawn between the topics of subsequent models.
+The \code{top_n_edges} with the highest weights are drawn. If \code{NULL}
+(default), all edges are drawn.}
 }
 \value{
 A \code{ggplot2} object describing the alignment weights across
