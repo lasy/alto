@@ -129,7 +129,8 @@ order_topics <- function(aligned_topics) {
 }
 
 consecutive_weights <- function(aligned_topics) {
-  model_names <- names(aligned_topics@models) %>%
+  model_names <-
+    names(aligned_topics@models) %>%
     factor(., levels = names(aligned_topics@models))
 
   tibble(
@@ -233,7 +234,8 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
   weights <- list()
   for (i in seq_len(nrow(edges))) {
     pair <- c(edges$from[i], edges$to[i])
-    weights[[i]] <- weight_fun(gamma_hats[pair], beta_hats[pair], ...) %>%
+    weights[[i]] <-
+      weight_fun(gamma_hats[pair], beta_hats[pair], ...) %>%
       mutate(m = pair[1], m_next = pair[2])
   }
   postprocess_weights(weights, nrow(gamma_hats[[1]]), names(gamma_hats)) %>%
@@ -270,7 +272,8 @@ align_graph <- function(edges, gamma_hats, beta_hats, weight_fun, ...) {
 #' @export
 product_weights <- function(gammas, ...) {
   products <- t(gammas[[1]]) %*% gammas[[2]]
-  dimnames(products) <- map(gammas, ~ colnames(.))
+  # dimnames(products) <- map(gammas, ~ colnames(.))
+  dimnames(products) <- map(gammas, ~ 1:ncol(.))
   data.frame(products) %>%
     .lengthen_weights()
 }
@@ -327,7 +330,8 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
     warning("OT diverged, considering increasing regularization.\n")
   }
 
-  dimnames(plan) <- map(gammas, ~ colnames(.))
+  # dimnames(plan) <- map(gammas, ~ colnames(.))
+  dimnames(plan) <- map(gammas, ~ 1:ncol(.))
   data.frame(plan) %>%
     .lengthen_weights()
 }
@@ -352,7 +356,10 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
 #' @importFrom magrittr %>%
 postprocess_weights <- function(weights, n_docs, m_levels) {
   bind_rows(weights) %>%
-    mutate(document_mass = weight, weight = document_mass / n_docs) %>%
+    mutate(
+      document_mass = weight,
+      weight = document_mass / n_docs,
+      ) %>%
     group_by(m, m_next, k_next) %>%
     mutate(bw_weight = weight / sum(weight)) %>%
     ungroup() %>%
