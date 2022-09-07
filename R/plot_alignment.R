@@ -355,16 +355,18 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' @export
 plot_beta <- function(x, models = "all",
                       filter_by = "beta",
+                      x_axis = "label",
                       threshold = 0.001, n_features = NULL,
                       beta_aes = "size", color_by = "path") {
 
   filter_by <- match.arg(filter_by, choices = c("beta", "distinctiveness"))
   beta_aes <- match.arg(beta_aes, choices = c("size", "alpha"))
   color_by <- match.arg(color_by, choices = c("topic", "path", "refinement", "coherence"))
+  x_axis <- match.arg(x_axis, choices = c("label","index"))
 
   beta <-
     plot_beta_layout(x, models, filter_by, threshold, n_features, color_by) %>%
-    format_beta()
+    format_beta(x_axis = x_axis)
 
   # we further trim beta to improve the visualization
   # by removing the betas that are 1 order of magnitude lower
@@ -374,7 +376,7 @@ plot_beta <- function(x, models = "all",
     filter(b > max(threshold, 1/length(unique(beta$w))/10))
 
   g <-
-    ggplot(beta, aes(x = k_label, y = w, col = col)) +
+    ggplot(beta, aes(x = x, y = w, col = col)) +
     guides(col = "none", size = "none")
 
   if (beta_aes == "size") {
@@ -447,7 +449,7 @@ plot_beta_layout <- function(x, subset = "all",
 #'  slice_head slice_min
 #' @importFrom tidyr pivot_longer
 #' @importFrom magrittr %>%
-format_beta <-  function(p) {
+format_beta <-  function(p, x_axis = "label") {
   beta <-
     p$betas %>%
     group_by(m) %>%
@@ -460,13 +462,15 @@ format_beta <-  function(p) {
       values_to = "b"
     )
 
+  if (x_axis == "label") beta$x <- beta$k_label else beta$x <- beta$k %>% factor()
+
   w_order <- beta %>%
     slice_min(m) %>%
     arrange(w, -b) %>%
     group_by(w) %>%
     slice_head(n = 1) %>%
     ungroup() %>%
-    arrange(k_label)
+    arrange(x)
 
   beta %>%
     mutate(
