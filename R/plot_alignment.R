@@ -466,7 +466,7 @@ format_beta <-  function(p) {
     group_by(w) %>%
     slice_head(n = 1) %>%
     ungroup() %>%
-    arrange(k)
+    arrange(k_label)
 
   beta %>%
     mutate(
