@@ -373,7 +373,8 @@ plot_beta <- function(x, models = "all",
     beta %>%
     filter(b > max(threshold, 1/length(unique(beta$w))/10))
 
-  g <- ggplot(beta, aes(x = factor(k, levels = 1:100), y = w, col = col)) +
+  g <-
+    ggplot(beta, aes(x = k_label, y = w, col = col)) +
     guides(col = "none", size = "none")
 
   if (beta_aes == "size") {
@@ -425,7 +426,8 @@ plot_beta_layout <- function(x, subset = "all",
     mutate(m = factor(m, levels = rev(names(model_params))))
 
   # associate topics with the variable to shade in by
-  topic_weights <- topics(x) %>%
+  topic_weights <-
+    topics(x) %>%
     filter(m %in% betas$m) %>%
     mutate(topic = factor(k)) %>%
     rename(topic_col = !!color_by)
@@ -446,13 +448,14 @@ plot_beta_layout <- function(x, subset = "all",
 #' @importFrom tidyr pivot_longer
 #' @importFrom magrittr %>%
 format_beta <-  function(p) {
-  beta <- p$betas %>%
+  beta <-
+    p$betas %>%
     group_by(m) %>%
     mutate(k = row_number()) %>%
     ungroup() %>%
-    left_join(p$weights %>% select(m, k, topic_col, col), by = c("m", "k")) %>%
+    left_join(p$weights %>% select(m, k, k_label, topic_col, col), by = c("m", "k")) %>%
     pivot_longer(
-      -c(m, k, col, topic_col),
+      -c(m, k, k_label, col, topic_col),
       names_to = "w",
       values_to = "b"
     )
