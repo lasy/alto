@@ -322,6 +322,9 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' @param filter_by (optional, default = \code{"beta"}) a character specifying
 #' if the data (beta matrices) should be filtered by the average \code{"beta"}
 #' across topics or by the \code{"distinctiveness"} of the features.
+#' @param x_axis (optional, default = \code{"index"}) a character specifying
+#' if the x-axis should display topic indices (\code{"index"}) such that they
+#' match the alignment plot order or topic names (\code{"label"}).
 #' @param threshold (optional, default = 0.001)
 #' Words (features) with less than this average beta or
 #' distinctiveness across all topics are ignored
@@ -366,7 +369,7 @@ plot_beta <- function(x, models = "all",
 
   beta <-
     plot_beta_layout(x, models, filter_by, threshold, n_features, color_by) %>%
-    format_beta(x_axis = x_axis)
+    format_beta(., x_axis = x_axis)
 
   # we further trim beta to improve the visualization
   # by removing the betas that are 1 order of magnitude lower
@@ -462,9 +465,15 @@ format_beta <-  function(p, x_axis = "label") {
       values_to = "b"
     )
 
-  if (x_axis == "label") beta$x <- beta$k_label else beta$x <- beta$k %>% factor()
+  if (x_axis == "label") {
+    beta$x <- beta$k_label
+  } else {
+    beta$x <- beta$k %>% factor()
+  }
 
-  w_order <- beta %>%
+
+  w_order <-
+    beta %>%
     slice_min(m) %>%
     arrange(w, -b) %>%
     group_by(w) %>%
