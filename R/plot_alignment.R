@@ -353,7 +353,8 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' @importFrom dplyr select filter
 #' @importFrom ggplot2 ggplot aes scale_color_identity geom_point geom_tile
 #' guides scale_fill_identity scale_size scale_alpha facet_grid labs theme_bw
-#' theme element_text
+#' theme element_text element_rect
+#' @importFrom margin element_rect
 #' @importFrom grid unit
 #' @export
 plot_beta <- function(x, models = "all",
@@ -379,28 +380,43 @@ plot_beta <- function(x, models = "all",
     filter(b > max(threshold, 1/length(unique(beta$w))/10))
 
   g <-
-    ggplot(beta, aes(x = x, y = w, col = col)) +
-    guides(col = "none", size = "none")
+    ggplot(beta, aes(x = x, y = w)) + # col
+    guides(size = "none") # col = "none",
 
   if (beta_aes == "size") {
     g <- g +
-      geom_point(aes(size = b)) +
-      scale_color_identity() +
+      geom_point(aes(size = b, col = topic_col)) +
+      #scale_color_identity() +
       scale_size(range = c(0, 5), limits = c(0, 1))
   } else {
     g <- g +
-      geom_tile(aes(alpha = b)) +
-      scale_fill_identity() +
+      geom_tile(aes(alpha = b, fill = topic_col)) +
+      #scale_fill_identity() +
       scale_alpha(range = c(0, 1), limits = c(0, 1))
+  }
+
+  if (color_by %in% c("topic", "path")) {
+    g <- g +
+      ggplot2::scale_color_discrete(color_by) +
+      ggplot2::scale_fill_discrete(color_by)
+      # mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
+  } else {
+    max_score <- ifelse(color_by == "refinement", n_models(x), 1)
+    g <- g +
+      ggplot2::scale_color_gradient(color_by, low = "brown1", high = "cornflowerblue", limits = c(0, max_score)) +
+      ggplot2::scale_fill_gradient(color_by, low = "brown1", high = "cornflowerblue", limits = c(0, max_score))
+      # mutate(col = colorRampPalette(colors = c("brown1", "cornflowerblue"))(11)[round(topic_col,1)*10+1])
   }
 
   g +
     facet_grid(. ~ m, scales = "free", space = "free") +
     labs(x = "", y = "") +
-    theme_bw() +
+    # theme_bw() +
     theme(
+      panel.border = ggplot2::element_rect(color = "black", fill = NA),
       panel.spacing.x = unit(0, "pt"),
-      strip.text.y = element_text(angle = 0, hjust = 0, color = "black")
+      #strip.text.y = element_text(angle = 0, hjust = 0, color = "black"),
+      strip.background = ggplot2::element_rect(color = "black")
     )
 }
 
@@ -437,13 +453,13 @@ plot_beta_layout <- function(x, subset = "all",
     mutate(topic = factor(k)) %>%
     rename(topic_col = !!color_by)
 
-  if (color_by %in% c("topic", "path")) {
-    topic_weights <- topic_weights %>%
-      mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
-  } else {
-    topic_weights <- topic_weights %>%
-      mutate(col = colorRampPalette(colors = c("brown1", "cornflowerblue"))(11)[round(topic_col,1)*10+1])
-  }
+  # if (color_by %in% c("topic", "path")) {
+  #   topic_weights <- topic_weights %>%
+  #     mutate(col = hue_pal()(nlevels(topic_col))[as.integer(topic_col)])
+  # } else {
+  #   topic_weights <- topic_weights %>%
+  #     mutate(col = colorRampPalette(colors = c("brown1", "cornflowerblue"))(11)[round(topic_col,1)*10+1])
+  # }
 
   list(betas = betas, weights = topic_weights)
 }
@@ -458,9 +474,9 @@ format_beta <-  function(p, x_axis = "label") {
     group_by(m) %>%
     mutate(k = row_number()) %>%
     ungroup() %>%
-    left_join(p$weights %>% select(m, k, k_label, topic_col, col), by = c("m", "k")) %>%
+    left_join(p$weights %>% select(m, k, k_label, topic_col), by = c("m", "k")) %>% #, col
     pivot_longer(
-      -c(m, k, k_label, col, topic_col),
+      -c(m, k, k_label, topic_col), # , col
       names_to = "w",
       values_to = "b"
     )
