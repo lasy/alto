@@ -11,3 +11,4 @@ The LDA model has its own internal seed (it does not use the global R seed).
 This helper can be used to control that internal seed within
 `run_lda_models()`.
 }
+\keyword{internal}

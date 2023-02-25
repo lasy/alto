@@ -34,7 +34,6 @@
 #'  the number of edges that should be drawn between the topics of subsequent models.
 #'  The \code{top_n_edges} with the highest weights are drawn. If \code{NULL}
 #'  (default), all edges are drawn.
-#' @param
 #' @seealso align_topics
 #' @return A \code{ggplot2} object describing the alignment weights across
 #' models.
@@ -354,7 +353,6 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' @importFrom ggplot2 ggplot aes scale_color_identity geom_point geom_tile
 #' guides scale_fill_identity scale_size scale_alpha facet_grid labs theme_bw
 #' theme element_text element_rect
-#' @importFrom margin element_rect
 #' @importFrom grid unit
 #' @export
 plot_beta <- function(x, models = "all",
@@ -553,6 +551,7 @@ trim_betas <- function(betas, filter_by, threshold = 0, n_features = NULL) {
 #' @return The KL divergence between pairs of discrete probability categorical
 #' vectors.
 #' Equation (3) from https://doi.org/10.1371/journal.pgen.1006599
+#' @keywords internal
 kl_div <- function(p1, p2) {
   p1 * log(p1 / p2) + (p2 - p1)
 }
@@ -562,6 +561,7 @@ kl_div <- function(p1, p2) {
 #' @param p A matrix whose rows correspond to discrete probability vectors.
 #' @return K A matrix whose \code{ij} entry is the KL divergence between rows
 #' \code{i} and \code{j} of \code{p}.
+#' @keywords  internal
 kl_mat <- function(p) {
   K <- matrix(0, nrow = length(p), ncol = length(p))
   for (i in seq_along(p)) {
@@ -579,6 +579,7 @@ kl_mat <- function(p) {
 #'  prevents the divergence from exploding. Defaults to 1e-7.
 #' This implements equation (4) from
 #' https://doi.org/10.1371/journal.pgen.1006599
+#' @keywords internal
 discrepancy <- function(p, lambda = 1e-7) {
   p <- (p + lambda) / sum(p + lambda) # Laplace smoothing
   K <- kl_mat(p)

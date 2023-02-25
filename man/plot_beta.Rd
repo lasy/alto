@@ -8,6 +8,7 @@ plot_beta(
   x,
   models = "all",
   filter_by = "beta",
+  x_axis = "label",
   threshold = 0.001,
   n_features = NULL,
   beta_aes = "size",
@@ -28,6 +29,10 @@ indices in the original model list will be visualized.}
 \item{filter_by}{(optional, default = \code{"beta"}) a character specifying
 if the data (beta matrices) should be filtered by the average \code{"beta"}
 across topics or by the \code{"distinctiveness"} of the features.}
+
+\item{x_axis}{(optional, default = \code{"index"}) a character specifying
+if the x-axis should display topic indices (\code{"index"}) such that they
+match the alignment plot order or topic names (\code{"label"}).}
 
 \item{threshold}{(optional, default = 0.001)
 Words (features) with less than this average beta or

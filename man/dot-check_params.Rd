@@ -23,3 +23,4 @@ For each element of the lda_varying_params_lists, we check the varying params
 and we add the fixed params to the varying params list. The end result is a
 list of lists. Each sub-list has the element k, method and control.
 }
+\keyword{internal}

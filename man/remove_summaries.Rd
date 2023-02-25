@@ -9,3 +9,4 @@ remove_summaries(topics)
 \description{
 Removes the refinement scores from the last set of models
 }
+\keyword{internal}

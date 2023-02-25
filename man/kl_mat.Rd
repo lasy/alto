@@ -16,3 +16,4 @@ K A matrix whose \code{ij} entry is the KL divergence between rows
 \description{
 Pairwise KL divergences
 }
+\keyword{internal}

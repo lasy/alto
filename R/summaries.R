@@ -16,6 +16,7 @@ add_summaries <- function(aligned_topics) {
 
 #' Removes the refinement scores from the last set of models
 #' @importFrom dplyr mutate across if_else
+#' @keywords internal
 remove_summaries <- function(topics) {
   topics %>%
     mutate(across(
@@ -55,6 +56,7 @@ add_measure <- function(aligned_topics, fi=topic_coherence) {
 #'  summarize
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble
+#' @keywords internal
 topic_coherence <- function(model, topic, aligned_topics) {
   all_topics <- topics(aligned_topics)
   topic_path <- all_topics %>%
@@ -114,6 +116,7 @@ topic_coherence <- function(model, topic, aligned_topics) {
 #' @importFrom tibble tibble
 #' @importFrom dplyr filter mutate group_by summarize
 #' @importFrom magrittr %>%
+#' @keywords internal
 topic_refinement <- function(model, topic, aligned_topics) {
   topic_descendants <- aligned_topics@weights %>%
     filter(m == model, k == topic)

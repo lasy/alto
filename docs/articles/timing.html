@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,30 +33,25 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">alto</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li class="divider">
-    <li class="dropdown-header">Demos</li>
+    </li>
+<li class="dropdown-header">Demos</li>
     <li>
       <a href="../articles/basic-alignment.html">Introduction to Alignment</a>
     </li>
@@ -62,7 +59,8 @@
       <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
     </li>
     <li class="divider">
-    <li class="dropdown-header">Simulations</li>
+    </li>
+<li class="dropdown-header">Simulations</li>
     <li>
       <a href="../articles/lda.html">Identifying True Topics</a>
     </li>
@@ -73,7 +71,8 @@
       <a href="../articles/strain-switching.html">Strain Switching</a>
     </li>
     <li class="divider">
-    <li class="dropdown-header">Profiling</li>
+    </li>
+<li class="dropdown-header">Profiling</li>
     <li>
       <a href="../articles/timing.html">Measuring Runtimes</a>
     </li>
@@ -90,7 +89,7 @@
 
       
 
-      </header><script src="timing_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Measuring Runtimes</h1>
@@ -103,100 +102,106 @@
 
     
     
-<p>This vignette measures the runtime of a few steps in the alignment workflow. Running this vignette with <span class="math inline">\(V = 1000\)</span>, <span class="math inline">\(N = 250\)</span> gives the estimates reported in the accompanying manuscript.</p>
+<p>This vignette measures the runtime of a few steps in the alignment
+workflow. Running this vignette with <span class="math inline">\(V =
+1000\)</span>, <span class="math inline">\(N = 250\)</span> gives the
+estimates reported in the accompanying manuscript.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://CRAN.R-project.org/package=MCMCpack">MCMCpack</a></span><span class="op">)</span>
-<span class="co">#&gt; Loading required package: coda</span>
-<span class="co">#&gt; Loading required package: MASS</span>
-<span class="co">#&gt; Warning in .recacheSubclasses(def@className, def, env): undefined subclass</span>
-<span class="co">#&gt; "numericVector" of class "Mnumeric"; definition not updated</span>
-<span class="co">#&gt; ##</span>
-<span class="co">#&gt; ## Markov Chain Monte Carlo Package (MCMCpack)</span>
-<span class="co">#&gt; ## Copyright (C) 2003-2021 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park</span>
-<span class="co">#&gt; ##</span>
-<span class="co">#&gt; ## Support provided by the U.S. National Science Foundation</span>
-<span class="co">#&gt; ## (Grants SES-0350646 and SES-0350613)</span>
-<span class="co">#&gt; ##</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     weights</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following object is masked from 'package:MASS':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     select</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://purrr.tidyverse.org">purrr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org">stringr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/collectivemedia/tictoc">tictoc</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R"</span><span class="op">)</span></code></pre></div>
-<p>For this simulation, we work with simulated LDA data, as in the “Identifying True Topics” vignette.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://CRAN.R-project.org/package=MCMCpack" class="external-link">MCMCpack</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; Loading required package: coda</span></span>
+<span><span class="co">#&gt; Loading required package: MASS</span></span>
+<span><span class="co">#&gt; ##</span></span>
+<span><span class="co">#&gt; ## Markov Chain Monte Carlo Package (MCMCpack)</span></span>
+<span><span class="co">#&gt; ## Copyright (C) 2003-2023 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park</span></span>
+<span><span class="co">#&gt; ##</span></span>
+<span><span class="co">#&gt; ## Support provided by the U.S. National Science Foundation</span></span>
+<span><span class="co">#&gt; ## (Grants SES-0350646 and SES-0350613)</span></span>
+<span><span class="co">#&gt; ##</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'alto'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     weights</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:MASS':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     select</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/jabiru/tictoc" class="external-link">tictoc</a></span><span class="op">)</span></span>
+<span><span class="kw"><a href="https://rdrr.io/r/base/source.html" class="external-link">source</a></span><span class="op">(</span><span class="st">"https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R"</span><span class="op">)</span></span></code></pre></div>
+<p>For this simulation, we work with simulated LDA data, as in the
+“Identifying True Topics” vignette.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/attach.html">attach</a></span><span class="op">(</span><span class="va">params</span><span class="op">)</span>
-<span class="va">lambdas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.1</span>, gamma <span class="op">=</span> <span class="fl">.5</span>, count <span class="op">=</span> <span class="fl">1e4</span><span class="op">)</span>
-<span class="va">betas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MCMCpack/man/Dirichlet.html">rdirichlet</a></span><span class="op">(</span><span class="va">K</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">lambdas</span><span class="op">$</span><span class="va">beta</span>, <span class="va">V</span><span class="op">)</span><span class="op">)</span>
-<span class="va">gammas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MCMCpack/man/Dirichlet.html">rdirichlet</a></span><span class="op">(</span><span class="va">N</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html">rep</a></span><span class="op">(</span><span class="va">lambdas</span><span class="op">$</span><span class="va">gamma</span>, <span class="va">K</span><span class="op">)</span><span class="op">)</span>
-<span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">simulate_lda</span><span class="op">(</span><span class="va">betas</span>, <span class="va">gammas</span>, lambda <span class="op">=</span> <span class="va">lambdas</span><span class="op">$</span><span class="va">count</span><span class="op">)</span></code></pre></div>
-<p>We split model running and alignment, so we can measure the computation times separately. We use the <code>tictoc</code> library for this. In general, running the LDA models consumes the majority of the time in an alignment workflow, especially when the sample or vocabulary size is large.</p>
+<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/attach.html" class="external-link">attach</a></span><span class="op">(</span><span class="va">params</span><span class="op">)</span></span>
+<span><span class="va">lambdas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>beta <span class="op">=</span> <span class="fl">0.1</span>, gamma <span class="op">=</span> <span class="fl">.5</span>, count <span class="op">=</span> <span class="fl">1e4</span><span class="op">)</span></span>
+<span><span class="va">betas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MCMCpack/man/Dirichlet.html" class="external-link">rdirichlet</a></span><span class="op">(</span><span class="va">K</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lambdas</span><span class="op">$</span><span class="va">beta</span>, <span class="va">V</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">gammas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/MCMCpack/man/Dirichlet.html" class="external-link">rdirichlet</a></span><span class="op">(</span><span class="va">N</span>, <span class="fu"><a href="https://rdrr.io/r/base/rep.html" class="external-link">rep</a></span><span class="op">(</span><span class="va">lambdas</span><span class="op">$</span><span class="va">gamma</span>, <span class="va">K</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">x</span> <span class="op">&lt;-</span> <span class="fu">simulate_lda</span><span class="op">(</span><span class="va">betas</span>, <span class="va">gammas</span>, lambda <span class="op">=</span> <span class="va">lambdas</span><span class="op">$</span><span class="va">count</span><span class="op">)</span></span></code></pre></div>
+<p>We split model running and alignment, so we can measure the
+computation times separately. We use the <code>tictoc</code> library for
+this. In general, running the LDA models consumes the majority of the
+time in an alignment workflow, especially when the sample or vocabulary
+size is large.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">lda_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n_models</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span>
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">lda_params</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_c.html">str_c</a></span><span class="op">(</span><span class="st">"K"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_models</span><span class="op">)</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="va">lda_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_lda_models.html">run_lda_models</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">lda_params</span>, reset <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 5.323 sec elapsed</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"product"</span><span class="op">)</span>
-<span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
-<span class="co">#&gt; # A tibble: 6 × 8</span>
-<span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
-<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 K1    K2         1      1  0.605         18.1          1     0.605</span>
-<span class="co">#&gt; 2 K1    K2         1      2  0.395         11.9          1     0.395</span>
-<span class="co">#&gt; 3 K1    K3         1      1  0.325          9.74         1     0.325</span>
-<span class="co">#&gt; 4 K1    K3         1      2  0.198          5.93         1     0.198</span>
-<span class="co">#&gt; 5 K1    K3         1      3  0.478         14.3          1     0.478</span>
-<span class="co">#&gt; 6 K1    K4         1      1  0.299          8.96         1     0.299</span>
-<span class="co">#&gt; # ... with 1314 more rows</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 5.434 sec elapsed</span>
-
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">tic</a></span><span class="op">(</span><span class="op">)</span>
-<span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span>
-<span class="co">#&gt; # An alignment: 10 models, 55 topics:</span>
-<span class="co">#&gt; # A tibble: 6 × 8</span>
-<span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span>
-<span class="co">#&gt;   &lt;fct&gt; &lt;fct&gt;  &lt;int&gt;  &lt;int&gt;  &lt;dbl&gt;         &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;</span>
-<span class="co">#&gt; 1 K1    K2         1      1  0.605         18.1          1     0.605</span>
-<span class="co">#&gt; 2 K1    K2         1      2  0.395         11.9          1     0.395</span>
-<span class="co">#&gt; 3 K1    K3         1      1  0.325          9.74         1     0.325</span>
-<span class="co">#&gt; 4 K1    K3         1      2  0.198          5.93         1     0.198</span>
-<span class="co">#&gt; 5 K1    K3         1      3  0.478         14.3          1     0.478</span>
-<span class="co">#&gt; 6 K1    K4         1      1  0.299          8.96         1     0.299</span>
-<span class="co">#&gt; # ... with 1314 more rows</span>
-<span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html">toc</a></span><span class="op">(</span><span class="op">)</span>
-<span class="co">#&gt; 6.799 sec elapsed</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">lda_params</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="va">n_models</span>, <span class="op">~</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">.</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">lda_params</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://stringr.tidyverse.org/reference/str_c.html" class="external-link">str_c</a></span><span class="op">(</span><span class="st">"K"</span>, <span class="fl">1</span><span class="op">:</span><span class="va">n_models</span><span class="op">)</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="va">lda_models</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/run_lda_models.html">run_lda_models</a></span><span class="op">(</span><span class="va">x</span>, <span class="va">lda_params</span>, reset <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 6.955 sec elapsed</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"product"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # An alignment: 10 models, 55 topics:</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
+<span><span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> K1    K2         1      1  0.602         18.1          1     0.602</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> K1    K2         1      2  0.398         11.9          1     0.398</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> K1    K3         1      1  0.396         11.9          1     0.396</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> K1    K3         1      2  0.232          6.96         1     0.232</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> K1    K3         1      3  0.372         11.2          1     0.372</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> K1    K4         1      1  0.164          4.91         1     0.164</span></span>
+<span><span class="co">#&gt; # ... with 1314 more rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 13.01 sec elapsed</span></span>
+<span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span></span>
+<span><span class="co">#&gt; # An alignment: 10 models, 55 topics:</span></span>
+<span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
+<span><span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span></span>
+<span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> K1    K2         1      1  0.602         18.1          1     0.602</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> K1    K2         1      2  0.398         11.9          1     0.398</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> K1    K3         1      1  0.396         11.9          1     0.396</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> K1    K3         1      2  0.232          6.96         1     0.232</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> K1    K3         1      3  0.372         11.2          1     0.372</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> K1    K4         1      1  0.262          7.86         1     0.262</span></span>
+<span><span class="co">#&gt; # ... with 1314 more rows</span></span>
+<span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="co">#&gt; 11.314 sec elapsed</span></span></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -208,11 +213,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Kris Sankaran, Laura Symul, Julia Fukuyama.</p>
+  <p></p>
+<p>Developed by Kris Sankaran, Laura Symul, Julia Fukuyama.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -220,6 +227,8 @@
 
   
 
+
+  
 
   </body>
 </html>

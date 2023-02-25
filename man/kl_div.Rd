@@ -19,3 +19,4 @@ Equation (3) from https://doi.org/10.1371/journal.pgen.1006599
 \description{
 KL Divergence of Categoricals
 }
+\keyword{internal}

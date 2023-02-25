@@ -44,6 +44,7 @@
 #' @importFrom purrr map_dfr
 #' @importFrom dplyr filter select as_tibble
 #' @importFrom magrittr %>% set_colnames
+#' @keywords internal
 #' @export
 compute_strain_switching_scores_of_model <-
   function(alignment, model, n_ancestry_levels) {

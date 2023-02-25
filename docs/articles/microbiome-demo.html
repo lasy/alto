@@ -19,6 +19,8 @@
 <![endif]-->
 </head>
 <body data-spy="scroll" data-target="#toc">
+    
+
     <div class="container template-article">
       <header><div class="navbar navbar-default navbar-fixed-top" role="navigation">
   <div class="container">
@@ -31,30 +33,25 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">alto</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">0.1.0</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="">0.1.0</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
 <li>
-  <a href="../index.html">
-    <span class="fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
-  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">
+  <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
     Articles
      
     <span class="caret"></span>
   </a>
   <ul class="dropdown-menu" role="menu">
 <li class="divider">
-    <li class="dropdown-header">Demos</li>
+    </li>
+<li class="dropdown-header">Demos</li>
     <li>
       <a href="../articles/basic-alignment.html">Introduction to Alignment</a>
     </li>
@@ -62,7 +59,8 @@
       <a href="../articles/microbiome-demo.html">Using `alto` on vaginal microbiome data</a>
     </li>
     <li class="divider">
-    <li class="dropdown-header">Simulations</li>
+    </li>
+<li class="dropdown-header">Simulations</li>
     <li>
       <a href="../articles/lda.html">Identifying True Topics</a>
     </li>
@@ -73,7 +71,8 @@
       <a href="../articles/strain-switching.html">Strain Switching</a>
     </li>
     <li class="divider">
-    <li class="dropdown-header">Profiling</li>
+    </li>
+<li class="dropdown-header">Profiling</li>
     <li>
       <a href="../articles/timing.html">Measuring Runtimes</a>
     </li>
@@ -90,10 +89,11 @@
 
       
 
-      </header><script src="microbiome-demo_files/accessible-code-block-0.0.1/empty-anchor.js"></script><div class="row">
+      </header><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
-      <h1 data-toc-skip>Using <code>alto</code> on vaginal microbiome data</h1>
+      <h1 data-toc-skip>Using <code>alto</code> on vaginal microbiome
+data</h1>
             
       
       
@@ -104,156 +104,198 @@
     
     
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'alto'</span>
-<span class="co">#&gt; The following object is masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     weights</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'dplyr'</span>
-<span class="co">#&gt; The following objects are masked from 'package:stats':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     filter, lag</span>
-<span class="co">#&gt; The following objects are masked from 'package:base':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     intersect, setdiff, setequal, union</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org">magrittr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/">tibble</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://stringr.tidyverse.org">stringr</a></span><span class="op">)</span>
-<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org">tidyr</a></span><span class="op">)</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt; Attaching package: 'tidyr'</span>
-<span class="co">#&gt; The following object is masked from 'package:magrittr':</span>
-<span class="co">#&gt; </span>
-<span class="co">#&gt;     extract</span></code></pre></div>
-<p>This document showcases the <code>alto</code> package functions applied to vaginal microbiome data.</p>
-<div id="loading-the-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#loading-the-data" class="anchor"></a>Loading the data</h2>
-<p>We use the data published with the article <a href="https://www.pnas.org/content/114/37/9966.short">“Replication and refinement of a vaginal microbial signature of preterm birth in two racially distinct cohorts of US women”</a> by Calahan et al., 2017, PNAS.</p>
-<p>A .zip file containing the related data can be downloaded from the <a href="https://stacks.stanford.edu/file/druid:yb681vm1809/RepRefine_Scripts.tar.gz">Stanford data catalog</a>.</p>
-<p>For convenience, the data file (i.e. the tables contained in the <code>processed.rda</code> file) has been attached to the <code>alto</code> package as <code>vm_data</code>. For details, type <code><a href="../reference/vm_data.html">?vm_data</a></code>.</p>
+<code class="sourceCode R"><span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'alto'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     weights</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org" class="external-link">dplyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'dplyr'</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:stats':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     filter, lag</span></span>
+<span><span class="co">#&gt; The following objects are masked from 'package:base':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     intersect, setdiff, setequal, union</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://magrittr.tidyverse.org" class="external-link">magrittr</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org" class="external-link">ggplot2</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tibble.tidyverse.org/" class="external-link">tibble</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyr.tidyverse.org" class="external-link">tidyr</a></span><span class="op">)</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt; Attaching package: 'tidyr'</span></span>
+<span><span class="co">#&gt; The following object is masked from 'package:magrittr':</span></span>
+<span><span class="co">#&gt; </span></span>
+<span><span class="co">#&gt;     extract</span></span></code></pre></div>
+<p>This document showcases the <code>alto</code> package functions
+applied to vaginal microbiome data.</p>
+<p>## Loading the data</p>
+<p>We use the data published with the article <a href="https://www.pnas.org/content/114/37/9966.short" class="external-link">“Replication and
+refinement of a vaginal microbial signature of preterm birth in two
+racially distinct cohorts of US women”</a> by Calahan et al., 2017,
+PNAS.</p>
+<p>A .zip file containing the related data can be downloaded from the <a href="https://stacks.stanford.edu/file/druid:yb681vm1809/RepRefine_Scripts.tar.gz" class="external-link">Stanford
+data catalog</a>.</p>
+<p>For convenience, the data file (i.e. the tables contained in the
+<code>processed.rda</code> file) has been attached to the
+<code>alto</code> package as <code>vm_data</code>. For details, type
+<code><a href="../reference/vm_data.html">?vm_data</a></code>.</p>
 <div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">vm_data</span><span class="op">)</span>
-<span class="co">#&gt; [1] "sample_info" "counts"      "taxonomy"</span></code></pre></div>
-<p>First, we do some pre-processing of the data. Specifically, we change the <code>colnames</code> to replace ASV DNA sequences by human-friendly names built from the taxonomy table.</p>
+<code class="sourceCode R"><span>  </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">vm_data</span><span class="op">)</span></span>
+<span><span class="co">#&gt; [1] "sample_info" "counts"      "taxonomy"</span></span></code></pre></div>
+<p>First, we do some pre-processing of the data. Specifically, we change
+the <code>colnames</code> to replace ASV DNA sequences by human-friendly
+names built from the taxonomy table.</p>
 <div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="co"># we create the human-friendly ASV names</span>
-<span class="co"># by concatenating Genus and Species and an identifying number</span>
-<span class="co"># as a given species can be represented by several ASVs</span>
-<span class="va">vm_data</span><span class="op">$</span><span class="va">taxonomy</span> <span class="op">&lt;-</span>
-  <span class="va">vm_data</span><span class="op">$</span><span class="va">taxonomy</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">Genus</span>, <span class="va">Species</span><span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html">mutate</a></span><span class="op">(</span>
-    ASV_name <span class="op">=</span>
-      <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span>
-        <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Genus</span><span class="op">)</span>,<span class="st">"[unknown Genus]"</span>, <span class="va">Genus</span><span class="op">)</span>, <span class="st">" ("</span>,
-        <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Species</span><span class="op">)</span>,<span class="st">"?"</span>, <span class="va">Species</span><span class="op">)</span>, <span class="st">") "</span>,
-        <span class="fu"><a href="https://dplyr.tidyverse.org/reference/ranking.html">row_number</a></span><span class="op">(</span><span class="op">)</span>
-      <span class="op">)</span>
-  <span class="op">)</span> <span class="op">%&gt;%</span>
-  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">ungroup</a></span><span class="op">(</span><span class="op">)</span>
-
-<span class="co"># then, we replace the colnames of the count matrix by these new names.</span>
-<span class="co"># Note that the tax table rows are ordered as the count matrix columns,</span>
-<span class="co"># allowing us to assign without matching first.</span>
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">vm_data</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span>  <span class="va">vm_data</span><span class="op">$</span><span class="va">taxonomy</span><span class="op">$</span><span class="va">ASV_name</span></code></pre></div>
-</div>
-<div id="using-alto-on-these-data" class="section level2">
-<h2 class="hasAnchor">
-<a href="#using-alto-on-these-data" class="anchor"></a>Using <code>alto</code> on these data</h2>
-<p>Our first step is to run the lda models for varying number of topics, i.e. from 1 to 18 topics. For this, we use the <code>run_lda_models</code> function. This can take a while on a personal computer. For example, it takes about 10 minutes on the authors’ laptops.</p>
+<code class="sourceCode R"><span>  </span>
+<span><span class="co"># we create the human-friendly ASV names</span></span>
+<span><span class="co"># by concatenating Genus and Species and an identifying number</span></span>
+<span><span class="co"># as a given species can be represented by several ASVs</span></span>
+<span><span class="va">vm_data</span><span class="op">$</span><span class="va">taxonomy</span> <span class="op">&lt;-</span></span>
+<span><span class="va">vm_data</span><span class="op">$</span><span class="va">taxonomy</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">group_by</a></span><span class="op">(</span><span class="va">Genus</span>, <span class="va">Species</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate.html" class="external-link">mutate</a></span><span class="op">(</span></span>
+<span>ASV_name <span class="op">=</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Genus</span><span class="op">)</span>,<span class="st">"[unknown Genus]"</span>, <span class="va">Genus</span><span class="op">)</span>, <span class="st">" ("</span>,</span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html" class="external-link">is.na</a></span><span class="op">(</span><span class="va">Species</span><span class="op">)</span>,<span class="st">"?"</span>, <span class="va">Species</span><span class="op">)</span>, <span class="st">") "</span>,</span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/row_number.html" class="external-link">row_number</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="op">)</span></span>
+<span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span></span>
+<span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html" class="external-link">ungroup</a></span><span class="op">(</span><span class="op">)</span></span>
+<span></span>
+<span><span class="co"># then, we replace the colnames of the count matrix by these new names.</span></span>
+<span><span class="co"># Note that the tax table rows are ordered as the count matrix columns,</span></span>
+<span><span class="co"># allowing us to assign without matching first.</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">vm_data</span><span class="op">$</span><span class="va">counts</span><span class="op">)</span> <span class="op">&lt;-</span>  <span class="va">vm_data</span><span class="op">$</span><span class="va">taxonomy</span><span class="op">$</span><span class="va">ASV_name</span></span></code></pre></div>
+<div class="section level2">
+<h2 id="using-alto-on-these-data">Using <code>alto</code> on these data<a class="anchor" aria-label="anchor" href="#using-alto-on-these-data"></a>
+</h2>
+<p>Our first step is to run the lda models for varying number of topics,
+i.e. from 1 to 18 topics. For this, we use the
+<code>run_lda_models</code> function. This can take a while on a
+personal computer. For example, it takes about 10 minutes on the
+authors’ laptops.</p>
 <div class="sourceCode" id="cb4"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="va">lda_varying_params_lists</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span><span class="op">)</span>
-<span class="kw">for</span> <span class="op">(</span><span class="va">k</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">18</span><span class="op">)</span> <span class="op">{</span><span class="va">lda_varying_params_lists</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste0</a></span><span class="op">(</span><span class="st">"k"</span>,<span class="va">k</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">}</span>
-
-<span class="va">lda_models</span>  <span class="op">&lt;-</span> 
-  <span class="fu"><a href="../reference/run_lda_models.html">run_lda_models</a></span><span class="op">(</span>
-    data <span class="op">=</span> <span class="va">vm_data</span><span class="op">$</span><span class="va">counts</span>,
-    lda_varying_params_lists <span class="op">=</span> <span class="va">lda_varying_params_lists</span>,
-    lda_fixed_params_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"VEM"</span><span class="op">)</span>,
-    dir <span class="op">=</span> <span class="st">"microbiome_lda_models/"</span>,
-    reset <span class="op">=</span> <span class="cn">FALSE</span>,
-    verbose <span class="op">=</span> <span class="cn">TRUE</span>
-  <span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="va">lda_varying_params_lists</span> <span class="op">&lt;-</span>  <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span><span class="op">)</span></span>
+<span><span class="kw">for</span> <span class="op">(</span><span class="va">k</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="fl">18</span><span class="op">)</span> <span class="op">{</span><span class="va">lda_varying_params_lists</span><span class="op">[[</span><span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"k"</span>,<span class="va">k</span><span class="op">)</span><span class="op">]</span><span class="op">]</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>k <span class="op">=</span> <span class="va">k</span><span class="op">)</span><span class="op">}</span></span>
+<span></span>
+<span><span class="va">lda_models</span>  <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="../reference/run_lda_models.html">run_lda_models</a></span><span class="op">(</span></span>
+<span>    data <span class="op">=</span> <span class="va">vm_data</span><span class="op">$</span><span class="va">counts</span>,</span>
+<span>    lda_varying_params_lists <span class="op">=</span> <span class="va">lda_varying_params_lists</span>,</span>
+<span>    lda_fixed_params_list <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>method <span class="op">=</span> <span class="st">"VEM"</span><span class="op">)</span>,</span>
+<span>    dir <span class="op">=</span> <span class="st">"microbiome_lda_models/"</span>,</span>
+<span>    reset <span class="op">=</span> <span class="cn">FALSE</span>,</span>
+<span>    verbose <span class="op">=</span> <span class="cn">TRUE</span></span>
+<span>  <span class="op">)</span></span></code></pre></div>
 <p>We can now align the topics from each consecutive models:</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R">
-<span class="va">aligned_topics_product</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span>
-    models <span class="op">=</span> <span class="va">lda_models</span>,
-    method <span class="op">=</span> <span class="st">"product"</span><span class="op">)</span> <span class="co"># transport product</span>
-
-<span class="va">aligned_topics_transport</span> <span class="op">&lt;-</span> 
-  <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span>
-    models <span class="op">=</span> <span class="va">lda_models</span>,
-    method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span> </code></pre></div>
+<code class="sourceCode R"><span></span>
+<span><span class="va">aligned_topics_product</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span></span>
+<span>    models <span class="op">=</span> <span class="va">lda_models</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"product"</span><span class="op">)</span> </span>
+<span></span>
+<span><span class="va">aligned_topics_transport</span> <span class="op">&lt;-</span> </span>
+<span>  <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span></span>
+<span>    models <span class="op">=</span> <span class="va">lda_models</span>,</span>
+<span>    method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span> </span></code></pre></div>
 </div>
-<div id="alignement-visualization" class="section level2">
-<h2 class="hasAnchor">
-<a href="#alignement-visualization" class="anchor"></a>Alignement visualization</h2>
-<p>The alignments can be visualized with the <code>plot</code> function.</p>
+<div class="section level2">
+<h2 id="alignement-visualization">Alignement visualization<a class="anchor" aria-label="anchor" href="#alignement-visualization"></a>
+</h2>
+<p>The alignments can be visualized with the <code>plot</code>
+function.</p>
 <div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">aligned_topics_product</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aligned_topics_product</span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/alignment-viz-1.png" width="700"></p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/alignment-viz-2.png" width="700"></p>
 </div>
-<div id="key-number-of-topics" class="section level2">
-<h2 class="hasAnchor">
-<a href="#key-number-of-topics" class="anchor"></a>Key number of topics</h2>
-<p>The number of key topics is computed with the function <code>compute_number_of_key_topics</code>. The function <code>plot_number_of_key_topics</code> can then be used to visualize that number across models.</p>
+<div class="section level2">
+<h2 id="key-number-of-topics">Key number of topics<a class="anchor" aria-label="anchor" href="#key-number-of-topics"></a>
+</h2>
+<p>The number of key topics is computed with the function
+<code>compute_number_of_key_topics</code>. The function
+<code>plot_number_of_key_topics</code> can then be used to visualize
+that number across models.</p>
 <div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/compute_number_of_paths.html">compute_number_of_paths</a></span><span class="op">(</span><span class="va">aligned_topics_product</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="../reference/plot_number_of_paths.html">plot_number_of_paths</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Method: product"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/compute_number_of_paths.html">compute_number_of_paths</a></span><span class="op">(</span><span class="va">aligned_topics_product</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/plot_number_of_paths.html">plot_number_of_paths</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Method: product"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/key-number-of-topics-1.png" width="700"></p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/compute_number_of_paths.html">compute_number_of_paths</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span><span class="op">)</span> <span class="op">%&gt;%</span> 
-  <span class="fu"><a href="../reference/plot_number_of_paths.html">plot_number_of_paths</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> 
-  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html">ggtitle</a></span><span class="op">(</span><span class="st">"Method: transport"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/compute_number_of_paths.html">compute_number_of_paths</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html" class="external-link">%&gt;%</a></span> </span>
+<span>  <span class="fu"><a href="../reference/plot_number_of_paths.html">plot_number_of_paths</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
+<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">ggtitle</a></span><span class="op">(</span><span class="st">"Method: transport"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/key-number-of-topics-2.png" width="700"></p>
-<p>The number of key topics shows a small plateau around K = 12 with both methods (product and transport). As in the simulations, the number of key topics are lower and the plateau is stronger when key topics are identified by the product than by the transport alignment. The fact that the plateau is small is likely indicative that the data generation process does not strictly follow the LDA model assumption.</p>
-<p>We can then evaluate the coherence and ancestry scores of these topics with the <code>plot</code> function and the <code>color_by</code> option.</p>
-</div>
-<div id="alignment-with-diagnostics-scores" class="section level2">
-<h2 class="hasAnchor">
-<a href="#alignment-with-diagnostics-scores" class="anchor"></a>Alignment with diagnostics scores</h2>
+<p>The number of key topics shows a small plateau around K = 12 with
+both methods (product and transport). As in the simulations, the number
+of key topics are lower and the plateau is stronger when key topics are
+identified by the product than by the transport alignment. The fact that
+the plateau is small is likely indicative that the data generation
+process does not strictly follow the LDA model assumption.</p>
+<p>Note: for convenience, the <code>plot</code> function includes
+options for labeling the topics with their path ID, and with their
+composition. Type <code><a href="../reference/plot_alignment.html">?plot_alignment</a></code> for details about these
+options.</p>
 <div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">aligned_topics_product</span>, color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></code></pre></div>
-<p><img src="microbiome-demo_files/figure-html/coherence-1.png" width="700"></p>
+<code class="sourceCode R"><span></span>
+<span><span class="va">aligned_topics_transport_12</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span><span class="op">[</span><span class="fl">1</span><span class="op">:</span><span class="fl">12</span><span class="op">]</span>, method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aligned_topics_transport_12</span>, add_leaves <span class="op">=</span> <span class="cn">TRUE</span>, label_topics <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-demo_files/figure-html/plot-with-add-leaves-and-id-numbers-1.png" width="700"></p>
+<p>We can also evaluate the coherence and ancestry scores of these
+topics with the <code>plot</code> function and the <code>color_by</code>
+option.</p>
+</div>
+<div class="section level2">
+<h2 id="alignment-with-diagnostics-scores">Alignment with diagnostics scores<a class="anchor" aria-label="anchor" href="#alignment-with-diagnostics-scores"></a>
+</h2>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aligned_topics_product</span>, color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-demo_files/figure-html/coherence-1.png" width="700"></p>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/coherence-2.png" width="700"></p>
 <p>Most of the identified topics around <span class="math inline">\(K=12\)</span> are coherent across <span class="math inline">\(K\)</span>.</p>
-<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">aligned_topics_product</span>, color_by <span class="op">=</span> <span class="st">"refinement"</span><span class="op">)</span></code></pre></div>
-<p><img src="microbiome-demo_files/figure-html/ancestry-1.png" width="700"></p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, color_by <span class="op">=</span> <span class="st">"refinement"</span><span class="op">)</span></code></pre></div>
-<p><img src="microbiome-demo_files/figure-html/ancestry-2.png" width="700"></p>
-<p>Interestingly, by <span class="math inline">\(K=7\)</span>, the identified topics correspond to the four Lactobacillus community state types (CST) and to three non-Lactobacillus topics. Among these, one topic, dominated by a specific strain of Gardnerella and Atopobium, remains coherent across models. The two remaining topics at <span class="math inline">\(K=7\)</span> have little overlap and high refinement scores, indicative that these topics successfully identify two distinct groups of communities, which are revealed as robust topics as <span class="math inline">\(K\)</span> is increased.</p>
-<p>The function <code>plot_beta</code> allows to visualize the betas for a selection (or all) models.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aligned_topics_product</span>, color_by <span class="op">=</span> <span class="st">"refinement"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-demo_files/figure-html/ancestry-1.png" width="700"></p>
 <div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_product</span>, models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, threshold <span class="op">=</span> <span class="fl">0.005</span><span class="op">)</span></code></pre></div>
-<p><img src="microbiome-demo_files/figure-html/beta-plot-1.png" width="700"></p>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html" class="external-link">plot</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, color_by <span class="op">=</span> <span class="st">"refinement"</span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-demo_files/figure-html/ancestry-2.png" width="700"></p>
+<p>Interestingly, by <span class="math inline">\(K=7\)</span>, the
+identified topics correspond to the four Lactobacillus community state
+types (CST) and to three non-Lactobacillus topics. Among these, one
+topic, dominated by a specific strain of Gardnerella and Atopobium,
+remains coherent across models. The two remaining topics at <span class="math inline">\(K=7\)</span> have little overlap and high
+refinement scores, indicative that these topics successfully identify
+two distinct groups of communities, which are revealed as robust topics
+as <span class="math inline">\(K\)</span> is increased.</p>
+<p>The function <code>plot_beta</code> allows to visualize the betas for
+a selection (or all) models.</p>
 <div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, threshold <span class="op">=</span> <span class="fl">0.005</span><span class="op">)</span></code></pre></div>
-<p><img src="microbiome-demo_files/figure-html/beta-plot-2.png" width="700"></p>
-<p>By <span class="math inline">\(K=18\)</span> topics are sparse and share little overlap between them (Fig d), which may reflect over-fitting.</p>
-<p>The <code>plot_beta</code> function also has a <code>color_by</code> option, which allows to visualize the coherence of topics.</p>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_product</span>, models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, threshold <span class="op">=</span> <span class="fl">0.005</span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-demo_files/figure-html/beta-plot-1.png" width="700"></p>
 <div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, 
-          models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, 
-          threshold <span class="op">=</span> <span class="fl">0.005</span>, 
-          color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, threshold <span class="op">=</span> <span class="fl">0.005</span><span class="op">)</span></span></code></pre></div>
+<p><img src="microbiome-demo_files/figure-html/beta-plot-2.png" width="700"></p>
+<p>By <span class="math inline">\(K=18\)</span> topics are sparse and
+share little overlap between them (Fig <span class="math inline">\(\ref{fig:microbiome_figure}\)</span>d), which may
+reflect over-fitting.</p>
+<p>The <code>plot_beta</code> function also has a <code>color_by</code>
+option, which allows to visualize the coherence of topics.</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">aligned_topics_transport</span>, </span>
+<span>          models <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"k3"</span>, <span class="st">"k7"</span>,<span class="st">"k12"</span>,<span class="st">"k18"</span><span class="op">)</span>, </span>
+<span>          threshold <span class="op">=</span> <span class="fl">0.005</span>, </span>
+<span>          color_by <span class="op">=</span> <span class="st">"coherence"</span><span class="op">)</span></span></code></pre></div>
 <p><img src="microbiome-demo_files/figure-html/unnamed-chunk-2-1.png" width="700"></p>
 </div>
   </div>
@@ -269,11 +311,13 @@
 
 
       <footer><div class="copyright">
-  <p>Developed by Kris Sankaran, Laura Symul, Julia Fukuyama.</p>
+  <p></p>
+<p>Developed by Kris Sankaran, Laura Symul, Julia Fukuyama.</p>
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.</p>
+  <p></p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
 </div>
 
       </footer>
@@ -281,6 +325,8 @@
 
   
 
+
+  
 
   </body>
 </html>

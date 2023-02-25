@@ -191,6 +191,7 @@ run_lda_models <-
 #'
 #' @importFrom purrr map
 #' @importFrom utils modifyList
+#' @keywords internal
 .check_params <- function(lda_varying_params_lists, lda_fixed_params_list) {
   defaults <- list(k = 5, method = "VEM", "control" = NULL)
   map(
@@ -215,6 +216,7 @@ run_lda_models <-
 #' This helper can be used to control that internal seed within
 #' `run_lda_models()`.
 #' @importFrom purrr map2
+#' @keywords internal
 .set_lda_seed <- function(params_list, seed) {
   stopifnot(is.integer(seed))
   map2(params_list, seq_along(params_list), ~ {

@@ -1,6 +1,9 @@
 .Rproj.user
 .Rhistory
 *.RData
+*.rda
+*.rdx
+*.rdb
 .Ruserdata
 inst/doc
 /doc/

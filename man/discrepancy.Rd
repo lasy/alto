@@ -17,3 +17,4 @@ https://doi.org/10.1371/journal.pgen.1006599}
 \description{
 Discrepancy for ordering words in plot_betas
 }
+\keyword{internal}
