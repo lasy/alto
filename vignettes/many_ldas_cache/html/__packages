@@ -1,0 +1,12 @@
+coda
+MASS
+MCMCpack
+alto
+dplyr
+ggplot2
+purrr
+readr
+stringr
+colorspace
+gridExtra
+cowplot
