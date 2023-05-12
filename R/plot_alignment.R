@@ -72,7 +72,7 @@ plot_alignment <- function(
 }
 
 #' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect geom_text
-#' theme guides scale_fill_gradient scale_fill_discrete element_blank labs
+#' theme guides scale_fill_gradient scale_fill_discrete element_blank labs geom_segment
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0, label_topics = FALSE, leaves = data.frame(), leaves_text_size = 10, top_n_edges = NULL) {
 
@@ -118,20 +118,6 @@ plot_alignment <- function(
           axis.text.y = element_blank()) +
     labs(x = "models", y = "")
 
-  # replace choices below by a better color scheme...
-  if (color_by %in% c("refinement", "coherence")) {
-    g <- g +
-      scale_fill_gradient(
-        color_by, low = "brown1", high = "cornflowerblue"
-      )
-    rect <-
-      rect %>%
-      mutate(topic_col = topic_col %>% round(., 2))
-  } else {
-    g <- g +
-      scale_fill_discrete(limits = levels(rect$topic_col), na.value = "transparent") +
-      guides(fill = "none")
-  }
 
   if (label_topics) {
     g <-
@@ -172,10 +158,26 @@ plot_alignment <- function(
         size = leaves_text_size/.pt,
         lineheight = 2.5/.pt
       ) +
-      guides(col = "none") +
       expand_limits(
         x = max(leaves$x_end + leaves_text_size * leaves$max_w_length/120)
       )
+  }
+
+
+  # replace choices below by a better color scheme...
+  if (color_by %in% c("refinement", "coherence")) {
+    g <- g +
+      scale_fill_gradient(
+        color_by, low = "brown1", high = "cornflowerblue"
+      )
+    rect <-
+      rect %>%
+      mutate(topic_col = topic_col %>% round(., 2))
+  } else {
+    g <- g +
+      scale_fill_discrete(limits = levels(rect$topic_col), na.value = "transparent") +
+      scale_color_discrete(limits = levels(rect$topic_col), na.value = "transparent") +
+      guides(fill = "none", color = "none")
   }
 
   g
