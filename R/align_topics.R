@@ -314,7 +314,6 @@ product_weights <- function(gammas, ...) {
 #'
 #' @importFrom philentropy JSD
 #' @importFrom purrr map
-#' @importFrom Barycenter Sinkhorn
 #' @export
 transport_weights <- function(gammas, betas, reg = 0.1, ...) {
   betas_mat <- do.call(rbind, betas)
@@ -322,8 +321,8 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
   ix <- seq_len(nrow(betas[[1]]))
 
   a <- matrix(colSums(gammas[[1]]), ncol = 1)
-  b <- matrix(colSums(gammas[[2]]), ncol = 1)
-  plan <- Sinkhorn(a, b, costs[ix, -ix, drop = F], lambda = reg)$Transportplan
+  b <- matrix(colSums(gammas[[2]]), ncol = 1) # T4transport
+  plan <- sinkhorn(costs[ix, -ix, drop = F], a, b, lambda = reg)$plan
 
   if (any(is.na(plan))) {
     plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
