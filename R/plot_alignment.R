@@ -354,7 +354,7 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #' @importFrom dplyr select filter
 #' @importFrom ggplot2 ggplot aes scale_color_identity geom_point geom_tile
 #' guides scale_fill_identity scale_size scale_alpha facet_grid labs theme_bw
-#' theme element_text element_rect
+#' theme element_text element_rect scale_color_discrete
 #' @importFrom grid unit
 #' @export
 plot_beta <- function(x, models = "all",
