@@ -313,16 +313,17 @@ product_weights <- function(gammas, ...) {
 #' transport_weights(gammas, betas)
 #'
 #' @importFrom philentropy JSD
+#' @importFrom T4transport sinkhornD
 #' @importFrom purrr map
 #' @export
 transport_weights <- function(gammas, betas, reg = 0.1, ...) {
   betas_mat <- do.call(rbind, betas)
-  costs <- suppressMessages(JSD(betas_mat))
+  costs <- suppressMessages(JSD(exp(betas_mat)))
   ix <- seq_len(nrow(betas[[1]]))
 
-  a <- matrix(colSums(gammas[[1]]), ncol = 1)
-  b <- matrix(colSums(gammas[[2]]), ncol = 1) # T4transport
-  plan <- sinkhorn(costs[ix, -ix, drop = F], a, b, lambda = reg)$plan
+  a <- colSums(gammas[[1]])
+  b <- colSums(gammas[[2]])
+  plan <- sinkhornD(costs[ix, -ix, drop = F], wx = a, wb = b, lambda = reg)$plan
 
   if (any(is.na(plan))) {
     plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
