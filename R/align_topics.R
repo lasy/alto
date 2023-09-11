@@ -316,14 +316,16 @@ product_weights <- function(gammas, ...) {
 #' @importFrom T4transport sinkhornD
 #' @importFrom purrr map
 #' @export
-transport_weights <- function(gammas, betas, reg = 0.1, ...) {
+transport_weights <- function(gammas, betas, reg = 0.1, maxIter = 1e4, ...) {
   betas_mat <- do.call(rbind, betas)
-  costs <- suppressMessages(JSD(exp(betas_mat)))
+  costs <- suppressMessages(JSD(betas_mat))
   ix <- seq_len(nrow(betas[[1]]))
 
   a <- colSums(gammas[[1]])
   b <- colSums(gammas[[2]])
-  plan <- sinkhornD(costs[ix, -ix, drop = F], wx = a, wy = b, lambda = reg)$plan
+
+  # compute transport plan and convert probability measure into general measure
+  plan <- sinkhornD(costs[ix, -ix, drop = F], wx = a, wy = b, lambda = reg, maxIter = maxIter, ...)$plan
   plan <- (a * plan / rowSums(plan)) * (b / colSums(a * plan / rowSums(plan)))
 
   if (any(is.na(plan))) {
