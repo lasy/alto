@@ -324,14 +324,13 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
   a <- colSums(gammas[[1]])
   b <- colSums(gammas[[2]])
   plan <- sinkhornD(costs[ix, -ix, drop = F], wx = a, wy = b, lambda = reg)$plan
-  plan <- (a * plan) * (b / colSums(a * plan))
+  plan <- (a * plan / rowSums(plan)) * (b / colSums(a * plan / rowSums(plan)))
 
   if (any(is.na(plan))) {
     plan <- matrix(0, nrow(betas[[1]]), nrow(betas[[2]]))
     warning("OT diverged, considering increasing regularization.\n")
   }
 
-  # dimnames(plan) <- map(gammas, ~ colnames(.))
   dimnames(plan) <- map(gammas, ~ 1:ncol(.))
   data.frame(plan) %>%
     .lengthen_weights()
