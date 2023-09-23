@@ -4,10 +4,10 @@ Title: Aligns Topics across LDA Models
 Version: 0.1.0
 Authors@R: c(
     person("Kris", "Sankaran", email = "ksankaran@wisc.edu",role = c("aut","cre")),
-    person("Laura","Symul", email = "lsymul@stanford.edu", role = c("aut")),
+    person("Laura","Symul", email = "laura.symul@uclouvain.be", role = c("aut")),
     person("Julia", "Fukuyama", email = "jfukuyam@iu.edu", role = c("aut"))
     )
-Maintainer: Laura Symul <lsymul@stanford.edu>
+Maintainer: Laura Symul <laura.symul@uclouvain.be>
 Description: "alto" is an R package that aligns topics from different LDA
   models, computes metrics for quantifying the goodness of alignment, and provides
   visualization functions to explore the alignment and robustness of topics across
