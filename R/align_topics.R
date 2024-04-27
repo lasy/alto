@@ -429,6 +429,8 @@ setClass("alignment",
 #' @export
 setMethod("show", "alignment", print_alignment)
 
+#' Generic - Extract Weights
+#' @param x An alignment object output from \code{align_topics}.
 setGeneric("weights", function(x) standardGeneric("weights"))
 #' Weights Accessor for Alignment Class
 #' @param x An alignment object output from \code{align_topics}.
@@ -436,8 +438,10 @@ setGeneric("weights", function(x) standardGeneric("weights"))
 #' @export
 setMethod("weights", "alignment", function(x) x@weights)
 
-setGeneric("n_models", function(x) standardGeneric("n_models"))
 
+#' Generic - Number of Topics
+#' @param x An alignment object output from \code{align_topics}.
+setGeneric("n_models", function(x) standardGeneric("n_models"))
 #' Number of Models Method for Alignment Class
 #' @param x An alignment object output from \code{align_topics}.
 #' @import methods
@@ -445,6 +449,8 @@ setGeneric("n_models", function(x) standardGeneric("n_models"))
 setMethod("n_models", "alignment", function(x) nlevels(x@weights$m))
 
 
+#' Generic - Number of Topics
+#' @param x An alignment object output from \code{align_topics}.
 setGeneric("n_topics", function(x) standardGeneric("n_topics"))
 #' Number of Topics Method for Alignment Class
 #' @param x An alignment object output from \code{align_topics}.
@@ -452,6 +458,9 @@ setGeneric("n_topics", function(x) standardGeneric("n_topics"))
 #' @export
 setMethod("n_topics", "alignment", function(x) nrow(x@topics))
 
+
+#' Generic - Extract Models
+#' @param x An alignment object output from \code{align_topics}.
 setGeneric("models", function(x) standardGeneric("models"))
 #' Extract Models underlying Alignment
 #' @param x An alignment object output from \code{align_topics}.
@@ -460,6 +469,8 @@ setGeneric("models", function(x) standardGeneric("models"))
 setMethod("models", "alignment", function(x) x@models)
 
 
+#' Generic - List of Topics and their Summaries
+#' @param x An alignment object output from \code{align_topics}.
 setGeneric("topics", function(x) standardGeneric("topics"))
 #' Extract List of Topics and their Summaries
 #' @param x An alignment object output from \code{align_topics}.
