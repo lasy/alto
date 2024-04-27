@@ -117,14 +117,11 @@ results</li>
 </ul>
 <p>First, we load some packages that are used in this vignette.</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt; Attaching package: 'alto'</span></span>
-<span><span class="co">#&gt; The following object is masked from 'package:stats':</span></span>
-<span><span class="co">#&gt; </span></span>
-<span><span class="co">#&gt;     weights</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/message.html" class="external-link">suppressPackageStartupMessages</a></span><span class="op">(</span><span class="op">{</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va">alto</span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://purrr.tidyverse.org/" class="external-link">purrr</a></span><span class="op">)</span></span>
+<span>  <span class="kw"><a href="https://rdrr.io/r/base/library.html" class="external-link">library</a></span><span class="op">(</span><span class="va"><a href="https://stringr.tidyverse.org" class="external-link">stringr</a></span><span class="op">)</span></span>
+<span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span></code></pre></div>
 <p>Next, we simulate a dataset (50 samples with 20 dimensions each)
 samples and run a sequence of LDA models to it. The data,
@@ -156,8 +153,9 @@ internal lists. We use <code>map</code> to construct a list whose <span class="m
 <p>The output of this function is a list of two element lists. The first
 element are the mixed-membership estimates <span class="math inline">\(\gamma\)</span>. This is an <span class="math inline">\(N \times K\)</span> matrix specifying the
 membership of each sample across the <span class="math inline">\(K\)</span> topics. THe second element are the
-estimated topic log-probabilities, <span class="math inline">\(\log\beta\)</span>. This is a <span class="math inline">\(K \times D\)</span> matrix whose rows give the log
-probabilities for each dimension within that topic.</p>
+estimated topic log-probabilities, <span class="math inline">\(\log\beta\)</span>. This is a <span class="math inline">\(K
+\times D\)</span> matrix whose rows give the log probabilities for each
+dimension within that topic.</p>
 <p>Given this output, we can compute a tpoic alignment. This is done by
 the <code>align_topics</code> function. By default, the
 <code>product</code> method is used to compute weights (below, we show
@@ -201,11 +199,11 @@ using the <code>weights</code> method.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 1     4          1      3  0.250          12.5         1     0.250</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 1     4          1      4  0.250          12.5         1     0.250</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 1     5          1      1  0.200          10.0         1     0.200</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 1,310 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,310 more rows</span></span></span></code></pre></div>
 <p>The <code>align_topics</code> function also computes a few per-topic
 measures. These can be accessed using <code>topics</code>. For example,
-<code>mass</code> describes the total mass <span class="math inline">\(\sum_{i = 1}^{n}\gamma_{ik}^{m}\)</span> for topic
-<span class="math inline">\(k\)</span> in model <span class="math inline">\(m\)</span>. The <code>prop</code> column
+<code>mass</code> describes the total mass <span class="math inline">\(\sum_{i =
+1}^{n}\gamma_{ik}^{m}\)</span> for topic <span class="math inline">\(k\)</span> in model <span class="math inline">\(m\)</span>. The <code>prop</code> column
 normalizes the <code>mass</code> column according to the total mass
 within that model. <code>branch</code> specifies which overall branch
 each topic belongs to (this corresponds to colors in the flow diagrams
@@ -227,7 +225,7 @@ accompanying this package.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 4         2 3        12.5 0.250 2         0.219       1.00</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 4         3 4        12.5 0.250 9         0.247       1.00</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 4         4 2        12.5 0.250 7         0.235       1.00</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 45 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 45 more rows</span></span></span></code></pre></div>
 <p>An alternative measure is the <code>key_topics</code> measure. This
 looks at how many topics have similar descendents across resolution
 levels, and it can be accessed using the
@@ -279,9 +277,9 @@ robustness, or topic ID.</p>
 <p>To understand the content of the topics, we can use
 <code>plot_beta</code>. This shows the probabilities <span class="math inline">\(\beta_{kd}^{m}\)</span> across topics and models.
 Dimensions are sorted from those with the highest distinctiveness across
-topics to those with the lowest. By default, all dimensions <span class="math inline">\(d\)</span> with at least one <span class="math inline">\(\beta_{kd}^{m} &gt; 0.001\)</span> will be
-displayed. This can be adjusted using the <code>min_beta</code>
-parameter. For clarity, circles with <span class="math inline">\(\beta_{kd}^{m} &lt; \text{min_beta}\)</span> are
+topics to those with the lowest. By default, all dimensions <span class="math inline">\(d\)</span> with at least one <span class="math inline">\(\beta_{kd}^{m} &gt;
+0.001\)</span> will be displayed. This can be adjusted using the
+<code>min_beta</code> parameter. For clarity, circles with <span class="math inline">\(\beta_{kd}^{m} &lt; \text{min_beta}\)</span> are
 not shown.</p>
 <div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/plot_beta.html">plot_beta</a></span><span class="op">(</span><span class="va">result</span><span class="op">)</span></span></code></pre></div>
@@ -325,7 +323,7 @@ models.</p>
 <div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">edges</span> <span class="op">&lt;-</span> <span class="fu">alto</span><span class="fu">:::</span><span class="fu"><a href="../reference/setup_edges.html">setup_edges</a></span><span class="op">(</span><span class="st">"all"</span>, <span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">lda_models</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="va">gamma</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="op">~</span> <span class="va">.</span><span class="op">$</span><span class="va">gamma</span><span class="op">)</span></span>
-<span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="op">~</span> <span class="va">.</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span></span>
+<span><span class="va">beta</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="va">lda_models</span>, <span class="op">~</span> <span class="fl">2</span> <span class="op">^</span> <span class="va">.</span><span class="op">$</span><span class="va">beta</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/align_graph.html">align_graph</a></span><span class="op">(</span><span class="va">edges</span>, <span class="va">gamma</span>, <span class="va">beta</span>, <span class="va">transport_weights</span><span class="op">)</span></span>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 1,320 × 8</span></span></span>
 <span><span class="co">#&gt;    m     m_next     k k_next weight document_mass bw_weight fw_weight</span></span>
@@ -340,7 +338,7 @@ models.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 1     4          1      3  0.250          12.5         1     0.250</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 1     4          1      4  0.250          12.5         1     0.250</span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 1     5          1      1  0.200          10.0         1     0.200</span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 1,310 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 1,310 more rows</span></span></span></code></pre></div>
 <p>Finally, arbitrary weight methods can be passed to
 <code>align_graph</code>. The only requirement is that, given pairs of
 matrices of mixed-memberships and log-topics between two models, the
@@ -376,7 +374,7 @@ pairs of topics.</p>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 8</span> 1     2          1      8      0             0       <span style="color: #BB0000;">NaN</span>       <span style="color: #BB0000;">NaN</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;"> 9</span> 1     2          1      9      0             0       <span style="color: #BB0000;">NaN</span>       <span style="color: #BB0000;">NaN</span></span></span>
 <span><span class="co">#&gt; <span style="color: #BCBCBC;">10</span> 1     2          1     10      0             0       <span style="color: #BB0000;">NaN</span>       <span style="color: #BB0000;">NaN</span></span></span>
-<span><span class="co">#&gt; <span style="color: #949494;"># … with 8,240 more rows</span></span></span></code></pre></div>
+<span><span class="co">#&gt; <span style="color: #949494;"># ℹ 8,240 more rows</span></span></span></code></pre></div>
 </div>
   </div>
 
@@ -395,7 +393,7 @@ pairs of topics.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>

@@ -318,7 +318,7 @@ product_weights <- function(gammas, ...) {
 #' @export
 transport_weights <- function(gammas, betas, reg = 0.1, ...) {
   betas_mat <- do.call(rbind, betas)
-  costs <- suppressMessages(JSD(betas_mat))
+  costs <- suppressMessages(2 ^ JSD(betas_mat))
   ix <- seq_len(nrow(betas[[1]]))
 
   a <- colSums(gammas[[1]])
