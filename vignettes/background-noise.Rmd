@@ -46,11 +46,12 @@ We load packages. The `sim_gradient` function that generates the contaminated
 LDA model is sourced from the link below.
 
 ```{r}
-library(alto)
-library(tidyverse)
-library(MCMCpack)
+suppressPackageStartupMessages({
+  library(alto)
+  library(tidyverse)
+  library(MCMCpack)
+})
 source("https://raw.githubusercontent.com/krisrs1128/topic_align/main/simulations/simulation_functions.R")
-my_theme()
 ```
 
 The block below simulates from the contaminated LDA model. The $\lambda_{\beta}$

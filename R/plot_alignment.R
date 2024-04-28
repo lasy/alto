@@ -598,6 +598,22 @@ discrepancy <- function(p, lambda = 1e-7) {
 #' encode? Defaults to 'path'. Other possible arguments are 'coherence',
 #' 'refinement', or 'topic'.
 #' @param model_name_repair_fun How should names be repaired before plotting?
+#' @param label_topics (optional, default = \code{FALSE}) A \code{logical}
+#' specifying if topics should be labeled with the \code{"color_by"} information.
+#' @param add_leaves (optional, default = \code{FALSE}) A \code{logical}
+#' specifying if the topic composition of leave-topics should be printed.
+#' @param leaves_text_size (optional, default = \code{10}) specifies the font
+#' size of leaves annotations in \code{pt} if \code{add_leaves} is \code{TRUE}.
+#' @param n_features_in_leaves (optional, default = 3) specifies the maximum
+#' number of features that should be included in the leaves annotations
+#' if \code{add_leaves} is \code{TRUE}.
+#' @param min_feature_prop (optional, default = 0.1) specifies the minimum
+#' proportion of a feature in a topic for that feature to be included in
+#' the leaves annotations if \code{add_leaves} is \code{TRUE}.
+#' @param top_n_edges (optional, \code{integer}, default = \code{NULL}) specifies
+#'  the number of edges that should be drawn between the topics of subsequent models.
+#'  The \code{top_n_edges} with the highest weights are drawn. If \code{NULL}
+#'  (default), all edges are drawn.
 #' @seealso align_topics
 #' @return A \code{ggplot2} object describing the alignment weights across
 #' models.

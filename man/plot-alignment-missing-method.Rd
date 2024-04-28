@@ -30,6 +30,28 @@ encode? Defaults to 'path'. Other possible arguments are 'coherence',
 'refinement', or 'topic'.}
 
 \item{model_name_repair_fun}{How should names be repaired before plotting?}
+
+\item{label_topics}{(optional, default = \code{FALSE}) A \code{logical}
+specifying if topics should be labeled with the \code{"color_by"} information.}
+
+\item{add_leaves}{(optional, default = \code{FALSE}) A \code{logical}
+specifying if the topic composition of leave-topics should be printed.}
+
+\item{leaves_text_size}{(optional, default = \code{10}) specifies the font
+size of leaves annotations in \code{pt} if \code{add_leaves} is \code{TRUE}.}
+
+\item{n_features_in_leaves}{(optional, default = 3) specifies the maximum
+number of features that should be included in the leaves annotations
+if \code{add_leaves} is \code{TRUE}.}
+
+\item{min_feature_prop}{(optional, default = 0.1) specifies the minimum
+proportion of a feature in a topic for that feature to be included in
+the leaves annotations if \code{add_leaves} is \code{TRUE}.}
+
+\item{top_n_edges}{(optional, \code{integer}, default = \code{NULL}) specifies
+the number of edges that should be drawn between the topics of subsequent models.
+The \code{top_n_edges} with the highest weights are drawn. If \code{NULL}
+(default), all edges are drawn.}
 }
 \value{
 A \code{ggplot2} object describing the alignment weights across

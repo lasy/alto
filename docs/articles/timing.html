@@ -112,7 +112,7 @@ estimates reported in the accompanying manuscript.</p>
 <span><span class="co">#&gt; Loading required package: MASS</span></span>
 <span><span class="co">#&gt; ##</span></span>
 <span><span class="co">#&gt; ## Markov Chain Monte Carlo Package (MCMCpack)</span></span>
-<span><span class="co">#&gt; ## Copyright (C) 2003-2023 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park</span></span>
+<span><span class="co">#&gt; ## Copyright (C) 2003-2024 Andrew D. Martin, Kevin M. Quinn, and Jong Hee Park</span></span>
 <span><span class="co">#&gt; ##</span></span>
 <span><span class="co">#&gt; ## Support provided by the U.S. National Science Foundation</span></span>
 <span><span class="co">#&gt; ## (Grants SES-0350646 and SES-0350613)</span></span>
@@ -169,7 +169,7 @@ size is large.</p>
 <span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
 <span><span class="co">#&gt; Using default value 'VEM' for 'method' LDA parameter.</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 6.955 sec elapsed</span></span>
+<span><span class="co">#&gt; 2.674 sec elapsed</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"product"</span><span class="op">)</span></span>
@@ -177,15 +177,15 @@ size is large.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
 <span><span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> K1    K2         1      1  0.602         18.1          1     0.602</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> K1    K2         1      2  0.398         11.9          1     0.398</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> K1    K3         1      1  0.396         11.9          1     0.396</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> K1    K3         1      2  0.232          6.96         1     0.232</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> K1    K3         1      3  0.372         11.2          1     0.372</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> K1    K4         1      1  0.164          4.91         1     0.164</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> K1    K2         1      1  0.439         13.2          1     0.439</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> K1    K2         1      2  0.561         16.8          1     0.561</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> K1    K3         1      1  0.266          7.99         1     0.266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> K1    K3         1      2  0.463         13.9          1     0.463</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> K1    K3         1      3  0.271          8.12         1     0.271</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> K1    K4         1      1  0.248          7.45         1     0.248</span></span>
 <span><span class="co">#&gt; # ... with 1314 more rows</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 13.01 sec elapsed</span></span>
+<span><span class="co">#&gt; 0.919 sec elapsed</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">tic</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="fu"><a href="../reference/align_topics.html">align_topics</a></span><span class="op">(</span><span class="va">lda_models</span>, method <span class="op">=</span> <span class="st">"transport"</span><span class="op">)</span></span>
@@ -193,15 +193,15 @@ size is large.</p>
 <span><span class="co">#&gt; <span style="color: #949494;"># A tibble: 6 × 8</span></span></span>
 <span><span class="co">#&gt;   m     m_next     k k_next weight document_mass bw_weight fw_weight</span></span>
 <span><span class="co">#&gt;   <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span> <span style="color: #949494; font-style: italic;">&lt;fct&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;int&gt;</span>  <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>         <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span>     <span style="color: #949494; font-style: italic;">&lt;dbl&gt;</span></span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> K1    K2         1      1  0.602         18.1          1     0.602</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> K1    K2         1      2  0.398         11.9          1     0.398</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> K1    K3         1      1  0.396         11.9          1     0.396</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> K1    K3         1      2  0.232          6.96         1     0.232</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> K1    K3         1      3  0.372         11.2          1     0.372</span></span>
-<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> K1    K4         1      1  0.262          7.86         1     0.262</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">1</span> K1    K2         1      1  0.439         13.2          1     0.439</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">2</span> K1    K2         1      2  0.561         16.8          1     0.561</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">3</span> K1    K3         1      1  0.266          7.99         1     0.266</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">4</span> K1    K3         1      2  0.463         13.9          1     0.463</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">5</span> K1    K3         1      3  0.271          8.12         1     0.271</span></span>
+<span><span class="co">#&gt; <span style="color: #BCBCBC;">6</span> K1    K4         1      1  0.248          7.45         1     0.248</span></span>
 <span><span class="co">#&gt; # ... with 1314 more rows</span></span>
 <span><span class="fu"><a href="https://rdrr.io/pkg/tictoc/man/tic.html" class="external-link">toc</a></span><span class="op">(</span><span class="op">)</span></span>
-<span><span class="co">#&gt; 11.314 sec elapsed</span></span></code></pre></div>
+<span><span class="co">#&gt; 0.901 sec elapsed</span></span></code></pre></div>
   </div>
 
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
@@ -219,7 +219,7 @@ size is large.</p>
 
 <div class="pkgdown">
   <p></p>
-<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.6.</p>
+<p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.0.7.</p>
 </div>
 
       </footer>
