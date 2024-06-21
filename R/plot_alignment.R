@@ -436,6 +436,7 @@ plot_beta_layout <- function(x, subset = "all",
   } else if (length(subset) == 1 && subset == "all") {
     model_params <- model_params
   } else {
+    # TODO: throw an explicit error if subset is not part of the models
     model_params <- model_params[subset]
   }
 
