@@ -21,9 +21,11 @@ simulated dataset. We will introduce,
 First, we load some packages that are used in this vignette.
 
 ```{r setup}
-library(alto)
-library(purrr)
-library(stringr)
+suppressPackageStartupMessages({
+  library(alto)
+  library(purrr)
+  library(stringr)
+})
 set.seed(123)
 ```
 
@@ -170,7 +172,7 @@ example, we can fit an alignment between all pairs of topics, across all models.
 ```{r}
 edges <- alto:::setup_edges("all", names(lda_models))
 gamma <- map(lda_models, ~ .$gamma)
-beta <- map(lda_models, ~ .$beta)
+beta <- map(lda_models, ~ 2 ^ .$beta)
 align_graph(edges, gamma, beta, transport_weights)
 ```
 

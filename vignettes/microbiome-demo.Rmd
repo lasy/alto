@@ -15,6 +15,7 @@ vignette: >
 ```
   
 ```{r setup}
+suppressPackageStartupMessages({
   library(alto)
   library(dplyr)
   library(magrittr)
@@ -22,18 +23,19 @@ vignette: >
   library(tibble)
   library(stringr)
   library(tidyr)
+})
 ```
   
   
-  This document showcases the `alto` package functions applied to vaginal microbiome data.
-  
-  ## Loading the data
-  
-  We use the data published with the article ["Replication and refinement of a vaginal microbial signature of preterm birth in two racially distinct cohorts of US women"](https://www.pnas.org/content/114/37/9966.short) by Calahan et al., 2017, PNAS.
-  
-  A .zip file containing the related data can be downloaded from the [Stanford data catalog](https://stacks.stanford.edu/file/druid:yb681vm1809/RepRefine_Scripts.tar.gz).
-  
-  For convenience, the data file (i.e. the tables contained in the `processed.rda` file) has been attached to the `alto` package as `vm_data`. For details, type `?vm_data`.
+This document showcases the `alto` package functions applied to vaginal microbiome data.
+
+## Loading the data
+
+We use the data published with the article ["Replication and refinement of a vaginal microbial signature of preterm birth in two racially distinct cohorts of US women"](https://www.pnas.org/content/114/37/9966.short) by Calahan et al., 2017, PNAS.
+
+A .zip file containing the related data can be downloaded from the [Stanford data catalog](https://stacks.stanford.edu/file/druid:yb681vm1809/RepRefine_Scripts.tar.gz).
+
+For convenience, the data file (i.e. the tables contained in the `processed.rda` file) has been attached to the `alto` package as `vm_data`. For details, type `?vm_data`.
   
 ```{r show-names-of-provided-data}
   
@@ -110,7 +112,7 @@ aligned_topics_transport <-
 ```
 
 
-## Alignement visualization
+## Alignment visualization
 
 The alignments can be visualized with the `plot` function.
 
