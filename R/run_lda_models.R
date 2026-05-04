@@ -100,13 +100,13 @@ run_lda_models <-
 
     # 2. RUNNING and SAVING MODELS
     existing_lda_files <- list.files(dir)
-    required_lda_files <- paste0(names(param_lists), ".Rdata")
+    required_lda_files <- paste0(names(param_lists), ".rds")
     if (reset |  !all(required_lda_files %in% existing_lda_files)) {
       done <-
         map(
           .x = names(param_lists),
           .f = function(m) {
-            model_file_name <- paste0(dir, m, ".Rdata")
+            model_file_name <- paste0(dir, m, ".rds")
             if (reset | !file.exists(model_file_name)) {
               if (verbose) cat("fitting model",m, "\n")
               param_list <- param_lists[[m]]
@@ -134,7 +134,7 @@ run_lda_models <-
                     beta = tm@beta %>% magrittr::set_colnames(colnames(data))
                   )
               }
-              save(lda_model, tm, file = model_file_name)
+              saveRDS(list(lda_model = lda_model, tm = tm), file = model_file_name)
             }
           }
         )
@@ -145,8 +145,7 @@ run_lda_models <-
       purrr::map(
         .x = names(param_lists),
         .f = function(m) {
-          load(file = paste0(dir, m, ".Rdata"))
-          lda_model
+            readRDS(paste0(dir, m, ".rds"))$lda_model
         }
       )
     names(lda_models) <- names(param_lists)

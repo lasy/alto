@@ -1,6 +1,6 @@
 Package: alto
 Type: Package
-Title: Aligns Topics across LDA Models
+Title: Aligns Topics Across LDA Models
 Version: 0.1.1
 Authors@R: c(
     person("Kris", "Sankaran", email = "ksankaran@wisc.edu",role = c("aut","cre")),
@@ -15,7 +15,6 @@ Description: "alto" is an R package that aligns topics from different LDA
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-RoxygenNote: 7.3.1
 Imports:
     T4transport,
     dplyr,
@@ -43,3 +42,4 @@ VignetteBuilder: knitr
 Depends:
     R (>= 3.6)
 Config/testthat/edition: 3
+Config/roxygen2/version: 8.0.0

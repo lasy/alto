@@ -353,8 +353,7 @@ transport_weights <- function(gammas, betas, reg = 0.1, ...) {
     mutate(k_next = str_replace(k_next, "X", ""))
 }
 
-#' @importFrom dplyr group_by bind_rows summarize mutate ungroup arrange across
-#' everything
+#' @importFrom dplyr group_by bind_rows summarize mutate ungroup arrange across everything
 #' @importFrom magrittr %>%
 postprocess_weights <- function(weights, n_docs, m_levels) {
   bind_rows(weights) %>%

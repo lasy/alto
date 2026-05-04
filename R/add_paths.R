@@ -1,7 +1,6 @@
 
 
-#' @importFrom dplyr last bind_rows rename mutate filter group_by arrange
-#' slice_max left_join select
+#' @importFrom dplyr last bind_rows rename mutate filter group_by arrange slice_max left_join select
 add_paths <- function(aligned_topics, weight_fun, ...) {
   model_names <- names(models(aligned_topics))
 
