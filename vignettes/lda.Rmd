@@ -122,7 +122,7 @@ if (perplexity & save) {
   x_new <- simulate_lda(betas, gammas, lambda = lambdas$count)
   perplexities <- matrix(nrow = n_models - 1, ncol = 2, dimnames = list(NULL, c("train", "test")))
   for (k in seq(2, n_models)) {
-    load(str_c("fits/lda_K", k, ".Rdata"))
+    tm <- readRDS(str_c("fits/lda_K", k, ".rds"))$tm
     perplexities[k - 1, 1] <- topicmodels::perplexity(tm, x)
     perplexities[k - 1, 2] <- topicmodels::perplexity(tm, x_new)
   }
