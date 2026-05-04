@@ -366,7 +366,7 @@ postprocess_weights <- function(weights, n_docs, m_levels) {
     mutate(bw_weight = weight / sum(weight)) %>%
     ungroup() %>%
     mutate(
-      across(c("m", "m_next"), factor, levels = m_levels),
+      across(c("m", "m_next"), \(x) factor(x, levels = m_levels)),
       across(c("k", "k_next"), as.integer)
     ) %>%
     group_by(m, m_next, k) %>%
