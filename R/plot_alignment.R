@@ -71,8 +71,7 @@ plot_alignment <- function(
   )
 }
 
-#' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect geom_text
-#' theme guides scale_fill_gradient scale_fill_discrete element_blank labs geom_segment
+#' @importFrom ggplot2 ggplot geom_ribbon aes %+% scale_x_continuous geom_rect geom_text theme guides scale_fill_gradient scale_fill_discrete element_blank labs geom_segment expand_limits
 #' @importFrom dplyr mutate left_join
 .plot_from_layout <- function(aligned_topics, layouts, rect_gap, color_by, model_name_repair_fun = paste0, label_topics = FALSE, leaves = data.frame(), leaves_text_size = 10, top_n_edges = NULL) {
 
@@ -352,9 +351,7 @@ ribbon_in <- function(weights, rect_gap = 0.1) {
 #'
 #' @importFrom magrittr %>%
 #' @importFrom dplyr select filter
-#' @importFrom ggplot2 ggplot aes scale_color_identity geom_point geom_tile
-#' guides scale_fill_identity scale_size scale_alpha facet_grid labs theme_bw
-#' theme element_text element_rect scale_color_discrete
+#' @importFrom ggplot2 ggplot aes scale_color_identity geom_point geom_tile guides scale_fill_identity scale_size scale_alpha facet_grid labs theme_bw theme element_text element_rect scale_color_discrete
 #' @importFrom grid unit
 #' @export
 plot_beta <- function(x, models = "all",
@@ -465,8 +462,7 @@ plot_beta_layout <- function(x, subset = "all",
   list(betas = betas, weights = topic_weights)
 }
 
-#' @importFrom dplyr select group_by mutate ungroup left_join arrange filter
-#'  slice_head slice_min
+#' @importFrom dplyr select group_by mutate ungroup left_join arrange filter slice_head slice_min
 #' @importFrom tidyr pivot_longer
 #' @importFrom magrittr %>%
 format_beta <-  function(p, x_axis = "label") {

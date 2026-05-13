@@ -1,5 +1,4 @@
-#' @importFrom dplyr group_by ungroup mutate select rename filter bind_rows
-#'   distinct
+#' @importFrom dplyr group_by ungroup mutate select rename filter bind_rows distinct
 topic_ordering <- function(weights) {
   permuted <- weights %>%
     select(m_next, k_init, k_next) %>%

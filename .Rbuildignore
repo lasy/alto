@@ -6,3 +6,16 @@
 ^README\.Rmd$
 ^doc$
 ^Meta$
+^docs$
+^docs/
+^_pkgdown\.yml$
+^vignettes/lda\.Rmd$
+^vignettes/microbiome-demo\.Rmd$
+^vignettes/background-noise\.Rmd$
+^vignettes/strain-switching\.Rmd$
+^vignettes/timing\.Rmd$
+^vignettes/many_ldas\.Rmd$
+^vignettes/many_ldas_cache/
+^vignettes/.*/fits/
+^vignettes/.*/.*\.rda$
+^vignettes/.*/.*\.csv$

@@ -27,8 +27,7 @@
 #' alignment <- align_topics(lda_models)
 #' compute_number_of_paths(alignment, plot = TRUE)
 #'
-#' @importFrom ggplot2 ggplot geom_line geom_point aes guides theme_minimal
-#' scale_x_continuous scale_y_continuous labs %+%
+#' @importFrom ggplot2 ggplot geom_line geom_point aes guides theme_minimal scale_x_continuous scale_y_continuous labs %+%
 #' @importFrom dplyr group_by summarise n n_distinct
 #' @importFrom magrittr %>%
 #' @export
@@ -57,8 +56,7 @@ compute_number_of_paths <- function(aligned_topics, plot = FALSE) {
 #'
 #' @seealso \code{compute_number_of_paths}
 #'
-#' @importFrom ggplot2 ggplot aes geom_line geom_point guides theme_minimal
-#'  scale_x_continuous scale_y_continuous labs
+#' @importFrom ggplot2 ggplot aes geom_line geom_point guides theme_minimal scale_x_continuous scale_y_continuous labs
 #' @export
 plot_number_of_paths <- function(n_paths) {
   ggplot(n_paths, aes(x = n_topics)) +

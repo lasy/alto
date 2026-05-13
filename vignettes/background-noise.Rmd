@@ -106,7 +106,7 @@ if (params$save) {
 if (params$perplexity && params$save) {
   perplexities <- matrix(nrow = params$n_models - 1, ncol = 2, dimnames = list(NULL, c("train", "test")))
   for (k in seq(2, params$n_models)) {
-    load(str_c("fits/background_K", k, ".Rdata"))
+    tm <- readRDS(str_c("fits/background_K", k, ".Rdata"))$tm
     perplexities[k - 1, 1] <- topicmodels::perplexity(tm, sim_data$x)
     perplexities[k - 1, 2] <- topicmodels::perplexity(tm, sim_data_$x[(N + 1):(2 * N), ])
   }

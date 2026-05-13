@@ -52,8 +52,7 @@ add_measure <- function(aligned_topics, fi=topic_coherence) {
 #' @param aligned_topics An alignment object on which the coherence scores
 #'   should be computed.
 #'
-#' @importFrom dplyr filter select rowwise left_join select rename group_by
-#'  summarize
+#' @importFrom dplyr filter select rowwise left_join select rename group_by summarize
 #' @importFrom magrittr %>%
 #' @importFrom tibble tibble
 #' @keywords internal
